@@ -3,10 +3,19 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Layout, PageHeader } from "@/components/Layout";
-import { ACTIVITY_TYPES, INTENSITIES, MOODS } from "@/lib/activities";
+import { CelebrationOverlay } from "@/components/CelebrationOverlay";
+import { ACTIVITY_TYPES, INTENSITIES, MOODS, computeStats, fetchActivities } from "@/lib/activities";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/log")({ component: LogMovement });
+
+type SavedActivity = {
+  type: string;
+  duration: number;
+  intensity: string;
+  mood: string;
+  date: string;
+};
 
 function LogMovement() {
   const navigate = useNavigate();
@@ -21,6 +30,7 @@ function LogMovement() {
     notes: "",
   });
   const [loading, setLoading] = useState(false);
+  const [celebration, setCelebration] = useState<{ activity: SavedActivity; streak: number } | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,87 +56,115 @@ function LogMovement() {
       toast.error(error.message);
       return;
     }
-    qc.invalidateQueries({ queryKey: ["activities"] });
-    toast.success("Activity logged. Let's go.");
+    await qc.invalidateQueries({ queryKey: ["activities"] });
+
+    // Compute streak for celebration
+    const allActivities = await fetchActivities();
+    const { streak } = computeStats(allActivities);
+
+    setCelebration({
+      activity: {
+        type: form.type,
+        duration: Number(form.duration),
+        intensity: form.intensity,
+        mood: form.mood,
+        date: form.date,
+      },
+      streak,
+    });
+  }
+
+  function dismiss() {
+    setCelebration(null);
     navigate({ to: "/" });
   }
 
   return (
-    <Layout>
-      <PageHeader
-        eyebrow="Today is another chance"
-        title="Log Today's Movement"
-        subtitle="No pressure. No perfection. Just show up and record the work."
-      />
+    <>
+      {celebration && (
+        <CelebrationOverlay
+          streak={celebration.streak}
+          activity={celebration.activity}
+          onDismiss={dismiss}
+        />
+      )}
 
-      <form
-        onSubmit={submit}
-        className="mx-auto grid max-w-[680px] gap-6 rounded-[20px] bg-card p-10 sm:p-12 card-shadow"
-      >
-        <Field label="What did you do today?">
-          <Select
-            value={form.type}
-            onChange={(v) => setForm({ ...form, type: v })}
-            options={ACTIVITY_TYPES.map((t) => ({ value: t, label: t }))}
-          />
-        </Field>
+      <Layout>
+        <PageHeader
+          eyebrow="Today is another chance"
+          title="Log Today's Movement"
+          subtitle="No pressure. No perfection. Just show up and record the work."
+        />
 
-        <Field label="How many minutes did you move?">
-          <input
-            type="number"
-            min={1}
-            placeholder="e.g. 45"
-            value={form.duration}
-            onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })}
-            className={inputCls}
-          />
-        </Field>
-
-        <Field label="How hard did you go?">
-          <Select
-            value={form.intensity}
-            onChange={(v) => setForm({ ...form, intensity: v })}
-            options={INTENSITIES.map((i) => ({ value: i.value, label: i.label }))}
-          />
-        </Field>
-
-        <Field label="How do you feel now?">
-          <Select
-            value={form.mood}
-            onChange={(v) => setForm({ ...form, mood: v })}
-            options={MOODS.map((m) => ({ value: m, label: m }))}
-          />
-        </Field>
-
-        <Field label="Date">
-          <input
-            type="date"
-            value={form.date}
-            onChange={(e) => setForm({ ...form, date: e.target.value })}
-            className={inputCls}
-          />
-        </Field>
-
-        <Field label="Champion note (optional)">
-          <textarea
-            rows={5}
-            value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            placeholder="Example: I did not feel like moving, but I showed up anyway."
-            className={`${inputCls} h-auto py-3`}
-          />
-        </Field>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-2 h-14 w-full rounded-full bg-gold text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
-          style={{ letterSpacing: "1.5px" }}
+        <form
+          onSubmit={submit}
+          className="mx-auto grid max-w-[680px] gap-6 rounded-[20px] bg-card p-10 sm:p-12 card-shadow"
         >
-          {loading ? "Saving..." : "Keep the Streak Going"}
-        </button>
-      </form>
-    </Layout>
+          <Field label="What did you do today?">
+            <Select
+              value={form.type}
+              onChange={(v) => setForm({ ...form, type: v })}
+              options={ACTIVITY_TYPES.map((t) => ({ value: t, label: t }))}
+            />
+          </Field>
+
+          <Field label="How many minutes did you move?">
+            <input
+              type="number"
+              min={1}
+              placeholder="e.g. 45"
+              value={form.duration}
+              onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })}
+              className={inputCls}
+            />
+          </Field>
+
+          <Field label="How hard did you go?">
+            <Select
+              value={form.intensity}
+              onChange={(v) => setForm({ ...form, intensity: v })}
+              options={INTENSITIES.map((i) => ({ value: i.value, label: i.label }))}
+            />
+          </Field>
+
+          <Field label="How do you feel now?">
+            <Select
+              value={form.mood}
+              onChange={(v) => setForm({ ...form, mood: v })}
+              options={MOODS.map((m) => ({ value: m, label: m }))}
+            />
+          </Field>
+
+          <Field label="Date">
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+              className={inputCls}
+            />
+          </Field>
+
+          <Field label="Champion note (optional)">
+            <textarea
+              rows={5}
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              placeholder="Example: I did not feel like moving, but I showed up anyway."
+              className={`${inputCls} h-auto py-3`}
+            />
+          </Field>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 h-14 w-full rounded-full bg-gold text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
+            style={{ letterSpacing: "1.5px" }}
+          >
+            {loading ? "Saving..." : "Keep the Streak Going"}
+          </button>
+        </form>
+      </Layout>
+    </>
   );
 }
 

@@ -1,0 +1,6 @@
+{
+  "framework": "vite",
+  "buildCommand": "bun run build",
+  "outputDirectory": ".output/public",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

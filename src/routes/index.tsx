@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Layout } from "@/components/Layout";
+import { ChampsBanner } from "@/components/ChampsBanner";
 import { computeStats, fetchActivities, minutesByType } from "@/lib/activities";
 import { useCountUp } from "@/hooks/useCountUp";
 
@@ -89,6 +90,9 @@ function Dashboard() {
           gold
         />
       </section>
+
+      {/* COMMUNITY CHAMPS */}
+      <ChampsBanner />
 
       {/* IDENTITY BANNER */}
       <section
