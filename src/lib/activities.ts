@@ -20,6 +20,11 @@ export const INTENSITIES = [
 
 export const MOODS = ["Energized", "Calm", "Motivated", "Tired but proud"] as const;
 
+export async function deleteActivity(id: string): Promise<void> {
+  const { error } = await supabase.from("activities").delete().eq("id", id);
+  if (error) throw error;
+}
+
 export async function fetchActivities(): Promise<Activity[]> {
   const { data, error } = await supabase
     .from("activities")

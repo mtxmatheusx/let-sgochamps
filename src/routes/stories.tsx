@@ -69,13 +69,24 @@ function PinnedStory({ story }: { story: Story }) {
       style={{ background: "var(--navy-dark)" }}
     >
       <div className="flex flex-col md:flex-row">
-        {story.photo_url && (
+        {(story.video_url || story.photo_url) && (
           <div className="md:w-[360px] shrink-0">
-            <img
-              src={story.photo_url}
-              alt={story.name}
-              className="h-60 w-full object-cover md:h-full"
-            />
+            {story.video_url ? (
+              <video
+                src={story.video_url}
+                className="h-60 w-full object-cover md:h-full"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <img
+                src={story.photo_url!}
+                alt={story.name}
+                className="h-60 w-full object-cover md:h-full"
+              />
+            )}
           </div>
         )}
         <div className="flex flex-col justify-center p-8 sm:p-10">
@@ -85,11 +96,15 @@ function PinnedStory({ story }: { story: Story }) {
             </span>
           </div>
           <blockquote className="text-[18px] leading-[1.7] text-white/90 sm:text-[20px]">
-            "{story.story}"
+            "{story.quote ?? story.story}"
           </blockquote>
           <div className="mt-6">
             <p className="font-bold text-white">{story.name}</p>
-            <p className="text-sm text-white/50">{story.city}</p>
+            <p className="text-sm text-white/50">
+              {story.city}
+              {story.activity_type && <span className="ml-2 text-gold/60">· {story.activity_type}</span>}
+              {story.social_handle && <span className="ml-2 text-gold">{story.social_handle}</span>}
+            </p>
           </div>
           {story.reply && (
             <div className="mt-6 rounded-xl border border-gold/30 bg-gold/10 p-4">
@@ -106,23 +121,50 @@ function PinnedStory({ story }: { story: Story }) {
 }
 
 function StoryCard({ story }: { story: Story }) {
+  const hasMedia = story.video_url || story.photo_url;
   return (
     <article className="flex flex-col overflow-hidden rounded-[20px] bg-card card-shadow lift">
-      {story.photo_url && (
-        <img
-          src={story.photo_url}
-          alt={story.name}
+      {story.video_url ? (
+        <video
+          src={story.video_url}
           className="h-48 w-full object-cover"
+          muted
+          playsInline
+          controls={false}
+          onMouseEnter={(e) => (e.currentTarget as HTMLVideoElement).play()}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLVideoElement).pause(); (e.currentTarget as HTMLVideoElement).currentTime = 0; }}
         />
-      )}
+      ) : story.photo_url ? (
+        <img src={story.photo_url} alt={story.name} className="h-48 w-full object-cover" />
+      ) : null}
+
       <div className="flex flex-1 flex-col p-6">
-        <p className="text-sm italic leading-relaxed text-sage line-clamp-5">
-          "{story.story}"
-        </p>
+        {story.activity_type && (
+          <span className="mb-3 inline-flex w-fit rounded-full bg-navy/8 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-navy">
+            {story.activity_type}
+          </span>
+        )}
+
+        {story.quote ? (
+          <p className="text-base font-semibold italic leading-snug text-navy line-clamp-3">
+            "{story.quote}"
+          </p>
+        ) : (
+          <p className="text-sm italic leading-relaxed text-sage line-clamp-5">
+            "{story.story}"
+          </p>
+        )}
+
         <div className="mt-auto pt-5">
           <p className="font-bold text-navy">{story.name}</p>
-          <p className="text-[13px] text-sage">{story.city}</p>
+          <p className="text-[13px] text-sage">
+            {story.city}
+            {story.social_handle && (
+              <span className="ml-2 text-gold">{story.social_handle}</span>
+            )}
+          </p>
         </div>
+
         {story.reply && (
           <div className="mt-4 rounded-lg border-l-4 border-gold bg-cream/60 p-3">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-gold">

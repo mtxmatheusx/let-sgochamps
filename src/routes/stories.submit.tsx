@@ -1,19 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PublicLayout, PageHeader } from "@/components/Layout";
 import { submitStory } from "@/lib/stories";
+import { ACTIVITY_TYPES } from "@/lib/activities";
 
 export const Route = createFileRoute("/stories/submit")({ component: SubmitStory });
+
+const MAX_VIDEO_MB = 50;
+const MAX_VIDEO_SECONDS = 30;
 
 function SubmitStory() {
   const [form, setForm] = useState({
     name: "",
     city: "",
     story: "",
+    quote: "",
+    activity_type: "",
+    social_handle: "",
     permission_to_share: false,
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
+  const [videoName, setVideoName] = useState<string | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +36,29 @@ function SubmitStory() {
     setPhotoPreview(URL.createObjectURL(file));
   }
 
+  function handleVideo(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setVideoError(null);
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+      setVideoError(`Video must be under ${MAX_VIDEO_MB}MB.`);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const vid = document.createElement("video");
+    vid.preload = "metadata";
+    vid.onloadedmetadata = () => {
+      if (vid.duration > MAX_VIDEO_SECONDS) {
+        setVideoError(`Video must be ${MAX_VIDEO_SECONDS} seconds or less.`);
+        URL.revokeObjectURL(url);
+      } else {
+        setVideo(file);
+        setVideoName(file.name);
+      }
+    };
+    vid.src = url;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -34,7 +68,19 @@ function SubmitStory() {
     }
     setLoading(true);
     try {
-      await submitStory(form, photo ?? undefined);
+      await submitStory(
+        {
+          name: form.name.trim(),
+          city: form.city.trim(),
+          story: form.story.trim(),
+          quote: form.quote.trim() || null,
+          activity_type: form.activity_type || null,
+          social_handle: form.social_handle.trim() || null,
+          permission_to_share: form.permission_to_share,
+        },
+        photo ?? undefined,
+        video ?? undefined
+      );
       setDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -81,6 +127,7 @@ function SubmitStory() {
         onSubmit={submit}
         className="mx-auto grid max-w-[680px] gap-6 rounded-[20px] bg-card p-10 sm:p-12 card-shadow"
       >
+        {/* Name + City */}
         <div className="grid gap-6 sm:grid-cols-2">
           <Field label="Your name">
             <input
@@ -104,6 +151,21 @@ function SubmitStory() {
           </Field>
         </div>
 
+        {/* Activity type */}
+        <Field label="What kind of movement changed your life?">
+          <select
+            value={form.activity_type}
+            onChange={(e) => setForm({ ...form, activity_type: e.target.value })}
+            className={`${inputCls} cursor-pointer`}
+          >
+            <option value="">Choose an activity…</option>
+            {[...ACTIVITY_TYPES, "Other"].map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </Field>
+
+        {/* Story */}
         <Field label="Your story">
           <textarea
             rows={7}
@@ -115,16 +177,25 @@ function SubmitStory() {
           />
         </Field>
 
+        {/* One-liner quote */}
+        <Field label={`Your one-liner (optional) — ${form.quote.length}/120`}>
+          <input
+            type="text"
+            maxLength={120}
+            placeholder="In one sentence, what does movement mean to you?"
+            value={form.quote}
+            onChange={(e) => setForm({ ...form, quote: e.target.value })}
+            className={inputCls}
+          />
+          <p className="mt-1.5 text-xs text-sage/70">
+            This could appear as a pull-quote on the site or social posts.
+          </p>
+        </Field>
+
+        {/* Photo */}
         <Field label="Photo (optional)">
-          <label
-            className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist bg-cream/60 px-4 py-8 transition-colors hover:border-gold"
-          >
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhoto}
-              className="sr-only"
-            />
+          <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist bg-cream/60 px-4 py-8 transition-colors hover:border-gold">
+            <input type="file" accept="image/*" onChange={handlePhoto} className="sr-only" />
             {photoPreview ? (
               <img src={photoPreview} alt="Preview" className="max-h-40 rounded-lg object-cover" />
             ) : (
@@ -141,6 +212,47 @@ function SubmitStory() {
           </label>
         </Field>
 
+        {/* Short video */}
+        <Field label="Short video — 30s max (optional)">
+          <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist bg-cream/60 px-4 py-8 transition-colors hover:border-gold">
+            <input type="file" accept="video/*" onChange={handleVideo} className="sr-only" />
+            {videoName ? (
+              <div className="flex items-center gap-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d5a1b" strokeWidth="2">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                <p className="text-sm font-semibold text-navy">{videoName}</p>
+              </div>
+            ) : (
+              <>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#b8962e" strokeWidth="1.5" className="mb-3">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                <p className="text-sm font-semibold text-sage">Click to upload a video</p>
+                <p className="mt-1 text-xs text-sage/70">MP4, MOV · Max 30 seconds · Max 50MB</p>
+              </>
+            )}
+          </label>
+          {videoError && (
+            <p className="mt-2 text-sm text-red-500">{videoError}</p>
+          )}
+        </Field>
+
+        {/* Social handle */}
+        <Field label="Instagram or TikTok handle (optional)">
+          <input
+            type="text"
+            placeholder="@yourhandle"
+            value={form.social_handle}
+            onChange={(e) => setForm({ ...form, social_handle: e.target.value })}
+            className={inputCls}
+          />
+          <p className="mt-1.5 text-xs text-sage/70">
+            So Aidan's team can tag you when sharing your story.
+          </p>
+        </Field>
+
+        {/* Permission */}
         <label className="flex cursor-pointer items-start gap-3">
           <input
             type="checkbox"
@@ -149,7 +261,7 @@ function SubmitStory() {
             className="mt-1 h-4 w-4 accent-gold"
           />
           <span className="text-sm leading-relaxed text-sage">
-            I give Let's Go Champs permission to share my story publicly on their
+            I give Let's Go Champs permission to share my story, photo, and video publicly on their
             website and social media channels.
           </span>
         </label>

@@ -5,7 +5,11 @@ export type Story = {
   name: string;
   city: string;
   story: string;
+  quote: string | null;
+  activity_type: string | null;
+  social_handle: string | null;
   photo_url: string | null;
+  video_url: string | null;
   permission_to_share: boolean;
   status: "unread" | "featured" | "archived";
   is_pinned: boolean;
@@ -18,7 +22,11 @@ export type StoryInsert = {
   name: string;
   city: string;
   story: string;
+  quote?: string | null;
+  activity_type?: string | null;
+  social_handle?: string | null;
   photo_url?: string | null;
+  video_url?: string | null;
   permission_to_share: boolean;
 };
 
@@ -46,28 +54,29 @@ export async function fetchPinnedStory(): Promise<Story | null> {
   return data as Story | null;
 }
 
+async function uploadFile(bucket: string, file: File): Promise<string> {
+  const ext = file.name.split(".").pop();
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(path, file, { cacheControl: "3600", upsert: false });
+  if (error) throw error;
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+}
+
 export async function submitStory(
   payload: StoryInsert,
-  photoFile?: File
+  photoFile?: File,
+  videoFile?: File
 ): Promise<void> {
-  let photo_url: string | null = null;
-
-  if (photoFile) {
-    const ext = photoFile.name.split(".").pop();
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from("story-photos")
-      .upload(path, photoFile, { cacheControl: "3600", upsert: false });
-    if (uploadError) throw uploadError;
-    const { data: urlData } = supabase.storage
-      .from("story-photos")
-      .getPublicUrl(path);
-    photo_url = urlData.publicUrl;
-  }
+  const [photo_url, video_url] = await Promise.all([
+    photoFile ? uploadFile("story-photos", photoFile) : Promise.resolve(null),
+    videoFile ? uploadFile("story-videos", videoFile) : Promise.resolve(null),
+  ]);
 
   const { error } = await supabase
     .from("stories")
-    .insert({ ...payload, photo_url });
+    .insert({ ...payload, photo_url, video_url });
   if (error) throw error;
 }
 

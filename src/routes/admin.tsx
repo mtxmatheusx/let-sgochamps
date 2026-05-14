@@ -168,19 +168,27 @@ function AdminDashboard() {
             </div>
           ) : (
             <div className="rounded-[20px] bg-card p-8 card-shadow">
-              {selected.photo_url && (
+              {selected.video_url ? (
+                <video
+                  src={selected.video_url}
+                  controls
+                  className="mb-6 h-48 w-full rounded-xl object-cover"
+                />
+              ) : selected.photo_url ? (
                 <img
                   src={selected.photo_url}
                   alt={selected.name}
                   className="mb-6 h-48 w-full rounded-xl object-cover"
                 />
-              )}
+              ) : null}
 
               <div className="mb-2 flex items-center justify-between gap-3">
                 <div>
                   <p className="font-bold text-navy">{selected.name}</p>
                   <p className="text-[13px] text-sage">
                     {selected.city} · {selected.created_at.slice(0, 10)}
+                    {selected.activity_type && <span className="ml-2 text-navy/60">· {selected.activity_type}</span>}
+                    {selected.social_handle && <span className="ml-2 text-gold font-semibold">{selected.social_handle}</span>}
                     {selected.permission_to_share && (
                       <span className="ml-2 text-green font-semibold">· Shared OK</span>
                     )}
@@ -188,6 +196,12 @@ function AdminDashboard() {
                 </div>
                 <StatusBadge status={selected.status} />
               </div>
+
+              {selected.quote && (
+                <p className="mt-3 rounded-lg bg-gold/10 px-4 py-3 text-[15px] font-semibold italic text-navy">
+                  "{selected.quote}"
+                </p>
+              )}
 
               <p className="mt-4 text-[15px] leading-relaxed text-navy">{selected.story}</p>
 
