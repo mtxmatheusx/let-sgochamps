@@ -7,8 +7,13 @@ const links = [
   { to: "/", label: "Dashboard" },
   { to: "/log", label: "Log Movement" },
   { to: "/history", label: "History" },
+  { to: "/stories", label: "Stories" },
   { to: "/about", label: "About" },
-  { to: "/demo", label: "Demo" },
+] as const;
+
+const publicLinks = [
+  { to: "/stories", label: "Stories" },
+  { to: "/stories/submit", label: "Share Your Story" },
 ] as const;
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -152,5 +157,105 @@ export function PageHeader({
         <p className="mt-5 text-base leading-relaxed text-sage sm:text-lg">{subtitle}</p>
       )}
     </header>
+  );
+}
+
+export function PublicLayout({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => setOpen(false), [location.pathname]);
+
+  return (
+    <div className="min-h-screen bg-cream">
+      <nav
+        className="sticky top-0 z-40 transition-all duration-300"
+        style={{
+          background: scrolled ? "rgba(7,27,47,0.85)" : "#071b2f",
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+        }}
+      >
+        <div className="mx-auto flex h-[68px] max-w-[1280px] items-center justify-between px-6 sm:px-[6%]">
+          <Link to="/" className="flex items-baseline gap-2.5">
+            <span className="font-display text-[22px] leading-none tracking-wide text-gold">LGC</span>
+            <span className="hidden text-sm font-semibold tracking-wide text-white sm:inline">
+              Move Your Way
+            </span>
+          </Link>
+
+          <div className="hidden items-center gap-8 md:flex">
+            {publicLinks.map((l) => {
+              const active = location.pathname === l.to;
+              return (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="relative text-sm font-semibold text-white/90 transition-colors hover:text-gold"
+                >
+                  {l.label}
+                  <span
+                    className="absolute -bottom-2 left-0 h-[2px] bg-gold transition-all duration-300"
+                    style={{ width: active ? "100%" : "0%" }}
+                  />
+                </Link>
+              );
+            })}
+            <Link
+              to="/auth"
+              className="text-xs font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-gold"
+            >
+              Member Login
+            </Link>
+          </div>
+
+          <button
+            className="md:hidden text-white"
+            onClick={() => setOpen(!open)}
+            aria-label="Menu"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {open ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+            </svg>
+          </button>
+        </div>
+
+        {open && (
+          <div className="md:hidden bg-navy px-6 pb-6">
+            <div className="flex flex-col gap-4">
+              {publicLinks.map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="text-base font-semibold text-white hover:text-gold"
+                >
+                  {l.label}
+                </Link>
+              ))}
+              <Link
+                to="/auth"
+                className="text-sm font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-gold"
+              >
+                Member Login
+              </Link>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-[6%] sm:py-20 fade-up">
+        {children}
+      </main>
+
+      <footer className="mx-auto max-w-[1280px] px-6 py-10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-sage sm:px-[6%]">
+        Let's Go Champs · Move Your Way
+      </footer>
+    </div>
   );
 }
