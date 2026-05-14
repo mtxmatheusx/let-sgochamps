@@ -41,7 +41,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <nav className="sticky top-0 z-40 bg-navy text-cream">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link to="/" className="text-lg font-bold tracking-tight">
-            Move Your Way
+            LET'SGOCHAMPS
           </Link>
           <div className="flex items-center gap-1 sm:gap-4">
             {links.map((l) => {
