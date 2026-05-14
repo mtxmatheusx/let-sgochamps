@@ -29,10 +29,12 @@ export function Layout({ children }: { children: ReactNode }) {
       setSession(s);
       setReady(true);
     });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setReady(true);
-    });
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        setSession(data.session);
+        setReady(true);
+      })
+      .catch(() => setReady(true));
     return () => sub.subscription.unsubscribe();
   }, []);
 
