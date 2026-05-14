@@ -11,6 +11,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -21,19 +22,26 @@ function AuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setLoading(true);
     try {
-      const fn =
-        mode === "signin"
-          ? supabase.auth.signInWithPassword({ email, password })
-          : supabase.auth.signUp({
-              email,
-              password,
-              options: { emailRedirectTo: window.location.origin },
-            });
-      const { error } = await fn;
-      if (error) throw error;
-      navigate({ to: "/" });
+      if (mode === "signin") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate({ to: "/" });
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/` },
+        });
+        if (error) throw error;
+        if (!data.session) {
+          setInfo("Enviamos um e-mail de confirmação. Verifique sua caixa de entrada para ativar sua conta.");
+        } else {
+          navigate({ to: "/" });
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -74,6 +82,7 @@ function AuthPage() {
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {info && <p className="rounded-lg bg-green/10 p-3 text-sm text-green">{info}</p>}
           <button
             type="submit"
             disabled={loading}
