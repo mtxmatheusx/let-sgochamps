@@ -82,6 +82,7 @@ function AuthPage() {
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {info && <p className="rounded-lg bg-green/10 p-3 text-sm text-green">{info}</p>}
           <button
             type="submit"
             disabled={loading}
