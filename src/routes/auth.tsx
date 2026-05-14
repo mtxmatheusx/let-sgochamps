@@ -22,19 +22,26 @@ function AuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setLoading(true);
     try {
-      const fn =
-        mode === "signin"
-          ? supabase.auth.signInWithPassword({ email, password })
-          : supabase.auth.signUp({
-              email,
-              password,
-              options: { emailRedirectTo: window.location.origin },
-            });
-      const { error } = await fn;
-      if (error) throw error;
-      navigate({ to: "/" });
+      if (mode === "signin") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate({ to: "/" });
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/` },
+        });
+        if (error) throw error;
+        if (!data.session) {
+          setInfo("Enviamos um e-mail de confirmação. Verifique sua caixa de entrada para ativar sua conta.");
+        } else {
+          navigate({ to: "/" });
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
