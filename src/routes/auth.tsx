@@ -50,50 +50,72 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-xl">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-green">
-          Move your way
+    <div className="flex min-h-screen items-center justify-center bg-cream px-4 py-12">
+      <div className="w-full max-w-md rounded-[20px] bg-card p-10 card-shadow">
+        <div className="mb-8 flex items-baseline gap-2.5">
+          <span className="font-display text-[28px] leading-none text-gold">LGC</span>
+          <span className="text-sm font-semibold tracking-wide text-navy">Move Your Way</span>
+        </div>
+        <p className="eyebrow mb-3 text-green">
+          {mode === "signin" ? "Welcome back" : "Join the movement"}
         </p>
-        <h1 className="mb-1 text-3xl font-bold text-navy">LET'SGOCHAMPS</h1>
-        <p className="mb-6 text-sm text-muted-foreground">
-          {mode === "signin" ? "Welcome back. Show up again." : "Create your account and start showing up."}
+        <h1 className="font-serif text-3xl font-bold text-navy">
+          {mode === "signin" ? "Show up again." : "Start showing up."}
+        </h1>
+        <p className="mt-3 text-sm text-sage">
+          {mode === "signin"
+            ? "Sign in to log your next movement."
+            : "Create your account and stack the days."}
         </p>
-        <form onSubmit={submit} className="space-y-4">
+
+        <form onSubmit={submit} className="mt-8 space-y-5">
           <div>
-            <label className="mb-1 block text-sm font-medium text-navy">Email</label>
+            <label
+              className="mb-2 block text-[12px] font-bold uppercase text-navy"
+              style={{ letterSpacing: "1px" }}
+            >
+              Email
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 outline-none focus:ring-2 focus:ring-green"
+              className="h-12 w-full rounded-xl border-[1.5px] border-mist bg-[var(--cream-deep)] px-4 text-[15px] outline-none transition-all duration-200 focus:border-gold focus:border-l-[3px] focus:bg-white"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-navy">Password</label>
+            <label
+              className="mb-2 block text-[12px] font-bold uppercase text-navy"
+              style={{ letterSpacing: "1px" }}
+            >
+              Password
+            </label>
             <input
               type="password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 outline-none focus:ring-2 focus:ring-green"
+              className="h-12 w-full rounded-xl border-[1.5px] border-mist bg-[var(--cream-deep)] px-4 text-[15px] outline-none transition-all duration-200 focus:border-gold focus:border-l-[3px] focus:bg-white"
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          {info && <p className="rounded-lg bg-green/10 p-3 text-sm text-green">{info}</p>}
+          {info && (
+            <p className="rounded-lg bg-green/10 p-3 text-sm text-green">{info}</p>
+          )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-gold px-6 py-3 font-semibold text-navy transition hover:brightness-95 disabled:opacity-60"
+            className="h-12 w-full rounded-full bg-gold text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
+            style={{ letterSpacing: "1.5px" }}
           >
-            {loading ? "..." : mode === "signin" ? "Sign in" : "Create account"}
+            {loading ? "..." : mode === "signin" ? "Sign In" : "Create Account"}
           </button>
         </form>
         <button
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-6 w-full text-center text-sm text-muted-foreground hover:text-navy"
+          className="mt-6 w-full text-center text-sm text-sage hover:text-navy"
         >
           {mode === "signin" ? "No account? Sign up" : "Already have one? Sign in"}
         </button>

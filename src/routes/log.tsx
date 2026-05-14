@@ -6,9 +6,9 @@ import { Layout, PageHeader } from "@/components/Layout";
 import { ACTIVITY_TYPES, INTENSITIES, MOODS } from "@/lib/activities";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/addactivity")({ component: AddActivity });
+export const Route = createFileRoute("/log")({ component: LogMovement });
 
-function AddActivity() {
+function LogMovement() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const today = new Date().toISOString().slice(0, 10);
@@ -47,7 +47,7 @@ function AddActivity() {
       return;
     }
     qc.invalidateQueries({ queryKey: ["activities"] });
-    toast.success("Activity logged! Keep going.");
+    toast.success("Activity logged. Let's go.");
     navigate({ to: "/" });
   }
 
@@ -58,56 +58,44 @@ function AddActivity() {
         title="Log Today's Movement"
         subtitle="No pressure. No perfection. Just show up and record the work."
       />
+
       <form
         onSubmit={submit}
-        className="grid max-w-2xl gap-5 rounded-3xl bg-card p-8 shadow-sm"
+        className="mx-auto grid max-w-[680px] gap-6 rounded-[20px] bg-card p-10 sm:p-12 card-shadow"
       >
-        <Field label="Activity type">
-          <select
+        <Field label="What did you do today?">
+          <Select
             value={form.type}
-            onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className={inputCls}
-          >
-            {ACTIVITY_TYPES.map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
+            onChange={(v) => setForm({ ...form, type: v })}
+            options={ACTIVITY_TYPES.map((t) => ({ value: t, label: t }))}
+          />
         </Field>
 
-        <Field label="Duration" hint="How many minutes did you move?">
+        <Field label="How many minutes did you move?">
           <input
             type="number"
             min={1}
+            placeholder="e.g. 45"
             value={form.duration}
             onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })}
             className={inputCls}
           />
         </Field>
 
-        <Field label="Intensity">
-          <select
+        <Field label="How hard did you go?">
+          <Select
             value={form.intensity}
-            onChange={(e) => setForm({ ...form, intensity: e.target.value })}
-            className={inputCls}
-          >
-            {INTENSITIES.map((i) => (
-              <option key={i.value} value={i.value}>
-                {i.label}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => setForm({ ...form, intensity: v })}
+            options={INTENSITIES.map((i) => ({ value: i.value, label: i.label }))}
+          />
         </Field>
 
-        <Field label="Mood">
-          <select
+        <Field label="How do you feel now?">
+          <Select
             value={form.mood}
-            onChange={(e) => setForm({ ...form, mood: e.target.value })}
-            className={inputCls}
-          >
-            {MOODS.map((m) => (
-              <option key={m}>{m}</option>
-            ))}
-          </select>
+            onChange={(v) => setForm({ ...form, mood: v })}
+            options={MOODS.map((m) => ({ value: m, label: m }))}
+          />
         </Field>
 
         <Field label="Date">
@@ -119,20 +107,21 @@ function AddActivity() {
           />
         </Field>
 
-        <Field label="Champion note" hint="Optional">
+        <Field label="Champion note (optional)">
           <textarea
-            rows={3}
+            rows={5}
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
             placeholder="Example: I did not feel like moving, but I showed up anyway."
-            className={inputCls}
+            className={`${inputCls} h-auto py-3`}
           />
         </Field>
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 inline-flex justify-center rounded-full bg-gold px-7 py-3 font-semibold text-navy transition hover:brightness-95 disabled:opacity-60"
+          className="mt-2 h-14 w-full rounded-full bg-gold text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
+          style={{ letterSpacing: "1.5px" }}
         >
           {loading ? "Saving..." : "Keep the Streak Going"}
         </button>
@@ -142,24 +131,55 @@ function AddActivity() {
 }
 
 const inputCls =
-  "w-full rounded-xl border border-input bg-background px-4 py-2.5 outline-none focus:ring-2 focus:ring-green";
+  "w-full h-14 rounded-xl border-[1.5px] border-mist bg-[var(--cream-deep)] px-4 text-[16px] text-navy outline-none transition-all duration-200 focus:border-gold focus:border-l-[3px] focus:bg-white";
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <div className="mb-1 flex items-baseline justify-between">
-        <span className="text-sm font-semibold text-navy">{label}</span>
-        {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
-      </div>
+      <span
+        className="mb-2 block text-[13px] font-bold uppercase text-navy"
+        style={{ letterSpacing: "1px" }}
+      >
+        {label}
+      </span>
       {children}
     </label>
+  );
+}
+
+function Select({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${inputCls} appearance-none pr-12`}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <svg
+        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sage"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+      >
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </div>
   );
 }

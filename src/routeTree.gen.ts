@@ -9,13 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LogRouteImport } from './routes/log'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AddactivityRouteImport } from './routes/addactivity'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const LogRoute = LogRouteImport.update({
+  id: '/log',
+  path: '/log',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -29,11 +34,6 @@ const DemoRoute = DemoRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AddactivityRoute = AddactivityRouteImport.update({
-  id: '/addactivity',
-  path: '/addactivity',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -50,54 +50,54 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/addactivity': typeof AddactivityRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
+  '/log': typeof LogRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/addactivity': typeof AddactivityRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
+  '/log': typeof LogRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/addactivity': typeof AddactivityRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
+  '/log': typeof LogRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/addactivity' | '/auth' | '/demo' | '/history'
+  fullPaths: '/' | '/about' | '/auth' | '/demo' | '/history' | '/log'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/addactivity' | '/auth' | '/demo' | '/history'
-  id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/addactivity'
-    | '/auth'
-    | '/demo'
-    | '/history'
+  to: '/' | '/about' | '/auth' | '/demo' | '/history' | '/log'
+  id: '__root__' | '/' | '/about' | '/auth' | '/demo' | '/history' | '/log'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AddactivityRoute: typeof AddactivityRoute
   AuthRoute: typeof AuthRoute
   DemoRoute: typeof DemoRoute
   HistoryRoute: typeof HistoryRoute
+  LogRoute: typeof LogRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/log': {
+      id: '/log'
+      path: '/log'
+      fullPath: '/log'
+      preLoaderRoute: typeof LogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/history': {
       id: '/history'
       path: '/history'
@@ -117,13 +117,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/addactivity': {
-      id: '/addactivity'
-      path: '/addactivity'
-      fullPath: '/addactivity'
-      preLoaderRoute: typeof AddactivityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -146,10 +139,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AddactivityRoute: AddactivityRoute,
   AuthRoute: AuthRoute,
   DemoRoute: DemoRoute,
   HistoryRoute: HistoryRoute,
+  LogRoute: LogRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

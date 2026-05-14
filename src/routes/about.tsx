@@ -3,52 +3,59 @@ import { Layout, PageHeader } from "@/components/Layout";
 
 export const Route = createFileRoute("/about")({ component: About });
 
-const cards = [
+const cards: Array<{ title: string; body?: string; list?: string[] }> = [
   {
     title: "The Idea",
-    body: "It's not about perfection — it's about daily action. LET'SGOCHAMPS is built to make small, consistent movement feel like a win every single time.",
+    body: "This app is not built around perfection or extreme workouts. It is built around daily action. Users track simple movement habits and turn small wins into visible progress.",
   },
   {
     title: "User Flow",
     list: [
       "Open the dashboard.",
-      "Review your stats and streak.",
+      "Review movement minutes, total activity and streak.",
       "Click Log Today's Movement.",
-      "Submit the quick form.",
-      "Return to the updated dashboard.",
-      "Use History to see your receipts.",
+      "Submit the activity form.",
+      "Return to an updated dashboard.",
+      "Use history to review progress over time.",
     ],
   },
   {
     title: "Design Direction",
-    body: "Bold green, deep navy, cream and gold. Wellness meets champion energy — calm enough to live with, motivating enough to act on.",
+    body: "The visual style uses bold green, deep navy, cream and gold to connect wellness with champion energy. The design feels motivational without becoming overwhelming.",
   },
   {
     title: "Why It Works",
-    body: "Movement becomes a feedback loop. Each logged activity is proof of consistency, and proof builds identity. You become the person who shows up.",
+    body: "The app turns movement into a feedback loop. Each logged activity gives users proof that they are becoming more consistent.",
   },
 ];
 
 function About() {
   return (
     <Layout>
-      <PageHeader eyebrow="The movement behind the app" title="About LET'SGOCHAMPS" />
+      <PageHeader
+        eyebrow="The movement behind the app"
+        title="About Move Your Way"
+        subtitle="Move Your Way is a data-driven wellness tracker inspired by the Let's Go Champs mindset: show up, stay consistent and build a lifestyle around movement."
+      />
       <div className="grid gap-6 md:grid-cols-2">
         {cards.map((c) => (
-          <div key={c.title} className="rounded-3xl bg-card p-8 shadow-sm">
-            <h3 className="mb-3 text-xl font-bold text-navy">{c.title}</h3>
-            {c.body && <p className="text-sm leading-relaxed text-muted-foreground">{c.body}</p>}
+          <article key={c.title} className="rounded-[20px] bg-card p-8 card-shadow lift">
+            <p className="eyebrow text-gold">Pillar</p>
+            <h3 className="mt-2 font-serif text-2xl font-bold text-navy">{c.title}</h3>
+            {c.body && (
+              <p className="mt-4 text-[15px] leading-relaxed text-sage">{c.body}</p>
+            )}
             {c.list && (
-              <ol className="space-y-2 text-sm text-muted-foreground">
+              <ol className="mt-4 space-y-3">
                 {c.list.map((step, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="font-bold text-gold">{i + 1}.</span>
+                  <li key={i} className="flex gap-3 text-[15px] text-sage">
+                    <span className="font-bold text-gold">{String(i + 1).padStart(2, "0")}.</span>
                     <span>{step}</span>
                   </li>
                 ))}
               </ol>
             )}
-          </div>
+          </article>
         ))}
       </div>
     </Layout>
