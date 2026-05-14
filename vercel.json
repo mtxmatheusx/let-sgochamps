@@ -1,6 +1,11 @@
 {
-  "framework": "vite",
-  "buildCommand": "bun run build",
-  "outputDirectory": ".output/public",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "buildCommand": "bun run build && node scripts/gen-html.mjs",
+  "outputDirectory": "dist/client",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
 }
