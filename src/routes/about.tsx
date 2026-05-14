@@ -6,7 +6,7 @@ export const Route = createFileRoute("/about")({ component: About });
 const cards = [
   {
     title: "The Idea",
-    body: "It's not about perfection — it's about daily action. Move Your Way is built to make small, consistent movement feel like a win every single time.",
+    body: "It's not about perfection — it's about daily action. LET'SGOCHAMPS is built to make small, consistent movement feel like a win every single time.",
   },
   {
     title: "User Flow",
@@ -32,7 +32,7 @@ const cards = [
 function About() {
   return (
     <Layout>
-      <PageHeader eyebrow="The movement behind the app" title="About Move Your Way" />
+      <PageHeader eyebrow="The movement behind the app" title="About LET'SGOCHAMPS" />
       <div className="grid gap-6 md:grid-cols-2">
         {cards.map((c) => (
           <div key={c.title} className="rounded-3xl bg-card p-8 shadow-sm">

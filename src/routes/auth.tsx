@@ -55,7 +55,7 @@ function AuthPage() {
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-green">
           Let's Go Champs
         </p>
-        <h1 className="mb-1 text-3xl font-bold text-navy">Move Your Way</h1>
+        <h1 className="mb-1 text-3xl font-bold text-navy">LET'SGOCHAMPS</h1>
         <p className="mb-6 text-sm text-muted-foreground">
           {mode === "signin" ? "Welcome back. Show up again." : "Create your account and start showing up."}
         </p>

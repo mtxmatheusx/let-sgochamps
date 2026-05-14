@@ -12,7 +12,7 @@ function Demo() {
           <iframe
             className="absolute inset-0 h-full w-full"
             src="https://www.youtube.com/embed/hdoF-8UXQfM"
-            title="Move Your Way demo"
+            title="LET'SGOCHAMPS demo"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
