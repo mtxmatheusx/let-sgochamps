@@ -53,7 +53,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-cream px-4">
       <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-xl">
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-green">
-          Let's Go Champs
+          Move your way
         </p>
         <h1 className="mb-1 text-3xl font-bold text-navy">LET'SGOCHAMPS</h1>
         <p className="mb-6 text-sm text-muted-foreground">
