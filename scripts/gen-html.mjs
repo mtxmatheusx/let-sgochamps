@@ -70,24 +70,26 @@ if (frameworkFile) {
   // Patch 1: Add Suspense fallback to TanStack Start's router promise wrapper.
   // Without fallback, vE renders bE without a <Suspense> boundary; the suspended
   // promise throws uncaught and React aborts the render → blank page.
+  // Matches: promise:<var>,children:n=> (unique to the router bootstrap in this bundle)
   const suspensePatch = fw.replace(
-    /k\.jsx\(vE,\{promise:qc,children:/g,
-    "k.jsx(vE,{promise:qc,fallback:null,children:"
+    /(promise:\w+,)(children:n=>)/g,
+    "$1fallback:null,$2"
   );
   if (suspensePatch !== fw) {
     fw = suspensePatch;
     patched = true;
     console.log("  Patch 1 applied: Suspense fallback added to router promise wrapper.");
   } else {
-    console.warn("  Patch 1 SKIPPED: could not find vE promise call (bundle shape changed?).");
+    console.warn("  Patch 1 SKIPPED: could not find router promise wrapper (bundle shape changed?).");
   }
 
   // Patch 2: Replace hydrateRoot(document,...) with createRoot(document.body).render(...)
   // hydrateRoot expects SSR HTML; in static mode the body is empty so React logs
   // hydration mismatches. createRoot does a clean client render instead.
+  // Matches any variable name combo: <dom>.hydrateRoot(document, <element>)
   const hydratePatch = fw.replace(
-    /tb\.hydrateRoot\(document,(k\.jsx\(st\.StrictMode,\{children:k\.jsx\(uR,\{\}\)\}\))\)\}/,
-    "tb.createRoot(document.body).render($1)}"
+    /(\w+)\.hydrateRoot\(document,(.+?)\)\}/,
+    "$1.createRoot(document.body).render($2)}"
   );
   if (hydratePatch !== fw) {
     fw = hydratePatch;
