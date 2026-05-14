@@ -37,7 +37,7 @@ function Dashboard() {
           Today's the day
         </p>
         <h1 className="max-w-2xl text-5xl font-bold leading-tight sm:text-6xl">
-          Let's Go Champs.
+          LET'SGOCHAMPS.
         </h1>
         <p className="mt-4 max-w-xl text-cream/80">
           Consistency over intensity. Show up today, stack the days, and become the person who moves.
