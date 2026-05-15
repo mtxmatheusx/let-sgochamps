@@ -79,11 +79,16 @@ function getDailyQuote() {
   return AIDAN_QUOTES[dayOfYear % AIDAN_QUOTES.length];
 }
 
+// iOS-style spring physics
+const iosSpring = { type: "spring" as const, stiffness: 220, damping: 26, mass: 1 };
+const iosTapSpring = { type: "spring" as const, stiffness: 400, damping: 28 };
+const iosHoverSpring = { type: "spring" as const, stiffness: 300, damping: 22 };
+
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.7, ease },
+  transition: iosSpring,
 };
 
 function Dashboard() {
@@ -208,22 +213,38 @@ function Dashboard() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.65 }}
+            transition={{ ...iosSpring, delay: 0.65 }}
             className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3"
           >
-            <Link
-              to="/log"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-green px-7 py-3 text-[15px] font-semibold text-white shadow-[0_10px_28px_-8px_rgba(34,197,94,0.65)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110 sm:py-3.5"
+            <motion.div
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              transition={iosHoverSpring}
             >
-              Log today's movement
-              <span className="transition-transform duration-300 group-hover:translate-x-1">›</span>
-            </Link>
-            <Link
-              to="/history"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-[15px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20 sm:py-3.5"
+              <Link
+                to="/log"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-green px-7 py-3 text-[15px] font-semibold text-white shadow-[0_10px_28px_-8px_rgba(22,163,74,0.65)] hover:brightness-110 sm:py-3.5"
+              >
+                Log today's movement
+                <motion.span
+                  initial={false}
+                  whileHover={{ x: 4 }}
+                  transition={iosHoverSpring}
+                >›</motion.span>
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              transition={iosHoverSpring}
             >
-              See your history ›
-            </Link>
+              <Link
+                to="/history"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-[15px] font-medium text-white backdrop-blur-sm hover:bg-white/20 sm:py-3.5"
+              >
+                See your history ›
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.div>
       </section>
@@ -531,11 +552,12 @@ function BentoCard({
       : "glass";
 
   const motionProps = {
-    initial: { opacity: 0, y: 24, scale: 0.97 },
+    initial: { opacity: 0, y: 32, scale: 0.94 },
     whileInView: { opacity: 1, y: 0, scale: 1 },
     viewport: { once: true, margin: "-60px" },
-    transition: { duration: 0.6, ease, delay },
-    whileHover: { y: -3, transition: { duration: 0.25, ease } },
+    transition: { ...iosSpring, delay },
+    whileHover: { y: -4, scale: 1.012, transition: iosHoverSpring },
+    whileTap: { scale: 0.97, transition: iosTapSpring },
   };
 
   if (href) {
@@ -544,7 +566,7 @@ function BentoCard({
         <motion.div
           {...motionProps}
           className={`group flex h-full flex-col rounded-3xl p-5 md:p-7 ${toneCls}`}
-          style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
+          style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(22,163,74,0.5)" } : undefined}
         >
           {children}
         </motion.div>
@@ -556,7 +578,7 @@ function BentoCard({
     <motion.div
       {...motionProps}
       className={`group flex h-full flex-col rounded-3xl p-5 md:p-7 ${toneCls} ${className}`}
-      style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
+      style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(22,163,74,0.5)" } : undefined}
     >
       {children}
     </motion.div>
@@ -566,13 +588,23 @@ function BentoCard({
 function BigNumber({ value, suffix, small = false }: { value: number; suffix?: string; small?: boolean }) {
   const animated = useCountUp(value, 1200);
   return (
-    <p
-      className="sf-display mt-auto text-navy"
-      style={{ fontSize: small ? "clamp(40px, 7vw, 64px)" : "clamp(52px, 9vw, 88px)" }}
+    <div
+      className="sf-display mt-auto flex items-baseline text-navy"
+      style={{
+        fontSize: small ? "clamp(40px, 7vw, 64px)" : "clamp(52px, 9vw, 88px)",
+        gap: "0.18em",
+      }}
     >
-      {animated}
-      {suffix && <span className="ml-1.5 text-[0.32em] font-medium text-sage">{suffix}</span>}
-    </p>
+      <span className="nums">{animated}</span>
+      {suffix && (
+        <span
+          className="font-medium text-ink-muted"
+          style={{ fontSize: "0.30em", letterSpacing: "0.01em" }}
+        >
+          {suffix}
+        </span>
+      )}
+    </div>
   );
 }
 
