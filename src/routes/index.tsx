@@ -234,7 +234,7 @@ function Dashboard() {
         <div className="orb" style={{ width: 360, height: 360, bottom: -40, right: -60, background: "#22c55e", opacity: 0.10 }} />
 
         {/* 2-col mobile, 4-col desktop */}
-        <div className="relative grid grid-cols-2 gap-3 md:auto-rows-[200px] md:grid-cols-4 md:gap-5">
+        <div className="relative grid grid-cols-2 gap-3 md:auto-rows-[230px] md:grid-cols-4 md:gap-5">
 
           {/* Streak — full width mobile, 2×2 desktop */}
           <BentoCard className="col-span-2 md:row-span-2 items-center justify-center text-center" delay={0}>
@@ -540,7 +540,7 @@ function BigNumber({ value, suffix, small = false }: { value: number; suffix?: s
   return (
     <p
       className="sf-display mt-auto text-navy"
-      style={{ fontSize: small ? "clamp(40px, 10vw, 72px)" : "clamp(52px, 12vw, 108px)" }}
+      style={{ fontSize: small ? "clamp(40px, 7vw, 64px)" : "clamp(52px, 9vw, 88px)" }}
     >
       {animated}
       {suffix && <span className="ml-1.5 text-[0.32em] font-medium text-sage">{suffix}</span>}
