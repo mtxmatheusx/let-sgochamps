@@ -4,7 +4,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Let's Go Champs
+   ──────────────────────────────────────────────────────
+   Philosophy: crisp surfaces, generous whitespace, one
+   accent colour, decisive typography. No foggy glass.
+   ════════════════════════════════════════════════════════ */
+
 @theme inline {
+  /* ── Tailwind radius scale (shadcn compat) ── */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -12,6 +20,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
 
+  /* ── shadcn surface aliases ── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -32,15 +41,28 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-navy: var(--navy);
-  --color-navy-dark: var(--navy-dark);
-  --color-green: var(--green);
-  --color-gold: var(--gold);
-  --color-cream: var(--cream);
-  --color-cream-deep: var(--cream-deep);
-  --color-sage: var(--sage);
-  --color-mist: var(--mist);
-  --color-blue: var(--blue);
+  /* ── Semantic color tokens ── */
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-strong: var(--brand-strong);
+
+  /* ── Legacy aliases (used across existing components) ── */
+  --color-navy: var(--ink);
+  --color-navy-dark: #000000;
+  --color-green: var(--brand);
+  --color-gold: var(--brand);
+  --color-cream: var(--surface);
+  --color-cream-deep: var(--surface-soft);
+  --color-sage: var(--ink-soft);
+  --color-mist: var(--line);
+  --color-blue: var(--brand);
 
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter Tight", "Inter", system-ui, sans-serif;
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Tight", system-ui, sans-serif;
@@ -48,51 +70,87 @@
 }
 
 :root {
-  --radius: 1.25rem;
+  /* ════ Radii ════ */
+  --radius: 1.25rem;        /* shadcn baseline */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;             /* primary card radius */
+  --r-2xl: 32px;            /* hero / large surfaces */
+  --r-pill: 9999px;
 
-  /* Brand palette */
-  --navy: #1a1a1a;
-  --navy-dark: #111111;
-  --cream: #ffffff;
-  --cream-deep: #f5f5f5;
-  --sage: #737373;
-  --mist: #e5e5e5;
-  --gold: #22c55e;
-  --green: #22c55e;
-  --green-dark: #16a34a;
-  --blue: #22c55e;
+  /* ════ Ink (text) ════ */
+  --ink: #0a0a0c;
+  --ink-soft: #525252;
+  --ink-muted: #a3a3a3;
 
-  --background: var(--cream);
-  --foreground: var(--navy);
-  --card: #ffffff;
-  --card-foreground: var(--navy);
-  --popover: #ffffff;
-  --popover-foreground: var(--navy);
-  --primary: var(--blue);
+  /* ════ Surface (backgrounds) ════ */
+  --surface: #ffffff;
+  --surface-soft: #fafafa;
+  --surface-muted: #f4f4f5;
+  --surface-inverse: #0a0a0c;
+
+  /* ════ Lines / borders ════ */
+  --line: rgba(15, 15, 16, 0.06);
+  --line-strong: rgba(15, 15, 16, 0.10);
+
+  /* ════ Brand (single accent — green) ════ */
+  --brand: #16a34a;          /* slightly deeper green than before, reads as premium */
+  --brand-soft: #f0fdf4;
+  --brand-strong: #15803d;
+  --brand-ink: #14532d;
+
+  /* ════ Shadows ════ */
+  --sh-card: 0 1px 2px rgba(15, 15, 16, 0.04), 0 8px 24px -12px rgba(15, 15, 16, 0.10);
+  --sh-card-hover: 0 1px 2px rgba(15, 15, 16, 0.06), 0 24px 48px -16px rgba(15, 15, 16, 0.16);
+  --sh-floating: 0 4px 12px rgba(15, 15, 16, 0.05), 0 30px 60px -20px rgba(15, 15, 16, 0.16);
+  --sh-cta: 0 8px 24px -10px rgba(22, 163, 74, 0.5);
+
+  /* ════ Legacy aliases (do not remove — used in components) ════ */
+  --navy: var(--ink);
+  --navy-dark: #000000;
+  --green: var(--brand);
+  --green-dark: var(--brand-strong);
+  --gold: var(--brand);
+  --blue: var(--brand);
+  --cream: var(--surface);
+  --cream-deep: var(--surface-soft);
+  --sage: var(--ink-soft);
+  --mist: var(--line);
+
+  /* ════ shadcn surface assignments ════ */
+  --background: var(--surface-soft);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--brand);
   --primary-foreground: #ffffff;
-  --secondary: rgba(0, 0, 0, 0.05);
-  --secondary-foreground: var(--navy);
-  --muted: rgba(0, 0, 0, 0.04);
-  --muted-foreground: var(--sage);
-  --accent: var(--blue);
+  --secondary: var(--surface-muted);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--brand);
   --accent-foreground: #ffffff;
-  --destructive: #ff3b30;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: var(--mist);
-  --input: var(--mist);
-  --ring: var(--blue);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--brand);
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * { border-color: var(--line); }
   html {
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100%;
   }
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--surface-soft);
+    color: var(--ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -105,22 +163,16 @@
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.025em;
+    color: var(--ink);
   }
 }
 
 @layer utilities {
+  /* ════════════ Typography ════════════ */
   .font-display { font-family: var(--font-display); }
   .font-serif { font-family: var(--font-serif); }
 
-  .eyebrow {
-    font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
-  /* Apple-style massive display */
+  /* Massive display number/headline */
   .sf-display {
     font-family: var(--font-display);
     font-weight: 700;
@@ -128,62 +180,153 @@
     line-height: 0.95;
   }
 
-  /* Liquid Glass surfaces */
-  .glass {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.85),
-      0 8px 32px rgba(17, 17, 17, 0.06),
-      0 1px 2px rgba(17, 17, 17, 0.04);
+  /* Section heading */
+  .h-section {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--ink);
+    font-size: clamp(22px, 2.4vw, 28px);
   }
-  .glass-strong {
-    background: rgba(255, 255, 255, 0.78);
-    backdrop-filter: blur(50px) saturate(200%);
-    -webkit-backdrop-filter: blur(50px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      0 16px 48px rgba(17, 17, 17, 0.08);
+
+  /* Small overline label */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
   }
-  .glass-nav {
-    background: rgba(245, 245, 247, 0.72);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  /* Tabular numerals for stats */
+  .nums { font-variant-numeric: tabular-nums; }
+
+  /* ════════════ Surfaces ════════════ */
+  /* Primary card — crisp white, no foggy glass */
+  .surface {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--sh-card);
   }
-  .glass-dark {
-    background: rgba(28, 28, 30, 0.72);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+  .surface-soft {
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+  }
+  .surface-inverse {
+    background: var(--surface-inverse);
+    color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .hairline { border: 1px solid rgba(0, 0, 0, 0.08); }
-  .hairline-b { border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
-  .hairline-t { border-top: 1px solid rgba(0, 0, 0, 0.08); }
+  /* Legacy classes redefined to use the new system (no foggy blur).
+     This upgrades ALL pages that still reference these. */
+  .glass {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--sh-card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .glass-strong {
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--sh-floating);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(18px);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+    border-bottom: 1px solid var(--line);
+  }
+  .glass-dark {
+    background: var(--surface-inverse);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 
-  /* Soft colored orbs that sit behind glass surfaces */
+  /* ════════════ Hairlines ════════════ */
+  .hairline { border: 1px solid var(--line); }
+  .hairline-b { border-bottom: 1px solid var(--line); }
+  .hairline-t { border-top: 1px solid var(--line); }
+
+  /* ════════════ Buttons ════════════ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: var(--r-pill);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 18px;
+    transition: transform .25s cubic-bezier(.22,1,.36,1), background .25s, box-shadow .25s, color .25s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--brand);
+    color: #ffffff;
+    box-shadow: var(--sh-cta);
+  }
+  .btn-primary:hover {
+    background: var(--brand-strong);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    background: var(--surface-muted);
+    color: var(--ink);
+  }
+  .btn-ghost:hover {
+    background: var(--line);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .btn-outline:hover {
+    background: var(--surface-muted);
+  }
+
+  /* ════════════ Tiny pill (used inside cards as "tag") ════════════ */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: var(--r-pill);
+    background: var(--surface-muted);
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .pill-brand {
+    background: var(--brand-soft);
+    color: var(--brand-ink);
+  }
+
+  /* ════════════ Decorative orb (subtle background bloom) ════════════ */
   .orb {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(80px);
-    opacity: 0.55;
+    filter: blur(90px);
+    opacity: 0.4;
     pointer-events: none;
     will-change: transform;
   }
 
+  /* ════════════ Motion utilities ════════════ */
   .lift {
     transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s cubic-bezier(.22,1,.36,1);
   }
   .lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(17,17,17,.10);
-  }
-  .card-shadow {
-    box-shadow: 0 4px 24px rgba(17,17,17,.06), 0 1px 2px rgba(17,17,17,.04);
+    transform: translateY(-3px);
+    box-shadow: var(--sh-card-hover);
   }
 
   .fade-up { animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both; }
@@ -199,10 +342,10 @@
   }
   .animate-float-orb { animation: float-orb 22s ease-in-out infinite; }
 
-  /* iOS-style focus ring */
+  /* ════════════ Focus ring ════════════ */
   .focus-ios:focus {
     outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.18);
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
   }
 }

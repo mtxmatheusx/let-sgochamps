@@ -229,54 +229,68 @@ function Dashboard() {
       </section>
 
       {/* ── BENTO GRID ── */}
-      <section className="relative mt-8 overflow-hidden">
-        <div className="orb" style={{ width: 400, height: 400, top: -60, left: -100, background: "#22c55e", opacity: 0.10 }} />
-        <div className="orb" style={{ width: 360, height: 360, bottom: -40, right: -60, background: "#22c55e", opacity: 0.10 }} />
+      <section className="relative mt-10 overflow-hidden">
+        <div className="orb" style={{ width: 420, height: 420, top: -80, left: -120, background: "#22c55e", opacity: 0.05 }} />
+        <div className="orb" style={{ width: 360, height: 360, bottom: -40, right: -60, background: "#22c55e", opacity: 0.04 }} />
 
         {/* 2-col mobile, 4-col desktop */}
         <div className="relative grid grid-cols-2 gap-3 md:auto-rows-[230px] md:grid-cols-4 md:gap-5">
 
           {/* Streak — full width mobile, 2×2 desktop */}
           <BentoCard className="col-span-2 md:row-span-2 items-center justify-center text-center" delay={0}>
-            <p className="eyebrow text-green">Current streak</p>
-            <div className="mt-3 md:mt-4">
-              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={156} stroke={14}>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green animate-pulse" />
+              <p className="eyebrow text-green">Current streak</p>
+            </div>
+            <div className="mt-4 md:mt-5">
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={160} stroke={14}>
                 <div>
-                  <p className="sf-display text-navy leading-none" style={{ fontSize: "clamp(52px, 12vw, 80px)" }}>
+                  <p className="sf-display text-navy leading-none nums" style={{ fontSize: "clamp(56px, 12vw, 84px)" }}>
                     {stats.streak}
                   </p>
-                  <p className="text-[12px] font-medium text-sage">
+                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
                     {stats.streak === 1 ? "day" : "days"} in a row
                   </p>
                 </div>
               </ActivityRing>
             </div>
             {stats.bestStreak > stats.streak && (
-              <p className="mt-1.5 text-[11px] text-sage">
-                Best: <span className="font-semibold text-navy">{stats.bestStreak} days</span>
-              </p>
+              <span className="pill mt-3">
+                Best · <span className="nums font-bold text-navy">{stats.bestStreak}</span>&nbsp;days
+              </span>
             )}
-            <p className="mt-1 max-w-[220px] text-[12px] text-sage">Identity is built one rep at a time.</p>
+            <p className="mt-3 max-w-[240px] text-[13px] leading-[1.45] text-ink-soft">
+              Identity is built one rep at a time.
+            </p>
           </BentoCard>
 
           {/* Total minutes — full width mobile, right-top desktop */}
           <BentoCard className="col-span-2 md:col-span-2" delay={0.05}>
-            <p className="eyebrow text-sage">Total minutes moved</p>
+            <p className="eyebrow">Total minutes moved</p>
             <BigNumber value={stats.totalMinutes} suffix="min" />
+            <p className="mt-1 text-[12px] text-ink-muted">
+              {stats.daysShowedUp > 0 ? `~${Math.round(stats.totalMinutes / stats.daysShowedUp)} min per session` : "Start logging to track your average"}
+            </p>
           </BentoCard>
 
           {/* Days — half-width mobile, 1-col desktop */}
           <BentoCard className="col-span-1 md:col-span-1" delay={0.1}>
-            <p className="eyebrow text-sage">Days showed up</p>
+            <p className="eyebrow">Days showed up</p>
             <BigNumber value={stats.daysShowedUp} small />
+            <p className="mt-1 text-[11px] text-ink-muted">
+              {stats.daysShowedUp === 1 ? "one day in" : `across ${stats.daysShowedUp} days`}
+            </p>
           </BentoCard>
 
           {/* Log CTA — half-width mobile, 1-col desktop */}
           <BentoCard className="col-span-1 md:col-span-1 cursor-pointer" delay={0.15} tone="blue" href="/log">
             <p className="eyebrow text-white/70">Today</p>
-            <p className="mt-4 sf-display text-[22px] text-white md:text-[26px]">
-              Log a<br />new move ›
-            </p>
+            <div className="mt-auto flex items-end justify-between gap-2">
+              <p className="sf-display text-[22px] text-white md:text-[26px]">
+                Log a<br />new move
+              </p>
+              <span className="text-white text-[22px] -mb-0.5">›</span>
+            </div>
           </BentoCard>
 
         </div>
@@ -288,7 +302,7 @@ function Dashboard() {
       {/* ── CHART + RECENT WINS ── */}
       <section className="mt-4 grid gap-4 lg:grid-cols-5 lg:items-start overflow-hidden">
         {/* Chart */}
-        <motion.div {...fadeUp} className="glass rounded-[24px] p-6 md:p-8 lg:col-span-3">
+        <motion.div {...fadeUp} className="glass rounded-3xl p-6 md:p-8 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="eyebrow text-sage">Energy breakdown</p>
@@ -361,7 +375,7 @@ function Dashboard() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="glass rounded-[24px] p-6 md:p-8 lg:col-span-2"
+          className="glass rounded-3xl p-6 md:p-8 lg:col-span-2"
         >
           <p className="eyebrow text-sage">Recent wins</p>
           <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">Proof you showed up</h3>
@@ -447,7 +461,7 @@ function Dashboard() {
       {/* ── IDENTITY BAND ── */}
       <motion.section
         {...fadeUp}
-        className="relative mt-4 -mx-6 overflow-hidden rounded-[24px] px-7 py-14 sm:-mx-8 sm:px-14 sm:py-24"
+        className="relative mt-4 -mx-6 overflow-hidden rounded-3xl px-7 py-14 sm:-mx-8 sm:px-14 sm:py-24"
         style={{
           background:
             "radial-gradient(ellipse at 20% 30%, rgba(34,197,94,0.35), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(22,163,74,0.25), transparent 55%), #0a0a0c",
@@ -529,7 +543,7 @@ function BentoCard({
       <Link to={href} className={`block ${className}`}>
         <motion.div
           {...motionProps}
-          className={`group flex h-full flex-col rounded-[24px] p-5 md:p-7 ${toneCls}`}
+          className={`group flex h-full flex-col rounded-3xl p-5 md:p-7 ${toneCls}`}
           style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
         >
           {children}
@@ -541,7 +555,7 @@ function BentoCard({
   return (
     <motion.div
       {...motionProps}
-      className={`group flex h-full flex-col rounded-[24px] p-5 md:p-7 ${toneCls} ${className}`}
+      className={`group flex h-full flex-col rounded-3xl p-5 md:p-7 ${toneCls} ${className}`}
       style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
     >
       {children}
@@ -591,7 +605,7 @@ function DailyQuote() {
   return (
     <motion.div
       {...fadeUp}
-      className="mt-4 relative overflow-hidden rounded-[24px]"
+      className="mt-4 relative overflow-hidden rounded-3xl"
       style={{ background: "linear-gradient(135deg, #0a0a0c 0%, #0d1a0f 50%, #0a0a0c 100%)" }}
     >
       <div
