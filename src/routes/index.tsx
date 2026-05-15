@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import {
   Bar,
   BarChart,
@@ -10,14 +12,22 @@ import {
   YAxis,
 } from "recharts";
 import { Layout } from "@/components/Layout";
-import { ChampsBanner } from "@/components/ChampsBanner";
 import { computeStats, fetchActivities, minutesByType } from "@/lib/activities";
 import { useCountUp } from "@/hooks/useCountUp";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
 const HERO_IMG =
-  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80";
+  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1800&q=85";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const fadeUp = {
+  initial: { opacity: 0, y: 32 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.8, ease },
+};
 
 function Dashboard() {
   const { data: activities = [] } = useQuery({
@@ -28,94 +38,140 @@ function Dashboard() {
   const chartData = minutesByType(activities);
   const recent = activities.slice(0, 5);
 
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.3]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+
   return (
     <Layout>
-      {/* HERO */}
+      {/* HERO — full-bleed cinematic */}
       <section
-        className="relative overflow-hidden rounded-[24px] card-shadow"
-        style={{ minHeight: 480 }}
+        ref={heroRef}
+        className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-[6%] sm:-mt-20"
+        style={{ height: "min(88vh, 820px)" }}
       >
-        <img
-          src={HERO_IMG}
-          alt="Athletes training together"
-          className="absolute inset-0 h-full w-full object-cover"
-          loading="eager"
-        />
-        <div
+        <motion.div
+          style={{ y: heroY, scale: heroScale }}
           className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(7,27,47,0.88) 0%, rgba(45,90,27,0.80) 100%)",
-          }}
-        />
-        <div className="relative flex min-h-[480px] flex-col justify-center px-8 py-16 sm:px-14 sm:py-20">
-          <div className="max-w-[55%] min-w-[280px]">
-            <p className="eyebrow mb-5 text-gold">Movement. Mindset. Consistency.</p>
-            <h1
-              className="font-display text-white"
-              style={{ fontSize: "clamp(56px, 9vw, 88px)", lineHeight: 0.95, letterSpacing: "-0.01em" }}
-            >
-              LET'S GO CHAMPS.
-            </h1>
-            <div className="mt-6 space-y-4 text-[17px] leading-[1.75] text-[#d4cfc7] sm:text-[18px]">
-              <p>
-                This is not about doing the most. It is about showing up, building
-                momentum and becoming the kind of person who keeps going.
-              </p>
-              <p>Log your movement. Stack the days. Move your way.</p>
-            </div>
+        >
+          <img
+            src={HERO_IMG}
+            alt="Athletes in motion"
+            className="h-full w-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(13,17,23,0.35) 0%, rgba(13,17,23,0.55) 60%, rgba(245,240,232,0.95) 100%)",
+            }}
+          />
+        </motion.div>
+
+        <motion.div
+          style={{ opacity: heroOpacity }}
+          className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-center px-6 sm:px-12"
+        >
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.1 }}
+            className="eyebrow text-gold"
+          >
+            Movement · Mindset · Consistency
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease, delay: 0.2 }}
+            className="font-display mt-6 text-white"
+            style={{
+              fontSize: "clamp(64px, 11vw, 156px)",
+              lineHeight: 0.92,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            LET'S GO
+            <br />
+            <span className="text-gold">CHAMPS.</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.5 }}
+            className="mt-8 max-w-xl text-[17px] leading-[1.6] text-white/85 sm:text-[19px]"
+          >
+            Showing up. Stacking days. Becoming the kind of person who keeps going.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.7 }}
+            className="mt-10"
+          >
             <Link
               to="/log"
-              className="mt-9 inline-flex items-center justify-center rounded-full bg-gold px-8 py-4 text-[12px] font-extrabold uppercase tracking-[0.15em] text-navy transition-all duration-200 hover:scale-[1.03] hover:brightness-110"
-              style={{ letterSpacing: "1.5px" }}
+              className="group inline-flex items-center gap-3 rounded-full bg-gold px-9 py-4 text-[12px] font-extrabold uppercase tracking-[0.18em] text-navy transition-all duration-300 hover:scale-[1.04] hover:brightness-110 hover:shadow-[0_20px_60px_-15px_rgba(184,150,46,0.6)]"
             >
               Log Today's Movement
+              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* STATS STRIP */}
-      <section className="mt-10 grid gap-6 md:grid-cols-3">
-        <StatCard label="Minutes Moved" value={stats.totalMinutes} subtext="Every minute counts." />
-        <StatCard
-          label="Days You Showed Up"
-          value={stats.daysShowedUp}
-          subtext="Progress starts with action."
-        />
-        <StatCard
-          label="Current Streak"
-          value={stats.streak}
-          subtext="Stack the days."
-          gold
-        />
+      {/* BENTO GRID — Apple-style mixed sizes */}
+      <section className="mt-20 grid auto-rows-[180px] grid-cols-1 gap-5 md:grid-cols-4 md:auto-rows-[200px]">
+        {/* Big stat — Streak */}
+        <BentoCard
+          className="md:col-span-2 md:row-span-2"
+          tone="navy"
+          delay={0}
+        >
+          <p className="eyebrow text-gold">Current streak</p>
+          <CountDisplay value={stats.streak} suffix={stats.streak === 1 ? " day" : " days"} gold />
+          <p className="mt-auto max-w-[220px] text-sm leading-relaxed text-white/65">
+            Stack the days. Identity is built one rep at a time.
+          </p>
+        </BentoCard>
+
+        {/* Minutes */}
+        <BentoCard className="md:col-span-2" tone="cream" delay={0.05}>
+          <p className="eyebrow text-sage">Total minutes moved</p>
+          <CountDisplay value={stats.totalMinutes} className="text-green" />
+        </BentoCard>
+
+        {/* Days showed up */}
+        <BentoCard className="md:col-span-1" tone="cream" delay={0.1}>
+          <p className="eyebrow text-sage">Days you showed up</p>
+          <CountDisplay value={stats.daysShowedUp} className="text-navy" small />
+        </BentoCard>
+
+        {/* CTA tile */}
+        <BentoCard className="md:col-span-1" tone="gold" delay={0.15} as={Link} to="/log">
+          <p className="eyebrow text-navy/70">Today</p>
+          <p className="mt-auto font-serif text-[28px] font-bold leading-[1.05] text-navy">
+            Log a<br />new move →
+          </p>
+        </BentoCard>
       </section>
 
-      {/* COMMUNITY CHAMPS */}
-      <ChampsBanner />
-
-      {/* IDENTITY BANNER */}
-      <section
-        className="mt-10 rounded-[20px] px-8 py-9 sm:px-12"
-        style={{ background: "var(--navy-dark)" }}
-      >
-        <p className="eyebrow text-gold">
-          You have shown up {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} —{" "}
-          {stats.streak} in a row.
-        </p>
-        <h2 className="mt-3 font-serif text-2xl font-bold leading-tight text-white sm:text-[32px]">
-          This is how consistency becomes identity.
-        </h2>
-      </section>
-
-      {/* CONTENT GRID */}
-      <section className="mt-10 grid gap-6 lg:grid-cols-5">
-        <div className="rounded-[20px] bg-card p-8 card-shadow lift lg:col-span-3">
-          <p className="eyebrow text-sage">Your movement breakdown</p>
-          <h3 className="mt-2 font-serif text-[22px] font-bold text-navy">
-            Where Your Energy Is Going
+      {/* CHART + RECENT — refined two-up */}
+      <section className="mt-6 grid gap-5 lg:grid-cols-5">
+        <motion.div
+          {...fadeUp}
+          className="rounded-[28px] bg-card p-8 lift card-shadow lg:col-span-3"
+        >
+          <p className="eyebrow text-sage">Energy breakdown</p>
+          <h3 className="mt-2 font-serif text-[26px] font-bold text-navy">
+            Where you spent your minutes
           </h3>
-          <div className="mt-6 h-[320px]">
+          <div className="mt-8 h-[300px]">
             {chartData.length === 0 ? (
               <Empty text="Log your first movement to see the breakdown." />
             ) : (
@@ -128,42 +184,46 @@ function Dashboard() {
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis
-                    tick={{ fontSize: 11, fill: "#52624c" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
+                  <YAxis tick={{ fontSize: 11, fill: "#52624c" }} axisLine={false} tickLine={false} />
                   <Tooltip
                     cursor={{ fill: "rgba(184,150,46,0.08)" }}
                     contentStyle={{
-                      background: "#071b2f",
+                      background: "#0d1117",
                       border: "none",
-                      borderRadius: 12,
+                      borderRadius: 14,
                       color: "#fff",
                       fontSize: 13,
+                      padding: "10px 14px",
                     }}
                     labelStyle={{ color: "#b8962e", fontWeight: 700 }}
                   />
-                  <Bar dataKey="minutes" fill="#b8962e" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="minutes" fill="#b8962e" radius={[10, 10, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-[20px] bg-card p-8 card-shadow lift lg:col-span-2">
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.1 }}
+          className="rounded-[28px] bg-card p-8 lift card-shadow lg:col-span-2"
+        >
           <p className="eyebrow text-sage">Recent wins</p>
-          <h3 className="mt-2 font-serif text-[22px] font-bold text-navy">
-            Proof You Showed Up
-          </h3>
+          <h3 className="mt-2 font-serif text-[26px] font-bold text-navy">Proof you showed up</h3>
           {recent.length === 0 ? (
-            <p className="mt-8 italic text-sage">
-              You have not logged anything yet. Start today. Let's go.
-            </p>
+            <p className="mt-8 italic text-sage">Nothing yet. Start today. Let's go.</p>
           ) : (
-            <ul className="mt-5 divide-y divide-mist">
-              {recent.map((a) => (
-                <li key={a.id} className="flex items-start justify-between gap-3 py-4">
+            <ul className="mt-6 divide-y divide-mist">
+              {recent.map((a, i) => (
+                <motion.li
+                  key={a.id}
+                  initial={{ opacity: 0, x: 12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease, delay: i * 0.06 }}
+                  className="flex items-start justify-between gap-3 py-4"
+                >
                   <div>
                     <p className="text-[15px] font-bold text-navy">{a.type}</p>
                     <p className="mt-0.5 text-[13px] text-sage">
@@ -171,42 +231,106 @@ function Dashboard() {
                     </p>
                   </div>
                   <span className="whitespace-nowrap text-[12px] text-sage">{a.date}</span>
-                </li>
+                </motion.li>
               ))}
             </ul>
           )}
-        </div>
+        </motion.div>
       </section>
+
+      {/* IDENTITY band — closer to Apple section breaker */}
+      <motion.section
+        {...fadeUp}
+        className="mt-6 overflow-hidden rounded-[28px] px-8 py-16 sm:px-16 sm:py-24"
+        style={{ background: "var(--navy-dark)" }}
+      >
+        <p className="eyebrow text-gold">
+          {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} showed up · {stats.streak}{" "}
+          in a row
+        </p>
+        <h2
+          className="mt-6 font-serif font-bold leading-[1.02] text-white"
+          style={{ fontSize: "clamp(36px, 5.5vw, 64px)", letterSpacing: "-0.02em" }}
+        >
+          This is how consistency<br />becomes <span className="text-gold">identity.</span>
+        </h2>
+      </motion.section>
     </Layout>
   );
 }
 
-function StatCard({
-  label,
-  value,
-  subtext,
-  gold = false,
+function BentoCard({
+  children,
+  className = "",
+  tone = "cream",
+  delay = 0,
+  as,
+  to,
 }: {
-  label: string;
-  value: number;
-  subtext: string;
-  gold?: boolean;
+  children: React.ReactNode;
+  className?: string;
+  tone?: "cream" | "navy" | "gold";
+  delay?: number;
+  as?: typeof Link;
+  to?: string;
 }) {
-  const animated = useCountUp(value);
-  return (
-    <div
-      className="rounded-[20px] bg-card p-8 card-shadow lift"
-      style={{ borderTop: `6px solid ${gold ? "#b8962e" : "#2d5a1b"}` }}
+  const toneStyles =
+    tone === "navy"
+      ? { background: "var(--navy-dark)", color: "#fff" }
+      : tone === "gold"
+      ? { background: "var(--gold)", color: "var(--navy)" }
+      : { background: "#fff", color: "var(--navy)" };
+
+  const Inner = (
+    <motion.div
+      initial={{ opacity: 0, y: 28, scale: 0.97 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.7, ease, delay }}
+      whileHover={{ y: -6, transition: { duration: 0.3, ease } }}
+      style={toneStyles}
+      className={`group flex h-full flex-col rounded-[28px] p-7 card-shadow ${className}`}
     >
-      <p className="eyebrow text-sage">{label}</p>
-      <p
-        className="mt-3 font-serif text-[3rem] font-bold leading-none"
-        style={{ color: gold ? "#b8962e" : "#2d5a1b" }}
-      >
-        {animated}
-      </p>
-      <p className="mt-3 text-sm text-sage">{subtext}</p>
-    </div>
+      {children}
+    </motion.div>
+  );
+
+  if (as && to) {
+    return (
+      <Link to={to} className={`block h-full ${className}`}>
+        {Inner}
+      </Link>
+    );
+  }
+  return Inner;
+}
+
+function CountDisplay({
+  value,
+  suffix = "",
+  gold = false,
+  small = false,
+  className = "",
+}: {
+  value: number;
+  suffix?: string;
+  gold?: boolean;
+  small?: boolean;
+  className?: string;
+}) {
+  const animated = useCountUp(value, 1200);
+  return (
+    <p
+      className={`mt-4 font-display leading-none ${className}`}
+      style={{
+        fontSize: small ? "clamp(56px, 8vw, 88px)" : "clamp(72px, 11vw, 132px)",
+        letterSpacing: "-0.02em",
+        color: gold ? "var(--gold)" : undefined,
+      }}
+    >
+      {animated}
+      {suffix && <span className="ml-2 text-[0.35em] font-sans font-bold text-current/60">{suffix}</span>}
+    </p>
   );
 }
 
