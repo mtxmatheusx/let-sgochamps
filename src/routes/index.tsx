@@ -286,7 +286,7 @@ function Dashboard() {
       <DailyQuote />
 
       {/* ── CHART + RECENT WINS ── */}
-      <section className="mt-4 grid gap-4 lg:grid-cols-5 overflow-hidden">
+      <section className="mt-4 grid gap-4 lg:grid-cols-5 lg:items-start overflow-hidden">
         {/* Chart */}
         <motion.div {...fadeUp} className="glass rounded-[24px] p-6 md:p-8 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -424,6 +424,20 @@ function Dashboard() {
                     <p className="text-[11px] text-sage text-right">{friendlyDate(a.date)}</p>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* Footer link */}
+              <div className="mt-5 flex items-center justify-between gap-3 border-t border-black/5 pt-4">
+                <p className="text-[12px] text-sage">
+                  {recent.length} {recent.length === 1 ? "session" : "sessions"} logged
+                </p>
+                <Link
+                  to="/history"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-black/[0.04] px-3.5 py-1.5 text-[12px] font-semibold text-navy transition-all hover:bg-black/[0.08]"
+                >
+                  See all
+                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                </Link>
               </div>
             </>
           )}
