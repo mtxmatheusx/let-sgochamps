@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { PublicLayout, PageHeader } from "@/components/Layout";
 import { submitStory } from "@/lib/stories";
 import { ACTIVITY_TYPES } from "@/lib/activities";
@@ -24,7 +24,6 @@ function SubmitStory() {
   const [video, setVideo] = useState<File | null>(null);
   const [videoName, setVideoName] = useState<string | null>(null);
   const [videoError, setVideoError] = useState<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -192,8 +191,8 @@ function SubmitStory() {
           </p>
         </Field>
 
-        {/* Photo */}
-        <Field label="Photo (optional)">
+        {/* Photo — UploadField avoids nested <label> inside Field's <label> */}
+        <UploadField label="Photo (optional)">
           <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist bg-cream/60 px-4 py-8 transition-colors hover:border-gold">
             <input type="file" accept="image/*" onChange={handlePhoto} className="sr-only" />
             {photoPreview ? (
@@ -210,10 +209,10 @@ function SubmitStory() {
               </>
             )}
           </label>
-        </Field>
+        </UploadField>
 
         {/* Short video */}
-        <Field label="Short video — 30s max (optional)">
+        <UploadField label="Short video — 30s max (optional)">
           <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist bg-cream/60 px-4 py-8 transition-colors hover:border-gold">
             <input type="file" accept="video/*" onChange={handleVideo} className="sr-only" />
             {videoName ? (
@@ -236,7 +235,7 @@ function SubmitStory() {
           {videoError && (
             <p className="mt-2 text-sm text-red-500">{videoError}</p>
           )}
-        </Field>
+        </UploadField>
 
         {/* Social handle */}
         <Field label="Instagram or TikTok handle (optional)">
@@ -297,5 +296,21 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       </span>
       {children}
     </label>
+  );
+}
+
+// Use instead of Field when children already contain a <label> (file uploads).
+// A <label> cannot be nested inside another <label> — it breaks file input clicks.
+function UploadField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="block">
+      <span
+        className="mb-2 block text-[13px] font-bold uppercase text-navy"
+        style={{ letterSpacing: "1px" }}
+      >
+        {label}
+      </span>
+      {children}
+    </div>
   );
 }
