@@ -55,14 +55,14 @@ function AuthPage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-cream px-4 py-10">
       {/* Floating colored orbs behind the glass */}
-      <div className="orb animate-float-orb" style={{ width: 520, height: 520, top: -120, left: -80, background: "#0071e3" }} />
+      <div className="orb animate-float-orb" style={{ width: 520, height: 520, top: -120, left: -80, background: "#22c55e" }} />
       <div
         className="orb animate-float-orb"
-        style={{ width: 460, height: 460, bottom: -160, right: -120, background: "#b8962e", animationDelay: "-8s" }}
+        style={{ width: 460, height: 460, bottom: -160, right: -120, background: "#22c55e", animationDelay: "-8s" }}
       />
       <div
         className="orb animate-float-orb"
-        style={{ width: 380, height: 380, top: "40%", left: "55%", background: "#30a46c", animationDelay: "-15s", opacity: 0.4 }}
+        style={{ width: 380, height: 380, top: "40%", left: "55%", background: "#22c55e", animationDelay: "-15s", opacity: 0.4 }}
       />
 
       {/* Top bar */}
@@ -169,7 +169,7 @@ function AuthPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(0,113,227,0.55)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
+              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
             >
               {loading ? "…" : mode === "signin" ? "Sign in" : "Create account"}
             </motion.button>

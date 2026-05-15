@@ -5,7 +5,7 @@ export function ActivityRing({
   max = 7,
   size = 220,
   stroke = 18,
-  color = "#0071e3",
+  color = "#22c55e",
   trackColor = "rgba(0,0,0,0.06)",
   children,
 }: {
@@ -44,7 +44,7 @@ export function ActivityRing({
         <defs>
           <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor={color} />
-            <stop offset="100%" stopColor="#5e9eff" />
+            <stop offset="100%" stopColor="#4ade80" />
           </linearGradient>
         </defs>
         <circle

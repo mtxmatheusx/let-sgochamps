@@ -32,7 +32,7 @@ export function CelebrationOverlay({ streak, activity, onDismiss }: Props) {
       particleCount: 150,
       spread: 70,
       origin: { y: 0.5 },
-      colors: ["#b8962e", "#ffffff", "#2d5a1b", "#f5f0e8"],
+      colors: ["#22c55e", "#ffffff", "#16a34a", "#f0fdf4"],
       disableForReducedMotion: true,
     });
   }, []);
@@ -69,7 +69,7 @@ export function CelebrationOverlay({ streak, activity, onDismiss }: Props) {
         {/* Subheadline */}
         <p
           className="mt-3 font-serif text-[22px] italic"
-          style={{ color: "#b8962e" }}
+          style={{ color: "#22c55e" }}
         >
           That&rsquo;s what Champs do.
         </p>
@@ -78,7 +78,7 @@ export function CelebrationOverlay({ streak, activity, onDismiss }: Props) {
         {streak > 0 && (
           <span
             className="mt-5 inline-block rounded-full px-5 py-2 text-[14px] font-bold text-white"
-            style={{ background: "#2d5a1b" }}
+            style={{ background: "#22c55e" }}
           >
             {streakMessage(streak)}
           </span>
@@ -110,7 +110,7 @@ export function CelebrationOverlay({ streak, activity, onDismiss }: Props) {
         <button
           onClick={onDismiss}
           className="mt-8 w-full max-w-[320px] rounded-full py-4 text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:brightness-110"
-          style={{ background: "#b8962e", letterSpacing: "1.5px" }}
+          style={{ background: "#22c55e", letterSpacing: "1.5px" }}
         >
           Back to Dashboard
         </button>

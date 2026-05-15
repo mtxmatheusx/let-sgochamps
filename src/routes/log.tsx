@@ -103,8 +103,8 @@ function LogMovement() {
           onSubmit={submit}
           className="relative mx-auto grid max-w-[680px] gap-5 overflow-hidden rounded-[28px] glass p-8 sm:p-10"
         >
-          <div className="orb" style={{ width: 300, height: 300, top: -100, right: -80, background: "#0071e3", opacity: 0.18 }} />
-          <div className="orb" style={{ width: 280, height: 280, bottom: -120, left: -60, background: "#b8962e", opacity: 0.15 }} />
+          <div className="orb" style={{ width: 300, height: 300, top: -100, right: -80, background: "#22c55e", opacity: 0.18 }} />
+          <div className="orb" style={{ width: 280, height: 280, bottom: -120, left: -60, background: "#22c55e", opacity: 0.15 }} />
 
           <Field label="What did you do today?">
             <Select
@@ -166,7 +166,7 @@ function LogMovement() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            className="relative mt-2 h-[54px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(0,113,227,0.6)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
+            className="relative mt-2 h-[54px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
           >
             {loading ? "Saving…" : "Keep the streak going"}
           </motion.button>

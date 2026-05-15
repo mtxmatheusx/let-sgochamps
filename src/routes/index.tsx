@@ -86,7 +86,7 @@ function Dashboard() {
             style={{ fontSize: "clamp(64px, 11vw, 168px)" }}
           >
             Let's go,<br />
-            <span style={{ color: "#0071e3" }}>champs.</span>
+            <span style={{ color: "#22c55e" }}>champs.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -104,7 +104,7 @@ function Dashboard() {
           >
             <Link
               to="/log"
-              className="group inline-flex items-center gap-2 rounded-full bg-blue px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(0,113,227,0.6)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
+              className="group inline-flex items-center gap-2 rounded-full bg-blue px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
             >
               Log today's movement
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
@@ -122,8 +122,8 @@ function Dashboard() {
       {/* BENTO GRID */}
       <section className="relative mt-16">
         {/* Soft orbs behind the grid */}
-        <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#0071e3", opacity: 0.18 }} />
-        <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#b8962e", opacity: 0.18 }} />
+        <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#22c55e", opacity: 0.18 }} />
+        <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#22c55e", opacity: 0.18 }} />
 
         <div className="relative grid auto-rows-[180px] grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[200px]">
           {/* Streak — Activity Ring */}
@@ -181,20 +181,20 @@ function Dashboard() {
                 <BarChart data={chartData} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#0071e3" />
-                      <stop offset="100%" stopColor="#a78bfa" />
+                      <stop offset="0%" stopColor="#22c55e" />
+                      <stop offset="100%" stopColor="#4ade80" />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
                   <XAxis
                     dataKey="type"
-                    tick={{ fontSize: 12, fill: "#6e6e73", fontWeight: 500 }}
+                    tick={{ fontSize: 12, fill: "#737373", fontWeight: 500 }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis tick={{ fontSize: 11, fill: "#6e6e73" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "#737373" }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    cursor={{ fill: "rgba(0,113,227,0.06)" }}
+                    cursor={{ fill: "rgba(34,197,94,0.06)" }}
                     contentStyle={{
                       background: "rgba(28,28,30,0.85)",
                       backdropFilter: "blur(20px)",
@@ -253,7 +253,7 @@ function Dashboard() {
         className="relative mt-6 -mx-6 overflow-hidden px-8 py-20 sm:-mx-8 sm:px-16 sm:py-28"
         style={{
           background:
-            "radial-gradient(ellipse at 20% 30%, rgba(0,113,227,0.4), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(167,139,250,0.35), transparent 55%), #0a0a0c",
+            "radial-gradient(ellipse at 20% 30%, rgba(34,197,94,0.35), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(22,163,74,0.25), transparent 55%), #0a0a0c",
         }}
       >
         <div className="mx-auto max-w-[1200px]">
@@ -300,7 +300,7 @@ function BentoCard({
       transition={{ duration: 0.6, ease, delay }}
       whileHover={{ y: -4, transition: { duration: 0.25, ease } }}
       className={`group flex h-full flex-col rounded-[28px] p-7 ${toneCls} ${className}`}
-      style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(0,113,227,0.5)" } : undefined}
+      style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
     >
       {children}
     </motion.div>

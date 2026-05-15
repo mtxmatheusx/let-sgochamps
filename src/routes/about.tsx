@@ -41,8 +41,8 @@ function About() {
         subtitle="A data-driven wellness tracker inspired by the Let's Go Champs mindset: show up, stay consistent, build a lifestyle around movement."
       />
       <div className="relative grid gap-4 md:grid-cols-2">
-        <div className="orb" style={{ width: 380, height: 380, top: -60, left: -100, background: "#0071e3", opacity: 0.18 }} />
-        <div className="orb" style={{ width: 360, height: 360, bottom: -80, right: -80, background: "#b8962e", opacity: 0.15 }} />
+        <div className="orb" style={{ width: 380, height: 380, top: -60, left: -100, background: "#22c55e", opacity: 0.18 }} />
+        <div className="orb" style={{ width: 360, height: 360, bottom: -80, right: -80, background: "#22c55e", opacity: 0.15 }} />
 
         {cards.map((c, i) => (
           <motion.article

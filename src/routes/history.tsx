@@ -19,7 +19,7 @@ const moodEmoji: Record<string, string> = {
 
 function intensityTint(level: string) {
   if (level === "Low") return { bg: "rgba(48,164,108,0.12)", color: "#1f7a4d" };
-  if (level === "High") return { bg: "rgba(0,113,227,0.12)", color: "#0071e3" };
+  if (level === "High") return { bg: "rgba(34,197,94,0.12)", color: "#22c55e" };
   return { bg: "rgba(184,150,46,0.16)", color: "#86691f" };
 }
 
@@ -77,7 +77,7 @@ function History() {
         </div>
       ) : (
         <div className="relative space-y-8">
-          <div className="orb" style={{ width: 400, height: 400, top: -60, right: -100, background: "#0071e3", opacity: 0.15 }} />
+          <div className="orb" style={{ width: 400, height: 400, top: -60, right: -100, background: "#22c55e", opacity: 0.15 }} />
 
           {grouped.map(([date, items], gi) => (
             <motion.section

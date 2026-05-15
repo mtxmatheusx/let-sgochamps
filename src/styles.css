@@ -50,16 +50,17 @@
 :root {
   --radius: 1.25rem;
 
-  /* Apple Light palette — semantic names preserved for backward compat */
-  --navy: #1d1d1f;          /* primary text */
-  --navy-dark: #000000;
-  --cream: #f5f5f7;          /* page bg */
-  --cream-deep: #fafafa;     /* alt surface */
-  --sage: #6e6e73;           /* muted text */
-  --mist: rgba(0, 0, 0, 0.08);
-  --gold: #b8962e;           /* brand accent */
-  --green: #30a46c;          /* success */
-  --blue: #0071e3;           /* Apple primary action */
+  /* Brand palette */
+  --navy: #1a1a1a;
+  --navy-dark: #111111;
+  --cream: #ffffff;
+  --cream-deep: #f5f5f5;
+  --sage: #737373;
+  --mist: #e5e5e5;
+  --gold: #22c55e;
+  --green: #22c55e;
+  --green-dark: #16a34a;
+  --blue: #22c55e;
 
   --background: var(--cream);
   --foreground: var(--navy);
