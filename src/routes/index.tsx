@@ -100,6 +100,7 @@ function Dashboard() {
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
+    layoutEffect: false,
   });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 180]);
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
@@ -111,9 +112,9 @@ function Dashboard() {
       <section
         ref={heroRef}
         className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16"
-        style={{ height: "min(92vh, 860px)", minHeight: 480 }}
+        style={{ height: "min(92vh, 860px)", minHeight: 440 }}
       >
-        {/* Parallax image — always full bleed */}
+        {/* Parallax image */}
         <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
           <img
             src={HERO_IMG}
@@ -123,18 +124,17 @@ function Dashboard() {
           />
         </motion.div>
 
-        {/* Mobile: bottom + left dark overlays */}
+        {/* Mobile: bottom fade */}
         <div
           className="lg:hidden absolute inset-0 pointer-events-none"
-          style={{ background: "linear-gradient(to top, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.4) 40%, rgba(10,10,10,0.05) 75%)" }}
+          style={{ background: "linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.5) 38%, rgba(10,10,10,0.08) 70%)" }}
         />
         <div
           className="lg:hidden absolute inset-0 pointer-events-none"
-          style={{ background: "linear-gradient(to right, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.35) 38%, rgba(10,10,10,0) 68%)" }}
+          style={{ background: "linear-gradient(to right, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.3) 40%, rgba(10,10,10,0) 65%)" }}
         />
 
-        {/* Desktop: single gradient overlay — solid dark left, fades to transparent right.
-            Using rgba(10,10,10,0) instead of "transparent" to avoid the CSS white-interpolation bug. */}
+        {/* Desktop: left-to-transparent */}
         <div
           className="hidden lg:block absolute inset-0 pointer-events-none"
           style={{
@@ -143,26 +143,26 @@ function Dashboard() {
           }}
         />
 
-        {/* Green glow — bottom left, both breakpoints */}
+        {/* Green glow */}
         <div
-          className="absolute bottom-0 left-0 h-[360px] w-[480px] rounded-full opacity-25 blur-[120px] pointer-events-none"
+          className="absolute bottom-0 left-0 h-[300px] w-[400px] rounded-full opacity-20 blur-[100px] pointer-events-none"
           style={{ background: "#22c55e" }}
         />
 
         {/* Content */}
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative z-10 h-full flex flex-col justify-end pb-16 px-6 sm:pb-20 sm:px-10 lg:justify-center lg:pb-0 lg:pl-20 lg:pr-4 lg:max-w-[52%]"
+          className="relative z-10 h-full flex flex-col justify-end pb-10 px-6 sm:pb-16 sm:px-10 lg:justify-center lg:pb-0 lg:pl-20 lg:pr-4 lg:max-w-[52%]"
         >
           {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease, delay: 0.1 }}
-            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm"
+            className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 backdrop-blur-sm"
           >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green" />
-            <span className="eyebrow text-white/90" style={{ letterSpacing: "0.18em" }}>
+            <span className="eyebrow text-white/90" style={{ letterSpacing: "0.16em", fontSize: 10 }}>
               Movement · Mindset · Consistency
             </span>
           </motion.div>
@@ -173,7 +173,7 @@ function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.2 }}
             className="sf-display text-white"
-            style={{ fontSize: "clamp(52px, 7vw, 110px)", lineHeight: 0.92 }}
+            style={{ fontSize: "clamp(44px, 7vw, 110px)", lineHeight: 0.92 }}
           >
             Let's go,<br />
             <span style={{ color: "#22c55e" }}>champs.</span>
@@ -184,9 +184,9 @@ function Dashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.45 }}
-            className="mt-6 max-w-[380px] text-[17px] leading-[1.55] text-white/70 sm:text-[18px]"
+            className="mt-4 max-w-[340px] text-[15px] leading-[1.5] text-white/70 sm:mt-6 sm:text-[18px]"
           >
-            Show up. Stack the days.<br />
+            Show up. Stack the days.<br className="hidden sm:block" />
             Become the person who keeps going.
           </motion.p>
 
@@ -209,86 +209,76 @@ function Dashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.65 }}
-            className="mt-8 flex flex-wrap items-center gap-3"
+            className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3"
           >
             <Link
               to="/log"
-              className="group inline-flex items-center gap-2 rounded-full bg-green px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_12px_32px_-8px_rgba(34,197,94,0.7)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-green px-7 py-3 text-[15px] font-semibold text-white shadow-[0_10px_28px_-8px_rgba(34,197,94,0.65)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110 sm:py-3.5"
             >
               Log today's movement
               <span className="transition-transform duration-300 group-hover:translate-x-1">›</span>
             </Link>
             <Link
               to="/history"
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-[15px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-[15px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20 sm:py-3.5"
             >
               See your history ›
             </Link>
-          </motion.div>
-
-          {/* Attribution */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, ease, delay: 1.2 }}
-            className="mt-10 flex items-center gap-2"
-          >
-            <div className="h-px w-8 bg-white/30" />
-            <span className="text-[12px] font-medium uppercase tracking-[0.2em] text-white/40">
-              Aidan O'Hare · Let's Go Champs
-            </span>
           </motion.div>
         </motion.div>
       </section>
 
       {/* ── BENTO GRID ── */}
-      <section className="relative mt-10 overflow-hidden">
-        <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#22c55e", opacity: 0.12 }} />
-        <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#22c55e", opacity: 0.12 }} />
+      <section className="relative mt-8 overflow-hidden">
+        <div className="orb" style={{ width: 400, height: 400, top: -60, left: -100, background: "#22c55e", opacity: 0.10 }} />
+        <div className="orb" style={{ width: 360, height: 360, bottom: -40, right: -60, background: "#22c55e", opacity: 0.10 }} />
 
-        <div className="relative grid md:auto-rows-[200px] grid-cols-1 gap-5 md:grid-cols-4">
-          {/* Streak */}
-          <BentoCard className="md:col-span-2 md:row-span-2 items-center justify-center text-center py-10 md:py-0" delay={0}>
+        {/* 2-col mobile, 4-col desktop */}
+        <div className="relative grid grid-cols-2 gap-3 md:auto-rows-[200px] md:grid-cols-4 md:gap-5">
+
+          {/* Streak — full width mobile, 2×2 desktop */}
+          <BentoCard className="col-span-2 md:row-span-2 items-center justify-center text-center" delay={0}>
             <p className="eyebrow text-green">Current streak</p>
-            <div className="mt-4">
-              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={220} stroke={18}>
+            <div className="mt-3 md:mt-4">
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={156} stroke={14}>
                 <div>
-                  <p className="sf-display text-[80px] text-navy leading-none">{stats.streak}</p>
-                  <p className="text-[13px] font-medium text-sage">
+                  <p className="sf-display text-navy leading-none" style={{ fontSize: "clamp(52px, 12vw, 80px)" }}>
+                    {stats.streak}
+                  </p>
+                  <p className="text-[12px] font-medium text-sage">
                     {stats.streak === 1 ? "day" : "days"} in a row
                   </p>
                 </div>
               </ActivityRing>
             </div>
             {stats.bestStreak > stats.streak && (
-              <p className="mt-2 text-[12px] text-sage">
+              <p className="mt-1.5 text-[11px] text-sage">
                 Best: <span className="font-semibold text-navy">{stats.bestStreak} days</span>
               </p>
             )}
-            <p className="mt-2 max-w-[260px] text-[13px] text-sage">
-              Identity is built one rep at a time.
-            </p>
+            <p className="mt-1 max-w-[220px] text-[12px] text-sage">Identity is built one rep at a time.</p>
           </BentoCard>
 
-          {/* Total minutes */}
-          <BentoCard className="md:col-span-2" delay={0.05}>
+          {/* Total minutes — full width mobile, right-top desktop */}
+          <BentoCard className="col-span-2 md:col-span-2" delay={0.05}>
             <p className="eyebrow text-sage">Total minutes moved</p>
             <BigNumber value={stats.totalMinutes} suffix="min" />
           </BentoCard>
 
-          {/* Days showed up */}
-          <BentoCard className="md:col-span-1" delay={0.1}>
-            <p className="eyebrow text-sage">Days you showed up</p>
+          {/* Days — half-width mobile, 1-col desktop */}
+          <BentoCard className="col-span-1 md:col-span-1" delay={0.1}>
+            <p className="eyebrow text-sage">Days showed up</p>
             <BigNumber value={stats.daysShowedUp} small />
           </BentoCard>
 
-          {/* Log CTA */}
-          <BentoCard className="md:col-span-1 cursor-pointer" delay={0.15} tone="blue" href="/log">
+          {/* Log CTA — half-width mobile, 1-col desktop */}
+          <BentoCard className="col-span-1 md:col-span-1 cursor-pointer" delay={0.15} tone="blue" href="/log">
             <p className="eyebrow text-white/70">Today</p>
-            <p className="mt-auto sf-display text-[26px] text-white">
+            <p className="mt-4 sf-display text-[22px] text-white md:text-[26px]">
               Log a<br />new move ›
             </p>
           </BentoCard>
+
         </div>
       </section>
 
@@ -296,13 +286,13 @@ function Dashboard() {
       <DailyQuote />
 
       {/* ── CHART + RECENT WINS ── */}
-      <section className="mt-5 grid gap-5 lg:grid-cols-5 overflow-hidden">
+      <section className="mt-4 grid gap-4 lg:grid-cols-5 overflow-hidden">
         {/* Chart */}
-        <motion.div {...fadeUp} className="glass rounded-[28px] p-8 lg:col-span-3">
+        <motion.div {...fadeUp} className="glass rounded-[24px] p-6 md:p-8 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="eyebrow text-sage">Energy breakdown</p>
-              <h3 className="mt-1 sf-display text-[26px] text-navy">
+              <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">
                 {chartView === "weekly" ? "Last 7 days" : "Where your minutes went"}
               </h3>
             </div>
@@ -313,9 +303,7 @@ function Dashboard() {
                   key={v}
                   onClick={() => setChartView(v)}
                   className={`rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all ${
-                    chartView === v
-                      ? "bg-white text-navy shadow-sm"
-                      : "text-sage hover:text-navy"
+                    chartView === v ? "bg-white text-navy shadow-sm" : "text-sage hover:text-navy"
                   }`}
                 >
                   {v === "weekly" ? "Weekly" : "By type"}
@@ -324,53 +312,45 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="mt-6 h-[280px]">
+          <div className="mt-5 h-[240px] md:h-[280px]">
             {chartData.length === 0 || (chartView === "weekly" && chartData.every((d) => d.minutes === 0)) ? (
               <Empty text="Log your first movement to see the breakdown." />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={chartData}
-                  margin={{ top: 8, right: 8, left: -10, bottom: 0 }}
-                  maxBarSize={56}
+                  margin={{ top: 8, right: 4, left: -16, bottom: 0 }}
+                  maxBarSize={48}
                 >
                   <defs>
                     <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#22c55e" />
                       <stop offset="100%" stopColor="#4ade80" />
                     </linearGradient>
-                    <linearGradient id="bar-grad-zero" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(0,0,0,0.06)" />
-                      <stop offset="100%" stopColor="rgba(0,0,0,0.03)" />
-                    </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
                   <XAxis
                     dataKey={chartView === "weekly" ? "day" : "type"}
-                    tick={{ fontSize: 12, fill: "#737373", fontWeight: 500 }}
+                    tick={{ fontSize: 11, fill: "#737373", fontWeight: 500 }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis tick={{ fontSize: 11, fill: "#737373" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "#737373" }} axisLine={false} tickLine={false} />
                   <Tooltip
                     cursor={{ fill: "rgba(34,197,94,0.06)" }}
                     contentStyle={{
                       background: "rgba(28,28,30,0.9)",
                       backdropFilter: "blur(20px)",
                       border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: 14,
+                      borderRadius: 12,
                       color: "#fff",
-                      fontSize: 13,
-                      padding: "10px 14px",
+                      fontSize: 12,
+                      padding: "8px 12px",
                     }}
                     labelStyle={{ color: "#fff", fontWeight: 600 }}
                     formatter={(v: number) => [`${v} min`, "Minutes"]}
                   />
-                  <Bar
-                    dataKey="minutes"
-                    radius={[10, 10, 4, 4]}
-                    fill="url(#bar-grad)"
-                  />
+                  <Bar dataKey="minutes" radius={[8, 8, 3, 3]} fill="url(#bar-grad)" />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -381,19 +361,19 @@ function Dashboard() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="glass rounded-[28px] p-8 lg:col-span-2"
+          className="glass rounded-[24px] p-6 md:p-8 lg:col-span-2"
         >
           <p className="eyebrow text-sage">Recent wins</p>
-          <h3 className="mt-1 sf-display text-[26px] text-navy">Proof you showed up</h3>
+          <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">Proof you showed up</h3>
 
           {recent.length === 0 ? (
-            <div className="mt-8 flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-[32px]">🏃</p>
-              <p className="mt-3 text-[15px] font-semibold text-navy">Nothing yet.</p>
-              <p className="mt-1 text-[13px] text-sage">Your first move starts the story.</p>
+            <div className="mt-8 flex flex-col items-center justify-center py-10 text-center">
+              <p className="text-[28px]">🏃</p>
+              <p className="mt-3 text-[14px] font-semibold text-navy">Nothing yet.</p>
+              <p className="mt-1 text-[12px] text-sage">Your first move starts the story.</p>
               <Link
                 to="/log"
-                className="mt-5 inline-flex rounded-full bg-green px-5 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-110"
+                className="mt-4 inline-flex rounded-full bg-green px-5 py-2 text-[13px] font-semibold text-white transition-all hover:brightness-110"
               >
                 Log now ›
               </Link>
@@ -401,7 +381,7 @@ function Dashboard() {
           ) : (
             <>
               {/* Mobile list */}
-              <ul className="mt-5 divide-y divide-black/5 lg:hidden">
+              <ul className="mt-4 divide-y divide-black/5 lg:hidden">
                 {recent.slice(0, 5).map((a, i) => (
                   <motion.li
                     key={a.id}
@@ -409,21 +389,21 @@ function Dashboard() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, ease, delay: i * 0.05 }}
-                    className="flex items-start justify-between gap-3 py-3.5"
+                    className="flex items-start justify-between gap-3 py-3"
                   >
                     <div className="min-w-0">
-                      <p className="text-[15px] font-semibold text-navy truncate">{a.type}</p>
-                      <p className="mt-0.5 text-[12px] text-sage">
-                        {a.duration} min · {a.intensity} · {a.mood}
+                      <p className="text-[14px] font-semibold text-navy truncate">{a.type}</p>
+                      <p className="mt-0.5 text-[11px] text-sage">
+                        {a.duration} min · {a.intensity}
                       </p>
                     </div>
-                    <span className="shrink-0 text-[12px] text-sage">{friendlyDate(a.date)}</span>
+                    <span className="shrink-0 text-[11px] text-sage">{friendlyDate(a.date)}</span>
                   </motion.li>
                 ))}
               </ul>
 
               {/* Desktop table */}
-              <div className="hidden lg:block mt-5">
+              <div className="hidden lg:block mt-4">
                 <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 border-b border-black/5 pb-2 mb-1">
                   {["Activity", "Min", "Level", "When"].map((h) => (
                     <span key={h} className="text-[10px] font-bold uppercase tracking-[0.12em] text-sage/60">{h}</span>
@@ -436,12 +416,12 @@ function Dashboard() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.35, ease, delay: i * 0.04 }}
-                    className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 items-center border-b border-black/[0.04] py-2.5 last:border-0 hover:bg-black/[0.02] rounded-lg px-1 -mx-1 transition-colors"
+                    className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 items-center border-b border-black/[0.04] py-2 last:border-0 hover:bg-black/[0.02] rounded-lg px-1 -mx-1 transition-colors"
                   >
-                    <p className="text-[14px] font-semibold text-navy truncate">{a.type}</p>
-                    <p className="text-[13px] tabular-nums text-navy">{a.duration}</p>
-                    <p className="text-[12px] text-sage">{a.intensity}</p>
-                    <p className="text-[12px] text-sage text-right">{friendlyDate(a.date)}</p>
+                    <p className="text-[13px] font-semibold text-navy truncate">{a.type}</p>
+                    <p className="text-[12px] tabular-nums text-navy">{a.duration}</p>
+                    <p className="text-[11px] text-sage">{a.intensity}</p>
+                    <p className="text-[11px] text-sage text-right">{friendlyDate(a.date)}</p>
                   </motion.div>
                 ))}
               </div>
@@ -453,7 +433,7 @@ function Dashboard() {
       {/* ── IDENTITY BAND ── */}
       <motion.section
         {...fadeUp}
-        className="relative mt-5 -mx-6 overflow-hidden rounded-[28px] px-8 py-20 sm:-mx-8 sm:px-16 sm:py-28"
+        className="relative mt-4 -mx-6 overflow-hidden rounded-[24px] px-7 py-14 sm:-mx-8 sm:px-14 sm:py-24"
         style={{
           background:
             "radial-gradient(ellipse at 20% 30%, rgba(34,197,94,0.35), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(22,163,74,0.25), transparent 55%), #0a0a0c",
@@ -465,15 +445,15 @@ function Dashboard() {
               {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
             </p>
             <h2
-              className="sf-display mt-5 text-white"
-              style={{ fontSize: "clamp(40px, 6vw, 80px)" }}
+              className="sf-display mt-4 text-white"
+              style={{ fontSize: "clamp(34px, 6vw, 80px)" }}
             >
               This is how consistency
               <br />
               becomes <span style={{ color: "#22c55e" }}>identity.</span>
             </h2>
           </div>
-          <div className="mt-10 flex flex-col gap-3 lg:mt-0 lg:shrink-0">
+          <div className="mt-8 flex flex-col gap-3 lg:mt-0 lg:shrink-0">
             <Link
               to="/stories/submit"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3.5 text-[14px] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
@@ -522,28 +502,37 @@ function BentoCard({
       ? "bg-green text-white border-transparent"
       : "glass";
 
-  const inner = (
+  const motionProps = {
+    initial: { opacity: 0, y: 24, scale: 0.97 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration: 0.6, ease, delay },
+    whileHover: { y: -3, transition: { duration: 0.25, ease } },
+  };
+
+  if (href) {
+    return (
+      <Link to={href} className={`block ${className}`}>
+        <motion.div
+          {...motionProps}
+          className={`group flex h-full flex-col rounded-[24px] p-5 md:p-7 ${toneCls}`}
+          style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
+        >
+          {children}
+        </motion.div>
+      </Link>
+    );
+  }
+
+  return (
     <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.97 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, ease, delay }}
-      whileHover={{ y: -4, transition: { duration: 0.25, ease } }}
-      className={`group flex h-full flex-col rounded-[28px] p-7 ${toneCls} ${className}`}
+      {...motionProps}
+      className={`group flex h-full flex-col rounded-[24px] p-5 md:p-7 ${toneCls} ${className}`}
       style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(34,197,94,0.5)" } : undefined}
     >
       {children}
     </motion.div>
   );
-
-  if (href) {
-    return (
-      <Link to={href} className={`block h-full ${className}`}>
-        {inner}
-      </Link>
-    );
-  }
-  return inner;
 }
 
 function BigNumber({ value, suffix, small = false }: { value: number; suffix?: string; small?: boolean }) {
@@ -551,10 +540,10 @@ function BigNumber({ value, suffix, small = false }: { value: number; suffix?: s
   return (
     <p
       className="sf-display mt-auto text-navy"
-      style={{ fontSize: small ? "clamp(48px, 7vw, 72px)" : "clamp(64px, 9vw, 108px)" }}
+      style={{ fontSize: small ? "clamp(40px, 10vw, 72px)" : "clamp(52px, 12vw, 108px)" }}
     >
       {animated}
-      {suffix && <span className="ml-2 text-[0.32em] font-medium text-sage">{suffix}</span>}
+      {suffix && <span className="ml-1.5 text-[0.32em] font-medium text-sage">{suffix}</span>}
     </p>
   );
 }
@@ -562,7 +551,7 @@ function BigNumber({ value, suffix, small = false }: { value: number; suffix?: s
 function Empty({ text }: { text: string }) {
   return (
     <div className="flex h-full items-center justify-center">
-      <p className="italic text-sage">{text}</p>
+      <p className="italic text-sage text-[13px] text-center">{text}</p>
     </div>
   );
 }
@@ -588,34 +577,35 @@ function DailyQuote() {
   return (
     <motion.div
       {...fadeUp}
-      className="mt-5 relative overflow-hidden rounded-[28px]"
+      className="mt-4 relative overflow-hidden rounded-[24px]"
       style={{ background: "linear-gradient(135deg, #0a0a0c 0%, #0d1a0f 50%, #0a0a0c 100%)" }}
     >
       <div
-        className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -left-12 -top-12 h-52 w-52 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.22) 0%, transparent 70%)" }}
       />
       <div
-        className="pointer-events-none absolute -bottom-12 right-8 h-48 w-48 rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -bottom-10 right-6 h-40 w-40 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.10) 0%, transparent 70%)" }}
       />
 
-      <div className="relative px-8 py-10 sm:px-12 sm:py-12">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-2 w-2 rounded-full bg-green animate-pulse" />
-            <p className="eyebrow text-green/80" style={{ letterSpacing: "0.18em" }}>
+      <div className="relative px-6 py-8 sm:px-12 sm:py-12">
+        {/* Header row */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-1.5 w-1.5 rounded-full bg-green animate-pulse" />
+            <p className="eyebrow text-green/80" style={{ letterSpacing: "0.16em", fontSize: 10 }}>
               Aidan's message today
             </p>
           </div>
-          <div className="flex items-center gap-3 pl-[18px] sm:pl-0">
-            <p className="text-[12px] font-medium text-white/30">{dateLabel}</p>
+          <div className="flex items-center gap-2.5">
+            <p className="hidden sm:block text-[12px] font-medium text-white/30">{dateLabel}</p>
             <button
               onClick={share}
               title="Share this quote"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white/40 transition-all hover:border-green/50 hover:text-green"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/40 transition-all hover:border-green/50 hover:text-green"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
                 <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
               </svg>
@@ -624,15 +614,15 @@ function DailyQuote() {
         </div>
 
         <blockquote
-          className="sf-display mt-6 text-white"
-          style={{ fontSize: "clamp(22px, 3.2vw, 38px)", lineHeight: 1.2, maxWidth: "760px" }}
+          className="sf-display mt-5 text-white"
+          style={{ fontSize: "clamp(20px, 3.5vw, 38px)", lineHeight: 1.2, maxWidth: "720px" }}
         >
           "{quote}"
         </blockquote>
 
-        <div className="mt-6 flex items-center gap-3">
+        <div className="mt-5 flex items-center gap-3">
           <div className="h-px flex-1 bg-white/10" />
-          <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/40">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40">
             Aidan O'Hare
           </p>
         </div>
