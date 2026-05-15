@@ -56,12 +56,25 @@ function Dashboard() {
         style={{ height: "min(86vh, 780px)" }}
       >
         <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
-          <img src={HERO_IMG} alt="Athletes in motion" className="h-full w-full object-cover" />
+          <img
+            src={HERO_IMG}
+            alt="Athletes in motion"
+            className="h-full w-full object-cover object-center"
+          />
+          {/* Left-to-right gradient: text area is clean white, image bleeds to the right */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, rgba(245,245,247,0.05) 0%, rgba(245,245,247,0.35) 55%, rgba(245,245,247,1) 100%)",
+                "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.92) 30%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0) 75%)",
+            }}
+          />
+          {/* Subtle bottom fade for continuity with page body */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(255,255,255,0.6) 0%, transparent 20%)",
             }}
           />
         </motion.div>
@@ -70,48 +83,56 @@ function Dashboard() {
           style={{ opacity: heroOpacity }}
           className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-center px-6 sm:px-8"
         >
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
+          {/* Green pill eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.1 }}
-            className="eyebrow text-blue"
+            transition={{ duration: 0.6, ease, delay: 0.1 }}
+            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full bg-green/10 px-4 py-1.5"
           >
-            Movement · Mindset · Consistency
-          </motion.p>
+            <span className="h-1.5 w-1.5 rounded-full bg-green" />
+            <span className="eyebrow text-green" style={{ letterSpacing: "0.18em" }}>
+              Movement · Mindset · Consistency
+            </span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.2 }}
-            className="sf-display mt-5 text-navy"
-            style={{ fontSize: "clamp(64px, 11vw, 168px)" }}
+            className="sf-display text-navy"
+            style={{ fontSize: "clamp(56px, 9vw, 140px)", maxWidth: "580px" }}
           >
             Let's go,<br />
-            <span style={{ color: "#22c55e" }}>champs.</span>
+            <span className="text-green">champs.</span>
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.45 }}
-            className="mt-6 max-w-xl text-[18px] leading-[1.45] text-navy/70 sm:text-[20px]"
+            className="mt-5 max-w-[420px] text-[17px] leading-[1.55] text-navy/60 sm:text-[19px]"
           >
-            Show up. Stack the days. Become the kind of person who keeps going.
+            Show up. Stack the days.<br />
+            Become the person who keeps going.
           </motion.p>
+
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.65 }}
-            className="mt-9 flex flex-wrap items-center gap-3"
+            className="mt-8 flex flex-wrap items-center gap-3"
           >
             <Link
               to="/log"
-              className="group inline-flex items-center gap-2 rounded-full bg-blue px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
+              className="group inline-flex items-center gap-2 rounded-full bg-green px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
             >
               Log today's movement
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
             </Link>
             <Link
               to="/history"
-              className="rounded-full px-5 py-3.5 text-[15px] font-medium text-navy/80 transition-colors hover:text-navy"
+              className="rounded-full px-5 py-3.5 text-[15px] font-medium text-navy/60 transition-colors hover:text-navy"
             >
               See your history ›
             </Link>
