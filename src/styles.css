@@ -85,7 +85,11 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -94,6 +98,8 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: "ss01", "cv11";
+    overflow-x: hidden;
+    max-width: 100%;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);

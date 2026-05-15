@@ -136,7 +136,7 @@ export function Layout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream overflow-x-hidden">
       <nav className="sticky top-0 z-40 glass-nav">
         <div className="mx-auto flex h-[52px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
           <Brand />
@@ -148,7 +148,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="hidden md:block">{signOutBtn}</div>
 
           <button
-            className="md:hidden text-navy"
+            className="md:hidden flex h-11 w-11 items-center justify-center rounded-xl text-navy active:bg-black/5"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >

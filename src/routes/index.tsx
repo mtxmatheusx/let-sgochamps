@@ -22,6 +22,14 @@ const HERO_IMG = "/hero.png";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+function friendlyDate(iso: string) {
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (iso === today) return "Today";
+  if (iso === yesterday) return "Yesterday";
+  return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 const AIDAN_QUOTES = [
   "You don't need to be the fastest. You just need to show up. Every single day.",
   "The version of you that keeps going — that's the one people remember.",
@@ -216,16 +224,16 @@ function Dashboard() {
       </section>
 
       {/* BENTO GRID */}
-      <section className="relative mt-10">
+      <section className="relative mt-10 overflow-hidden">
         <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#22c55e", opacity: 0.12 }} />
         <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#22c55e", opacity: 0.12 }} />
 
-        <div className="relative grid auto-rows-[200px] grid-cols-1 gap-5 md:grid-cols-4">
+        <div className="relative grid md:auto-rows-[200px] grid-cols-1 gap-5 md:grid-cols-4">
           {/* Streak — Activity Ring */}
-          <BentoCard className="md:col-span-2 md:row-span-2 items-center justify-center text-center" delay={0}>
+          <BentoCard className="md:col-span-2 md:row-span-2 items-center justify-center text-center py-10 md:py-0" delay={0}>
             <p className="eyebrow text-green">Current streak</p>
             <div className="mt-4">
-              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={240} stroke={20}>
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={200} stroke={18}>
                 <div>
                   <p className="sf-display text-[80px] text-navy">{stats.streak}</p>
                   <p className="-mt-1 text-[13px] font-medium text-sage">
@@ -267,7 +275,7 @@ function Dashboard() {
       <DailyQuote />
 
       {/* CHART + RECENT */}
-      <section className="mt-5 grid gap-5 lg:grid-cols-5">
+      <section className="mt-5 grid gap-5 lg:grid-cols-5 overflow-hidden">
         <motion.div {...fadeUp} className="glass rounded-[28px] p-8 lg:col-span-3">
           <p className="eyebrow text-sage">Energy breakdown</p>
           <h3 className="mt-2 sf-display text-[28px] text-navy">Where your minutes went</h3>
@@ -329,15 +337,15 @@ function Dashboard() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, ease, delay: i * 0.05 }}
-                  className="flex items-center justify-between gap-3 py-3.5"
+                  className="flex items-start justify-between gap-3 py-3.5"
                 >
-                  <div>
-                    <p className="text-[15px] font-semibold text-navy">{a.type}</p>
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-semibold text-navy truncate">{a.type}</p>
                     <p className="mt-0.5 text-[12px] text-sage">
                       {a.duration} min · {a.intensity} · {a.mood}
                     </p>
                   </div>
-                  <span className="whitespace-nowrap text-[12px] text-sage">{a.date}</span>
+                  <span className="shrink-0 text-[12px] text-sage">{friendlyDate(a.date)}</span>
                 </motion.li>
               ))}
             </ul>
@@ -477,14 +485,14 @@ function DailyQuote() {
 
       <div className="relative px-8 py-10 sm:px-12 sm:py-12">
         {/* Top row */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5">
             <span className="flex h-2 w-2 rounded-full bg-green animate-pulse" />
             <p className="eyebrow text-green/80" style={{ letterSpacing: "0.18em" }}>
               Aidan's message today
             </p>
           </div>
-          <p className="text-[12px] font-medium text-white/30">{dateLabel}</p>
+          <p className="text-[12px] font-medium text-white/30 pl-[18px] sm:pl-0">{dateLabel}</p>
         </div>
 
         {/* Quote */}
