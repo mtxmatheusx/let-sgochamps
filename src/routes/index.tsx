@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -13,13 +13,12 @@ import {
 } from "recharts";
 import { Layout } from "@/components/Layout";
 import { ActivityRing } from "@/components/ActivityRing";
-import { computeStats, fetchActivities, minutesByType } from "@/lib/activities";
+import { computeStats, fetchActivities, minutesByType, minutesByDay } from "@/lib/activities";
 import { useCountUp } from "@/hooks/useCountUp";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
 const HERO_IMG = "/hero.png";
-
 const ease = [0.22, 1, 0.36, 1] as const;
 
 function friendlyDate(iso: string) {
@@ -79,6 +78,7 @@ function getDailyQuote() {
   );
   return AIDAN_QUOTES[dayOfYear % AIDAN_QUOTES.length];
 }
+
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
@@ -92,8 +92,9 @@ function Dashboard() {
     queryFn: fetchActivities,
   });
   const stats = computeStats(activities);
-  const chartData = minutesByType(activities);
-  const recent = activities.slice(0, 5);
+  const recent = activities.slice(0, 10);
+  const [chartView, setChartView] = useState<"weekly" | "byType">("weekly");
+  const chartData = chartView === "weekly" ? minutesByDay(activities) : minutesByType(activities);
 
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -106,49 +107,57 @@ function Dashboard() {
 
   return (
     <Layout>
-      {/* HERO */}
+      {/* ── HERO ── */}
       <section
         ref={heroRef}
         className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16"
-        style={{ height: "min(92vh, 860px)" }}
+        style={{ height: "min(92vh, 860px)", minHeight: 480 }}
       >
-        {/* Parallax image */}
-        <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
+        {/* Parallax image — full bleed mobile, right 50% on desktop */}
+        <motion.div
+          style={{ y: heroY, scale: heroScale }}
+          className="absolute inset-0 lg:left-[50%]"
+        >
           <img
             src={HERO_IMG}
             alt="Aidan running with the community"
             className="h-full w-full object-cover"
-            style={{ objectPosition: "55% center" }}
+            style={{ objectPosition: "30% center" }}
           />
         </motion.div>
 
-        {/* Cinematic overlays */}
-        {/* Dark base layer — bottom-heavy vignette */}
+        {/* Mobile cinematic overlays */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.38) 40%, rgba(10,10,10,0.08) 70%, transparent 100%)",
-          }}
+          className="lg:hidden absolute inset-0 pointer-events-none"
+          style={{ background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.38) 40%, transparent 75%)" }}
         />
-        {/* Left fade for text legibility */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to right, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.3) 35%, transparent 65%)",
-          }}
+          className="lg:hidden absolute inset-0 pointer-events-none"
+          style={{ background: "linear-gradient(to right, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.3) 35%, transparent 65%)" }}
         />
-        {/* Green accent glow — bottom left */}
         <div
-          className="absolute bottom-0 left-0 h-[320px] w-[420px] rounded-full opacity-20 blur-[100px]"
+          className="lg:hidden absolute bottom-0 left-0 h-[280px] w-[360px] rounded-full opacity-20 blur-[80px] pointer-events-none"
           style={{ background: "#22c55e" }}
         />
+
+        {/* Desktop left dark panel */}
+        <div className="hidden lg:block absolute inset-y-0 left-0 right-[50%] pointer-events-none" style={{ background: "#0a0a0c" }}>
+          {/* Seamless blend to image */}
+          <div
+            className="absolute inset-y-0 right-0 w-48 pointer-events-none"
+            style={{ background: "linear-gradient(to right, #0a0a0c 0%, transparent 100%)" }}
+          />
+          {/* Green glow */}
+          <div
+            className="absolute bottom-0 left-0 h-[500px] w-[600px] rounded-full opacity-25 blur-[150px] pointer-events-none"
+            style={{ background: "#22c55e" }}
+          />
+        </div>
 
         {/* Content */}
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-end pb-16 px-6 sm:pb-20 sm:px-8"
+          className="relative z-10 h-full flex flex-col justify-end pb-16 px-6 sm:pb-20 sm:px-10 lg:justify-center lg:pb-0 lg:pl-20 lg:pr-4 lg:max-w-[52%]"
         >
           {/* Eyebrow */}
           <motion.div
@@ -169,7 +178,7 @@ function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.2 }}
             className="sf-display text-white"
-            style={{ fontSize: "clamp(52px, 9vw, 130px)", lineHeight: 0.92, maxWidth: "620px" }}
+            style={{ fontSize: "clamp(52px, 7vw, 110px)", lineHeight: 0.92 }}
           >
             Let's go,<br />
             <span style={{ color: "#22c55e" }}>champs.</span>
@@ -185,6 +194,20 @@ function Dashboard() {
             Show up. Stack the days.<br />
             Become the person who keeps going.
           </motion.p>
+
+          {/* Desktop stats bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease, delay: 0.55 }}
+            className="hidden lg:flex mt-8 items-center gap-6"
+          >
+            <StatPill label="Current streak" value={`${stats.streak} days`} />
+            <div className="h-8 w-px bg-white/15" />
+            <StatPill label="Total minutes" value={`${stats.totalMinutes} min`} />
+            <div className="h-8 w-px bg-white/15" />
+            <StatPill label="Days showed up" value={String(stats.daysShowedUp)} />
+          </motion.div>
 
           {/* CTAs */}
           <motion.div
@@ -208,7 +231,7 @@ function Dashboard() {
             </Link>
           </motion.div>
 
-          {/* Bottom attribution tag */}
+          {/* Attribution */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -223,46 +246,49 @@ function Dashboard() {
         </motion.div>
       </section>
 
-      {/* BENTO GRID */}
+      {/* ── BENTO GRID ── */}
       <section className="relative mt-10 overflow-hidden">
         <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#22c55e", opacity: 0.12 }} />
         <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#22c55e", opacity: 0.12 }} />
 
         <div className="relative grid md:auto-rows-[200px] grid-cols-1 gap-5 md:grid-cols-4">
-          {/* Streak — Activity Ring */}
+          {/* Streak */}
           <BentoCard className="md:col-span-2 md:row-span-2 items-center justify-center text-center py-10 md:py-0" delay={0}>
             <p className="eyebrow text-green">Current streak</p>
             <div className="mt-4">
-              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={200} stroke={18}>
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={220} stroke={18}>
                 <div>
-                  <p className="sf-display text-[80px] text-navy">{stats.streak}</p>
-                  <p className="-mt-1 text-[13px] font-medium text-sage">
+                  <p className="sf-display text-[80px] text-navy leading-none">{stats.streak}</p>
+                  <p className="text-[13px] font-medium text-sage">
                     {stats.streak === 1 ? "day" : "days"} in a row
                   </p>
                 </div>
               </ActivityRing>
             </div>
-            <p className="mt-3 max-w-[260px] text-[13px] text-sage">
+            {stats.bestStreak > stats.streak && (
+              <p className="mt-2 text-[12px] text-sage">
+                Best: <span className="font-semibold text-navy">{stats.bestStreak} days</span>
+              </p>
+            )}
+            <p className="mt-2 max-w-[260px] text-[13px] text-sage">
               Identity is built one rep at a time.
             </p>
           </BentoCard>
 
+          {/* Total minutes */}
           <BentoCard className="md:col-span-2" delay={0.05}>
             <p className="eyebrow text-sage">Total minutes moved</p>
             <BigNumber value={stats.totalMinutes} suffix="min" />
           </BentoCard>
 
+          {/* Days showed up */}
           <BentoCard className="md:col-span-1" delay={0.1}>
             <p className="eyebrow text-sage">Days you showed up</p>
             <BigNumber value={stats.daysShowedUp} small />
           </BentoCard>
 
-          <BentoCard
-            className="md:col-span-1 cursor-pointer"
-            delay={0.15}
-            tone="blue"
-            href="/log"
-          >
+          {/* Log CTA */}
+          <BentoCard className="md:col-span-1 cursor-pointer" delay={0.15} tone="blue" href="/log">
             <p className="eyebrow text-white/70">Today</p>
             <p className="mt-auto sf-display text-[26px] text-white">
               Log a<br />new move ›
@@ -271,29 +297,61 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* DAILY QUOTE */}
+      {/* ── DAILY QUOTE ── */}
       <DailyQuote />
 
-      {/* CHART + RECENT */}
+      {/* ── CHART + RECENT WINS ── */}
       <section className="mt-5 grid gap-5 lg:grid-cols-5 overflow-hidden">
+        {/* Chart */}
         <motion.div {...fadeUp} className="glass rounded-[28px] p-8 lg:col-span-3">
-          <p className="eyebrow text-sage">Energy breakdown</p>
-          <h3 className="mt-2 sf-display text-[28px] text-navy">Where your minutes went</h3>
-          <div className="mt-6 h-[300px]">
-            {chartData.length === 0 ? (
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="eyebrow text-sage">Energy breakdown</p>
+              <h3 className="mt-1 sf-display text-[26px] text-navy">
+                {chartView === "weekly" ? "Last 7 days" : "Where your minutes went"}
+              </h3>
+            </div>
+            {/* Toggle */}
+            <div className="flex rounded-xl bg-black/[0.05] p-1 gap-1">
+              {(["weekly", "byType"] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setChartView(v)}
+                  className={`rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all ${
+                    chartView === v
+                      ? "bg-white text-navy shadow-sm"
+                      : "text-sage hover:text-navy"
+                  }`}
+                >
+                  {v === "weekly" ? "Weekly" : "By type"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 h-[280px]">
+            {chartData.length === 0 || (chartView === "weekly" && chartData.every((d) => d.minutes === 0)) ? (
               <Empty text="Log your first movement to see the breakdown." />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 8, right: 8, left: -10, bottom: 0 }}
+                  maxBarSize={56}
+                >
                   <defs>
                     <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#22c55e" />
                       <stop offset="100%" stopColor="#4ade80" />
                     </linearGradient>
+                    <linearGradient id="bar-grad-zero" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(0,0,0,0.06)" />
+                      <stop offset="100%" stopColor="rgba(0,0,0,0.03)" />
+                    </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
                   <XAxis
-                    dataKey="type"
+                    dataKey={chartView === "weekly" ? "day" : "type"}
                     tick={{ fontSize: 12, fill: "#737373", fontWeight: 500 }}
                     axisLine={false}
                     tickLine={false}
@@ -302,7 +360,7 @@ function Dashboard() {
                   <Tooltip
                     cursor={{ fill: "rgba(34,197,94,0.06)" }}
                     contentStyle={{
-                      background: "rgba(28,28,30,0.85)",
+                      background: "rgba(28,28,30,0.9)",
                       backdropFilter: "blur(20px)",
                       border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: 14,
@@ -311,49 +369,93 @@ function Dashboard() {
                       padding: "10px 14px",
                     }}
                     labelStyle={{ color: "#fff", fontWeight: 600 }}
+                    formatter={(v: number) => [`${v} min`, "Minutes"]}
                   />
-                  <Bar dataKey="minutes" fill="url(#bar-grad)" radius={[12, 12, 4, 4]} />
+                  <Bar
+                    dataKey="minutes"
+                    radius={[10, 10, 4, 4]}
+                    fill="url(#bar-grad)"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             )}
           </div>
         </motion.div>
 
+        {/* Recent Wins */}
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="glass rounded-[28px] p-8 lg:col-span-2 min-h-[420px]"
+          className="glass rounded-[28px] p-8 lg:col-span-2"
         >
           <p className="eyebrow text-sage">Recent wins</p>
-          <h3 className="mt-2 sf-display text-[28px] text-navy">Proof you showed up</h3>
+          <h3 className="mt-1 sf-display text-[26px] text-navy">Proof you showed up</h3>
+
           {recent.length === 0 ? (
-            <p className="mt-8 italic text-sage">Nothing yet. Start today.</p>
+            <div className="mt-8 flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-[32px]">🏃</p>
+              <p className="mt-3 text-[15px] font-semibold text-navy">Nothing yet.</p>
+              <p className="mt-1 text-[13px] text-sage">Your first move starts the story.</p>
+              <Link
+                to="/log"
+                className="mt-5 inline-flex rounded-full bg-green px-5 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-110"
+              >
+                Log now ›
+              </Link>
+            </div>
           ) : (
-            <ul className="mt-5 divide-y divide-black/5">
-              {recent.map((a, i) => (
-                <motion.li
-                  key={a.id}
-                  initial={{ opacity: 0, x: 10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, ease, delay: i * 0.05 }}
-                  className="flex items-start justify-between gap-3 py-3.5"
-                >
-                  <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-navy truncate">{a.type}</p>
-                    <p className="mt-0.5 text-[12px] text-sage">
-                      {a.duration} min · {a.intensity} · {a.mood}
-                    </p>
-                  </div>
-                  <span className="shrink-0 text-[12px] text-sage">{friendlyDate(a.date)}</span>
-                </motion.li>
-              ))}
-            </ul>
+            <>
+              {/* Mobile list */}
+              <ul className="mt-5 divide-y divide-black/5 lg:hidden">
+                {recent.slice(0, 5).map((a, i) => (
+                  <motion.li
+                    key={a.id}
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, ease, delay: i * 0.05 }}
+                    className="flex items-start justify-between gap-3 py-3.5"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-navy truncate">{a.type}</p>
+                      <p className="mt-0.5 text-[12px] text-sage">
+                        {a.duration} min · {a.intensity} · {a.mood}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-[12px] text-sage">{friendlyDate(a.date)}</span>
+                  </motion.li>
+                ))}
+              </ul>
+
+              {/* Desktop table */}
+              <div className="hidden lg:block mt-5">
+                <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 border-b border-black/5 pb-2 mb-1">
+                  {["Activity", "Min", "Level", "When"].map((h) => (
+                    <span key={h} className="text-[10px] font-bold uppercase tracking-[0.12em] text-sage/60">{h}</span>
+                  ))}
+                </div>
+                {recent.map((a, i) => (
+                  <motion.div
+                    key={a.id}
+                    initial={{ opacity: 0, x: 8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.35, ease, delay: i * 0.04 }}
+                    className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 items-center border-b border-black/[0.04] py-2.5 last:border-0 hover:bg-black/[0.02] rounded-lg px-1 -mx-1 transition-colors"
+                  >
+                    <p className="text-[14px] font-semibold text-navy truncate">{a.type}</p>
+                    <p className="text-[13px] tabular-nums text-navy">{a.duration}</p>
+                    <p className="text-[12px] text-sage">{a.intensity}</p>
+                    <p className="text-[12px] text-sage text-right">{friendlyDate(a.date)}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </>
           )}
         </motion.div>
       </section>
 
-      {/* IDENTITY band — full-bleed dark */}
+      {/* ── IDENTITY BAND ── */}
       <motion.section
         {...fadeUp}
         className="relative mt-5 -mx-6 overflow-hidden rounded-[28px] px-8 py-20 sm:-mx-8 sm:px-16 sm:py-28"
@@ -362,21 +464,48 @@ function Dashboard() {
             "radial-gradient(ellipse at 20% 30%, rgba(34,197,94,0.35), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(22,163,74,0.25), transparent 55%), #0a0a0c",
         }}
       >
-        <div className="mx-auto max-w-[1200px]">
-          <p className="eyebrow text-white/60">
-            {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
-          </p>
-          <h2
-            className="sf-display mt-5 text-white"
-            style={{ fontSize: "clamp(40px, 6vw, 80px)" }}
-          >
-            This is how consistency
-            <br />
-            becomes <span style={{ color: "#22c55e" }}>identity.</span>
-          </h2>
+        <div className="mx-auto max-w-[1200px] lg:flex lg:items-end lg:justify-between lg:gap-16">
+          <div>
+            <p className="eyebrow text-white/60">
+              {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
+            </p>
+            <h2
+              className="sf-display mt-5 text-white"
+              style={{ fontSize: "clamp(40px, 6vw, 80px)" }}
+            >
+              This is how consistency
+              <br />
+              becomes <span style={{ color: "#22c55e" }}>identity.</span>
+            </h2>
+          </div>
+          <div className="mt-10 flex flex-col gap-3 lg:mt-0 lg:shrink-0">
+            <Link
+              to="/stories/submit"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3.5 text-[14px] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+            >
+              Share your story ›
+            </Link>
+            <Link
+              to="/stories"
+              className="text-center text-[13px] text-white/40 transition-colors hover:text-white/70"
+            >
+              Read community stories →
+            </Link>
+          </div>
         </div>
       </motion.section>
     </Layout>
+  );
+}
+
+// ── Sub-components ──
+
+function StatPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/40">{label}</p>
+      <p className="mt-0.5 text-[18px] font-bold text-white">{value}</p>
+    </div>
   );
 }
 
@@ -422,15 +551,7 @@ function BentoCard({
   return inner;
 }
 
-function BigNumber({
-  value,
-  suffix,
-  small = false,
-}: {
-  value: number;
-  suffix?: string;
-  small?: boolean;
-}) {
+function BigNumber({ value, suffix, small = false }: { value: number; suffix?: string; small?: boolean }) {
   const animated = useCountUp(value, 1200);
   return (
     <p
@@ -460,31 +581,31 @@ function DailyQuote() {
     day: "numeric",
   });
 
+  async function share() {
+    const text = `"${quote}" — Aidan O'Hare, Let's Go Champs`;
+    if (navigator.share) {
+      try { await navigator.share({ text }); } catch {}
+    } else {
+      await navigator.clipboard.writeText(text);
+    }
+  }
+
   return (
     <motion.div
       {...fadeUp}
       className="mt-5 relative overflow-hidden rounded-[28px]"
-      style={{
-        background:
-          "linear-gradient(135deg, #0a0a0c 0%, #0d1a0f 50%, #0a0a0c 100%)",
-      }}
+      style={{ background: "linear-gradient(135deg, #0a0a0c 0%, #0d1a0f 50%, #0a0a0c 100%)" }}
     >
-      {/* Ambient green glow */}
       <div
         className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)",
-        }}
+        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)" }}
       />
       <div
         className="pointer-events-none absolute -bottom-12 right-8 h-48 w-48 rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%)",
-        }}
+        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%)" }}
       />
 
       <div className="relative px-8 py-10 sm:px-12 sm:py-12">
-        {/* Top row */}
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5">
             <span className="flex h-2 w-2 rounded-full bg-green animate-pulse" />
@@ -492,10 +613,21 @@ function DailyQuote() {
               Aidan's message today
             </p>
           </div>
-          <p className="text-[12px] font-medium text-white/30 pl-[18px] sm:pl-0">{dateLabel}</p>
+          <div className="flex items-center gap-3 pl-[18px] sm:pl-0">
+            <p className="text-[12px] font-medium text-white/30">{dateLabel}</p>
+            <button
+              onClick={share}
+              title="Share this quote"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white/40 transition-all hover:border-green/50 hover:text-green"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        {/* Quote */}
         <blockquote
           className="sf-display mt-6 text-white"
           style={{ fontSize: "clamp(22px, 3.2vw, 38px)", lineHeight: 1.2, maxWidth: "760px" }}
@@ -503,7 +635,6 @@ function DailyQuote() {
           "{quote}"
         </blockquote>
 
-        {/* Attribution */}
         <div className="mt-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-white/10" />
           <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/40">

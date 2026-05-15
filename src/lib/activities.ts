@@ -40,18 +40,44 @@ export function computeStats(activities: Activity[]) {
   const days = new Set(activities.map((a) => a.date));
   const daysShowedUp = days.size;
 
-  // streak: consecutive days up to today (or yesterday)
+  // current streak: consecutive days up to today (or yesterday)
   let streak = 0;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const cursor = new Date(today);
-  // allow streak to start from today or yesterday
   if (!days.has(toISO(cursor))) cursor.setDate(cursor.getDate() - 1);
   while (days.has(toISO(cursor))) {
     streak++;
     cursor.setDate(cursor.getDate() - 1);
   }
-  return { totalMinutes, daysShowedUp, streak };
+
+  // best streak: longest consecutive run ever
+  const sortedDays = Array.from(days).sort();
+  let best = 0, run = 0;
+  for (let i = 0; i < sortedDays.length; i++) {
+    if (i === 0) {
+      run = 1;
+    } else {
+      const prev = new Date(sortedDays[i - 1] + "T00:00:00");
+      const curr = new Date(sortedDays[i] + "T00:00:00");
+      run = Math.round((curr.getTime() - prev.getTime()) / 86400000) === 1 ? run + 1 : 1;
+    }
+    best = Math.max(best, run);
+  }
+  const bestStreak = Math.max(best, streak);
+
+  return { totalMinutes, daysShowedUp, streak, bestStreak };
+}
+
+export function minutesByDay(activities: Activity[]): { day: string; minutes: number }[] {
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const iso = d.toISOString().slice(0, 10);
+    const day = i === 6 ? "Today" : d.toLocaleDateString("en-US", { weekday: "short" });
+    const minutes = activities.filter((a) => a.date === iso).reduce((s, a) => s + a.duration, 0);
+    return { day, minutes };
+  });
 }
 
 function toISO(d: Date) {
