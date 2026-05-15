@@ -113,46 +113,41 @@ function Dashboard() {
         className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16"
         style={{ height: "min(92vh, 860px)", minHeight: 480 }}
       >
-        {/* Parallax image — full bleed mobile, right 50% on desktop */}
-        <motion.div
-          style={{ y: heroY, scale: heroScale }}
-          className="absolute inset-0 lg:left-[50%]"
-        >
+        {/* Parallax image — always full bleed */}
+        <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
           <img
             src={HERO_IMG}
             alt="Aidan running with the community"
             className="h-full w-full object-cover"
-            style={{ objectPosition: "30% center" }}
+            style={{ objectPosition: "55% center" }}
           />
         </motion.div>
 
-        {/* Mobile cinematic overlays */}
+        {/* Mobile: bottom + left dark overlays */}
         <div
           className="lg:hidden absolute inset-0 pointer-events-none"
-          style={{ background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.38) 40%, transparent 75%)" }}
+          style={{ background: "linear-gradient(to top, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.4) 40%, rgba(10,10,10,0.05) 75%)" }}
         />
         <div
           className="lg:hidden absolute inset-0 pointer-events-none"
-          style={{ background: "linear-gradient(to right, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.3) 35%, transparent 65%)" }}
-        />
-        <div
-          className="lg:hidden absolute bottom-0 left-0 h-[280px] w-[360px] rounded-full opacity-20 blur-[80px] pointer-events-none"
-          style={{ background: "#22c55e" }}
+          style={{ background: "linear-gradient(to right, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.35) 38%, rgba(10,10,10,0) 68%)" }}
         />
 
-        {/* Desktop left dark panel */}
-        <div className="hidden lg:block absolute inset-y-0 left-0 right-[50%] pointer-events-none" style={{ background: "#0a0a0c" }}>
-          {/* Seamless blend to image */}
-          <div
-            className="absolute inset-y-0 right-0 w-48 pointer-events-none"
-            style={{ background: "linear-gradient(to right, #0a0a0c 0%, transparent 100%)" }}
-          />
-          {/* Green glow */}
-          <div
-            className="absolute bottom-0 left-0 h-[500px] w-[600px] rounded-full opacity-25 blur-[150px] pointer-events-none"
-            style={{ background: "#22c55e" }}
-          />
-        </div>
+        {/* Desktop: single gradient overlay — solid dark left, fades to transparent right.
+            Using rgba(10,10,10,0) instead of "transparent" to avoid the CSS white-interpolation bug. */}
+        <div
+          className="hidden lg:block absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(10,10,10,1) 0%, rgba(10,10,10,1) 28%, rgba(10,10,10,0.92) 38%, rgba(10,10,10,0.55) 50%, rgba(10,10,10,0.15) 62%, rgba(10,10,10,0) 72%)",
+          }}
+        />
+
+        {/* Green glow — bottom left, both breakpoints */}
+        <div
+          className="absolute bottom-0 left-0 h-[360px] w-[480px] rounded-full opacity-25 blur-[120px] pointer-events-none"
+          style={{ background: "#22c55e" }}
+        />
 
         {/* Content */}
         <motion.div

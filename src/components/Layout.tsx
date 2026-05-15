@@ -11,6 +11,8 @@ const links = [
   { to: "/about", label: "About" },
 ] as const;
 
+const storyLink = { to: "/stories/submit", label: "Share your story" } as const;
+
 const ease = [0.22, 1, 0.36, 1] as const;
 
 function Brand() {
@@ -145,7 +147,15 @@ export function Layout({ children }: { children: ReactNode }) {
             <NavLinks items={links} pathname={location.pathname} />
           </div>
 
-          <div className="hidden md:block">{signOutBtn}</div>
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              to={storyLink.to}
+              className="rounded-full bg-green px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-white transition-all hover:brightness-110 hover:scale-[1.03]"
+            >
+              Share your story
+            </Link>
+            {signOutBtn}
+          </div>
 
           <button
             className="md:hidden flex h-11 w-11 items-center justify-center rounded-xl text-navy active:bg-black/5"
@@ -158,7 +168,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </button>
         </div>
 
-        <MobileSheet open={open} items={links} onClose={() => setOpen(false)} trailing={signOutBtn} />
+        <MobileSheet open={open} items={[...links, storyLink]} onClose={() => setOpen(false)} trailing={signOutBtn} />
       </nav>
 
       <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16 fade-up">
