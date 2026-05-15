@@ -1,20 +1,34 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { PublicLayout, PageHeader } from "@/components/Layout";
-import { fetchFeaturedStories, fetchPinnedStory } from "@/lib/stories";
+import {
+  fetchFeaturedStories,
+  fetchPinnedStory,
+  adminFetchStories,
+  checkIsAdmin,
+} from "@/lib/stories";
 import type { Story } from "@/lib/stories";
 
 export const Route = createFileRoute("/stories/")({ component: StoriesWall });
 
 function StoriesWall() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    checkIsAdmin().then(setIsAdmin);
+  }, []);
+
   const { data: pinned, isLoading: loadingPin } = useQuery({
     queryKey: ["stories", "pinned"],
     queryFn: fetchPinnedStory,
+    enabled: !isAdmin,
   });
 
+  // Admins see ALL submissions; public sees only featured
   const { data: stories = [], isLoading } = useQuery({
-    queryKey: ["stories", "featured"],
-    queryFn: fetchFeaturedStories,
+    queryKey: ["stories", isAdmin ? "all" : "featured"],
+    queryFn: () => (isAdmin ? adminFetchStories("all") : fetchFeaturedStories()),
   });
 
   return (
@@ -25,8 +39,25 @@ function StoriesWall() {
         subtitle="Real people. Real movement. Real change. These are the champions in our community."
       />
 
-      {!loadingPin && pinned && <PinnedStory story={pinned} />}
+      {/* Admin notice */}
+      {isAdmin && (
+        <div className="mb-8 flex items-center gap-3 rounded-[14px] border border-gold/40 bg-gold/8 px-5 py-3.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8962e" strokeWidth="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <p className="text-[13px] font-semibold text-navy">
+            Admin view — mostrando todas as {stories.length} histórias submetidas.{" "}
+            <Link to="/admin" className="text-gold underline underline-offset-2 hover:brightness-90">
+              Gerenciar no painel →
+            </Link>
+          </p>
+        </div>
+      )}
 
+      {/* Pinned story (public only) */}
+      {!isAdmin && !loadingPin && pinned && <PinnedStory story={pinned} />}
+
+      {/* CTA */}
       <div className="mb-12 flex items-center gap-4">
         <Link
           to="/stories/submit"
@@ -37,6 +68,7 @@ function StoriesWall() {
         <p className="text-sm text-sage">Your story could inspire thousands.</p>
       </div>
 
+      {/* Grid */}
       {isLoading ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
@@ -45,13 +77,17 @@ function StoriesWall() {
         </div>
       ) : stories.length === 0 ? (
         <div className="rounded-[20px] bg-card p-12 text-center card-shadow">
-          <p className="text-lg font-bold text-navy">No stories yet.</p>
-          <p className="mt-2 text-sage">Be the first champion to share yours.</p>
+          <p className="text-lg font-bold text-navy">
+            {isAdmin ? "Nenhuma história submetida ainda." : "No stories yet."}
+          </p>
+          <p className="mt-2 text-sage">
+            {isAdmin ? "Quando alguém compartilhar, aparece aqui." : "Be the first champion to share yours."}
+          </p>
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {stories.map((s) => (
-            <StoryCard key={s.id} story={s} />
+            <StoryCard key={s.id} story={s} isAdmin={isAdmin} />
           ))}
         </div>
       )}
@@ -61,10 +97,7 @@ function StoriesWall() {
 
 function PinnedStory({ story }: { story: Story }) {
   return (
-    <section
-      className="mb-12 overflow-hidden rounded-[24px] card-shadow"
-      style={{ background: "var(--navy-dark)" }}
-    >
+    <section className="mb-12 overflow-hidden rounded-[24px] card-shadow" style={{ background: "var(--navy-dark)" }}>
       <div className="flex flex-col md:flex-row">
         {(story.video_url || story.photo_url) && (
           <div className="md:w-[360px] shrink-0">
@@ -102,7 +135,13 @@ function PinnedStory({ story }: { story: Story }) {
   );
 }
 
-function StoryCard({ story }: { story: Story }) {
+const statusStyle: Record<string, { bg: string; text: string; label: string }> = {
+  unread:   { bg: "bg-blue-100",   text: "text-blue-700", label: "Nova" },
+  featured: { bg: "bg-green/10",   text: "text-green",    label: "Featured" },
+  archived: { bg: "bg-mist/60",    text: "text-sage",     label: "Arquivada" },
+};
+
+function StoryCard({ story, isAdmin }: { story: Story; isAdmin: boolean }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-[20px] bg-card card-shadow lift">
       {story.video_url ? (
@@ -119,16 +158,28 @@ function StoryCard({ story }: { story: Story }) {
       ) : null}
 
       <div className="flex flex-1 flex-col p-6">
-        {story.activity_type && (
-          <span className="mb-3 inline-flex w-fit rounded-full bg-navy/8 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-navy">
-            {story.activity_type}
-          </span>
-        )}
+        <div className="mb-3 flex items-center gap-2">
+          {story.activity_type && (
+            <span className="inline-flex rounded-full bg-navy/8 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-navy">
+              {story.activity_type}
+            </span>
+          )}
+          {isAdmin && (
+            <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.1em] ${statusStyle[story.status].bg} ${statusStyle[story.status].text}`}>
+              {statusStyle[story.status].label}
+            </span>
+          )}
+          {isAdmin && story.is_pinned && (
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-gold">📌</span>
+          )}
+        </div>
+
         {story.quote ? (
           <p className="text-base font-semibold italic leading-snug text-navy line-clamp-3">"{story.quote}"</p>
         ) : (
           <p className="text-sm italic leading-relaxed text-sage line-clamp-5">"{story.story}"</p>
         )}
+
         <div className="mt-auto pt-5">
           <p className="font-bold text-navy">{story.name}</p>
           <p className="text-[13px] text-sage">
@@ -136,11 +187,22 @@ function StoryCard({ story }: { story: Story }) {
             {story.social_handle && <span className="ml-2 text-gold">{story.social_handle}</span>}
           </p>
         </div>
+
         {story.reply && (
           <div className="mt-4 rounded-lg border-l-4 border-gold bg-cream/60 p-3">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-gold">Aidan replied</p>
             <p className="mt-1 text-[13px] leading-relaxed text-sage line-clamp-3">{story.reply}</p>
           </div>
+        )}
+
+        {/* Admin quick-link to manage */}
+        {isAdmin && (
+          <Link
+            to="/admin"
+            className="mt-4 block text-center rounded-full border border-mist py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-sage transition-colors hover:border-gold hover:text-gold"
+          >
+            Gerenciar →
+          </Link>
         )}
       </div>
     </article>
