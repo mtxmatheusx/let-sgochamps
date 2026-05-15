@@ -18,8 +18,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
-const HERO_IMG =
-  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1800&q=85";
+const HERO_IMG = "/hero.png";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
