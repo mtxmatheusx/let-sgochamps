@@ -263,24 +263,41 @@ function Dashboard() {
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green animate-pulse" />
               <p className="eyebrow text-green">Current streak</p>
             </div>
-            <div className="mt-4 md:mt-5">
-              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={160} stroke={14}>
+
+            {/* Mobile ring */}
+            <div className="mt-4 md:hidden">
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={168} stroke={14}>
                 <div>
-                  <p className="sf-display text-navy leading-none nums" style={{ fontSize: "clamp(56px, 12vw, 84px)" }}>
+                  <p className="sf-display text-navy leading-none nums" style={{ fontSize: 64 }}>
                     {stats.streak}
                   </p>
-                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
                     {stats.streak === 1 ? "day" : "days"} in a row
                   </p>
                 </div>
               </ActivityRing>
             </div>
+
+            {/* Desktop ring — much larger to fill the 2×2 bento */}
+            <div className="mt-6 hidden md:block">
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={260} stroke={20}>
+                <div>
+                  <p className="sf-display text-navy leading-none nums" style={{ fontSize: 112 }}>
+                    {stats.streak}
+                  </p>
+                  <p className="mt-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+                    {stats.streak === 1 ? "day" : "days"} in a row
+                  </p>
+                </div>
+              </ActivityRing>
+            </div>
+
             {stats.bestStreak > stats.streak && (
-              <span className="pill mt-3">
+              <span className="pill mt-4 md:mt-5">
                 Best · <span className="nums font-bold text-navy">{stats.bestStreak}</span>&nbsp;days
               </span>
             )}
-            <p className="mt-3 max-w-[240px] text-[13px] leading-[1.45] text-ink-soft">
+            <p className="mt-3 md:mt-4 max-w-[260px] text-[13px] leading-[1.45] text-ink-soft">
               Identity is built one rep at a time.
             </p>
           </BentoCard>
