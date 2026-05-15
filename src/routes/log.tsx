@@ -101,7 +101,7 @@ function LogMovement() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease }}
           onSubmit={submit}
-          className="relative mx-auto grid max-w-[680px] gap-5 overflow-hidden rounded-[28px] glass p-8 sm:p-10"
+          className="relative grid max-w-[680px] gap-5 overflow-hidden rounded-[28px] glass p-8 sm:p-10"
         >
           <div className="orb" style={{ width: 300, height: 300, top: -100, right: -80, background: "#22c55e", opacity: 0.18 }} />
           <div className="orb" style={{ width: 280, height: 280, bottom: -120, left: -60, background: "#22c55e", opacity: 0.15 }} />
