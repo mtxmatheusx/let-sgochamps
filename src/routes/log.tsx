@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Layout, PageHeader } from "@/components/Layout";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
@@ -8,6 +9,8 @@ import { ACTIVITY_TYPES, INTENSITIES, MOODS, computeStats, fetchActivities } fro
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/log")({ component: LogMovement });
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 type SavedActivity = {
   type: string;
@@ -57,11 +60,8 @@ function LogMovement() {
       return;
     }
     await qc.invalidateQueries({ queryKey: ["activities"] });
-
-    // Compute streak for celebration
     const allActivities = await fetchActivities();
     const { streak } = computeStats(allActivities);
-
     setCelebration({
       activity: {
         type: form.type,
@@ -92,14 +92,20 @@ function LogMovement() {
       <Layout>
         <PageHeader
           eyebrow="Today is another chance"
-          title="Log Today's Movement"
+          title="Log today's movement"
           subtitle="No pressure. No perfection. Just show up and record the work."
         />
 
-        <form
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease }}
           onSubmit={submit}
-          className="mx-auto grid max-w-[680px] gap-6 rounded-[20px] bg-card p-10 sm:p-12 card-shadow"
+          className="relative mx-auto grid max-w-[680px] gap-5 overflow-hidden rounded-[28px] glass p-8 sm:p-10"
         >
+          <div className="orb" style={{ width: 300, height: 300, top: -100, right: -80, background: "#0071e3", opacity: 0.18 }} />
+          <div className="orb" style={{ width: 280, height: 280, bottom: -120, left: -60, background: "#b8962e", opacity: 0.15 }} />
+
           <Field label="What did you do today?">
             <Select
               value={form.type}
@@ -108,7 +114,7 @@ function LogMovement() {
             />
           </Field>
 
-          <Field label="How many minutes did you move?">
+          <Field label="How many minutes?">
             <input
               type="number"
               min={1}
@@ -120,18 +126,20 @@ function LogMovement() {
           </Field>
 
           <Field label="How hard did you go?">
-            <Select
+            <Segmented
               value={form.intensity}
               onChange={(v) => setForm({ ...form, intensity: v })}
-              options={INTENSITIES.map((i) => ({ value: i.value, label: i.label }))}
+              options={INTENSITIES.map((i) => ({ value: i.value, label: i.value }))}
+              groupId="intensity"
             />
           </Field>
 
           <Field label="How do you feel now?">
-            <Select
+            <Segmented
               value={form.mood}
               onChange={(v) => setForm({ ...form, mood: v })}
               options={MOODS.map((m) => ({ value: m, label: m }))}
+              groupId="mood"
             />
           </Field>
 
@@ -146,40 +154,35 @@ function LogMovement() {
 
           <Field label="Champion note (optional)">
             <textarea
-              rows={5}
+              rows={4}
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="Example: I did not feel like moving, but I showed up anyway."
-              className={`${inputCls} h-auto py-3`}
+              placeholder="I didn't feel like moving, but I showed up anyway."
+              className={`${inputCls} h-auto py-3.5`}
             />
           </Field>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            className="mt-2 h-14 w-full rounded-full bg-gold text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
-            style={{ letterSpacing: "1.5px" }}
+            className="relative mt-2 h-[54px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(0,113,227,0.6)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
           >
-            {loading ? "Saving..." : "Keep the Streak Going"}
-          </button>
-        </form>
+            {loading ? "Saving…" : "Keep the streak going"}
+          </motion.button>
+        </motion.form>
       </Layout>
     </>
   );
 }
 
 const inputCls =
-  "w-full h-14 rounded-xl border-[1.5px] border-mist bg-[var(--cream-deep)] px-4 text-[16px] text-navy outline-none transition-all duration-200 focus:border-gold focus:border-l-[3px] focus:bg-white";
+  "focus-ios w-full h-[54px] rounded-2xl border border-transparent bg-black/[0.04] px-4 text-[15px] text-navy outline-none transition-all";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <span
-        className="mb-2 block text-[13px] font-bold uppercase text-navy"
-        style={{ letterSpacing: "1px" }}
-      >
-        {label}
-      </span>
+    <label className="relative block">
+      <span className="mb-2 block text-[12px] font-semibold text-navy/80">{label}</span>
       {children}
     </label>
   );
@@ -218,6 +221,45 @@ function Select({
       >
         <path d="M6 9l6 6 6-6" />
       </svg>
+    </div>
+  );
+}
+
+function Segmented({
+  value,
+  onChange,
+  options,
+  groupId,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  groupId: string;
+}) {
+  return (
+    <div className="relative flex w-full rounded-2xl bg-black/[0.05] p-1">
+      {options.map((o) => {
+        const active = value === o.value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(o.value)}
+            className={`relative z-10 flex-1 rounded-xl py-2.5 text-[13px] font-semibold transition-colors ${
+              active ? "text-navy" : "text-sage hover:text-navy"
+            }`}
+          >
+            {active && (
+              <motion.span
+                layoutId={`seg-${groupId}`}
+                className="absolute inset-0 -z-10 rounded-xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                transition={{ duration: 0.35, ease }}
+              />
+            )}
+            {o.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

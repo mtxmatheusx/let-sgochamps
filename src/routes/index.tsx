@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Layout } from "@/components/Layout";
+import { ActivityRing } from "@/components/ActivityRing";
 import { computeStats, fetchActivities, minutesByType } from "@/lib/activities";
 import { useCountUp } from "@/hooks/useCountUp";
 
@@ -21,12 +22,11 @@ const HERO_IMG =
   "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1800&q=85";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
 const fadeUp = {
-  initial: { opacity: 0, y: 32 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.8, ease },
+  transition: { duration: 0.7, ease },
 };
 
 function Dashboard() {
@@ -43,161 +43,170 @@ function Dashboard() {
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 160]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.3]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
 
   return (
     <Layout>
-      {/* HERO — full-bleed cinematic */}
+      {/* HERO */}
       <section
         ref={heroRef}
-        className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-[6%] sm:-mt-20"
-        style={{ height: "min(88vh, 820px)" }}
+        className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16"
+        style={{ height: "min(86vh, 780px)" }}
       >
-        <motion.div
-          style={{ y: heroY, scale: heroScale }}
-          className="absolute inset-0"
-        >
-          <img
-            src={HERO_IMG}
-            alt="Athletes in motion"
-            className="h-full w-full object-cover"
-          />
+        <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
+          <img src={HERO_IMG} alt="Athletes in motion" className="h-full w-full object-cover" />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, rgba(13,17,23,0.35) 0%, rgba(13,17,23,0.55) 60%, rgba(245,240,232,0.95) 100%)",
+                "linear-gradient(180deg, rgba(245,245,247,0.05) 0%, rgba(245,245,247,0.35) 55%, rgba(245,245,247,1) 100%)",
             }}
           />
         </motion.div>
 
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-center px-6 sm:px-12"
+          className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-center px-6 sm:px-8"
         >
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.1 }}
-            className="eyebrow text-gold"
+            transition={{ duration: 0.7, ease, delay: 0.1 }}
+            className="eyebrow text-blue"
           >
             Movement · Mindset · Consistency
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease, delay: 0.2 }}
-            className="font-display mt-6 text-white"
-            style={{
-              fontSize: "clamp(64px, 11vw, 156px)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.02em",
-            }}
+            transition={{ duration: 0.9, ease, delay: 0.2 }}
+            className="sf-display mt-5 text-navy"
+            style={{ fontSize: "clamp(64px, 11vw, 168px)" }}
           >
-            LET'S GO
-            <br />
-            <span className="text-gold">CHAMPS.</span>
+            Let's go,<br />
+            <span style={{ color: "#0071e3" }}>champs.</span>
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.5 }}
-            className="mt-8 max-w-xl text-[17px] leading-[1.6] text-white/85 sm:text-[19px]"
+            transition={{ duration: 0.7, ease, delay: 0.45 }}
+            className="mt-6 max-w-xl text-[18px] leading-[1.45] text-navy/70 sm:text-[20px]"
           >
-            Showing up. Stacking days. Becoming the kind of person who keeps going.
+            Show up. Stack the days. Become the kind of person who keeps going.
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.7 }}
-            className="mt-10"
+            transition={{ duration: 0.7, ease, delay: 0.65 }}
+            className="mt-9 flex flex-wrap items-center gap-3"
           >
             <Link
               to="/log"
-              className="group inline-flex items-center gap-3 rounded-full bg-gold px-9 py-4 text-[12px] font-extrabold uppercase tracking-[0.18em] text-navy transition-all duration-300 hover:scale-[1.04] hover:brightness-110 hover:shadow-[0_20px_60px_-15px_rgba(184,150,46,0.6)]"
+              className="group inline-flex items-center gap-2 rounded-full bg-blue px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(0,113,227,0.6)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
             >
-              Log Today's Movement
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+              Log today's movement
+              <span className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+            </Link>
+            <Link
+              to="/history"
+              className="rounded-full px-5 py-3.5 text-[15px] font-medium text-navy/80 transition-colors hover:text-navy"
+            >
+              See your history ›
             </Link>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* BENTO GRID — Apple-style mixed sizes */}
-      <section className="mt-20 grid auto-rows-[180px] grid-cols-1 gap-5 md:grid-cols-4 md:auto-rows-[200px]">
-        {/* Big stat — Streak */}
-        <BentoCard
-          className="md:col-span-2 md:row-span-2"
-          tone="navy"
-          delay={0}
-        >
-          <p className="eyebrow text-gold">Current streak</p>
-          <CountDisplay value={stats.streak} suffix={stats.streak === 1 ? " day" : " days"} gold />
-          <p className="mt-auto max-w-[220px] text-sm leading-relaxed text-white/65">
-            Stack the days. Identity is built one rep at a time.
-          </p>
-        </BentoCard>
+      {/* BENTO GRID */}
+      <section className="relative mt-16">
+        {/* Soft orbs behind the grid */}
+        <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#0071e3", opacity: 0.18 }} />
+        <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#b8962e", opacity: 0.18 }} />
 
-        {/* Minutes */}
-        <BentoCard className="md:col-span-2" tone="cream" delay={0.05}>
-          <p className="eyebrow text-sage">Total minutes moved</p>
-          <CountDisplay value={stats.totalMinutes} className="text-green" />
-        </BentoCard>
+        <div className="relative grid auto-rows-[180px] grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[200px]">
+          {/* Streak — Activity Ring */}
+          <BentoCard className="md:col-span-2 md:row-span-2 items-center justify-center text-center" delay={0}>
+            <p className="eyebrow text-blue">Current streak</p>
+            <div className="mt-4">
+              <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={240} stroke={20}>
+                <div>
+                  <p className="sf-display text-[80px] text-navy">{stats.streak}</p>
+                  <p className="-mt-1 text-[13px] font-medium text-sage">
+                    {stats.streak === 1 ? "day" : "days"} in a row
+                  </p>
+                </div>
+              </ActivityRing>
+            </div>
+            <p className="mt-3 max-w-[260px] text-[13px] text-sage">
+              Identity is built one rep at a time.
+            </p>
+          </BentoCard>
 
-        {/* Days showed up */}
-        <BentoCard className="md:col-span-1" tone="cream" delay={0.1}>
-          <p className="eyebrow text-sage">Days you showed up</p>
-          <CountDisplay value={stats.daysShowedUp} className="text-navy" small />
-        </BentoCard>
+          <BentoCard className="md:col-span-2" delay={0.05}>
+            <p className="eyebrow text-sage">Total minutes moved</p>
+            <BigNumber value={stats.totalMinutes} suffix="min" />
+          </BentoCard>
 
-        {/* CTA tile */}
-        <BentoCard className="md:col-span-1" tone="gold" delay={0.15} as={Link} to="/log">
-          <p className="eyebrow text-navy/70">Today</p>
-          <p className="mt-auto font-serif text-[28px] font-bold leading-[1.05] text-navy">
-            Log a<br />new move →
-          </p>
-        </BentoCard>
+          <BentoCard className="md:col-span-1" delay={0.1}>
+            <p className="eyebrow text-sage">Days you showed up</p>
+            <BigNumber value={stats.daysShowedUp} small />
+          </BentoCard>
+
+          <BentoCard
+            className="md:col-span-1 cursor-pointer"
+            delay={0.15}
+            tone="blue"
+            href="/log"
+          >
+            <p className="eyebrow text-white/70">Today</p>
+            <p className="mt-auto sf-display text-[26px] text-white">
+              Log a<br />new move ›
+            </p>
+          </BentoCard>
+        </div>
       </section>
 
-      {/* CHART + RECENT — refined two-up */}
-      <section className="mt-6 grid gap-5 lg:grid-cols-5">
-        <motion.div
-          {...fadeUp}
-          className="rounded-[28px] bg-card p-8 lift card-shadow lg:col-span-3"
-        >
+      {/* CHART + RECENT */}
+      <section className="mt-4 grid gap-4 lg:grid-cols-5">
+        <motion.div {...fadeUp} className="glass rounded-[28px] p-8 lg:col-span-3">
           <p className="eyebrow text-sage">Energy breakdown</p>
-          <h3 className="mt-2 font-serif text-[26px] font-bold text-navy">
-            Where you spent your minutes
-          </h3>
-          <div className="mt-8 h-[300px]">
+          <h3 className="mt-2 sf-display text-[28px] text-navy">Where your minutes went</h3>
+          <div className="mt-6 h-[300px]">
             {chartData.length === 0 ? (
               <Empty text="Log your first movement to see the breakdown." />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0ece4" vertical={false} />
+                  <defs>
+                    <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0071e3" />
+                      <stop offset="100%" stopColor="#a78bfa" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
                   <XAxis
                     dataKey="type"
-                    tick={{ fontSize: 12, fill: "#52624c", fontWeight: 600 }}
+                    tick={{ fontSize: 12, fill: "#6e6e73", fontWeight: 500 }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis tick={{ fontSize: 11, fill: "#52624c" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "#6e6e73" }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    cursor={{ fill: "rgba(184,150,46,0.08)" }}
+                    cursor={{ fill: "rgba(0,113,227,0.06)" }}
                     contentStyle={{
-                      background: "#0d1117",
-                      border: "none",
+                      background: "rgba(28,28,30,0.85)",
+                      backdropFilter: "blur(20px)",
+                      border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: 14,
                       color: "#fff",
                       fontSize: 13,
                       padding: "10px 14px",
                     }}
-                    labelStyle={{ color: "#b8962e", fontWeight: 700 }}
+                    labelStyle={{ color: "#fff", fontWeight: 600 }}
                   />
-                  <Bar dataKey="minutes" fill="#b8962e" radius={[10, 10, 0, 0]} />
+                  <Bar dataKey="minutes" fill="url(#bar-grad)" radius={[12, 12, 4, 4]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -207,26 +216,26 @@ function Dashboard() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="rounded-[28px] bg-card p-8 lift card-shadow lg:col-span-2"
+          className="glass rounded-[28px] p-8 lg:col-span-2"
         >
           <p className="eyebrow text-sage">Recent wins</p>
-          <h3 className="mt-2 font-serif text-[26px] font-bold text-navy">Proof you showed up</h3>
+          <h3 className="mt-2 sf-display text-[28px] text-navy">Proof you showed up</h3>
           {recent.length === 0 ? (
-            <p className="mt-8 italic text-sage">Nothing yet. Start today. Let's go.</p>
+            <p className="mt-8 italic text-sage">Nothing yet. Start today.</p>
           ) : (
-            <ul className="mt-6 divide-y divide-mist">
+            <ul className="mt-5 divide-y divide-black/5">
               {recent.map((a, i) => (
                 <motion.li
                   key={a.id}
-                  initial={{ opacity: 0, x: 12 }}
+                  initial={{ opacity: 0, x: 10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, ease, delay: i * 0.06 }}
-                  className="flex items-start justify-between gap-3 py-4"
+                  transition={{ duration: 0.4, ease, delay: i * 0.05 }}
+                  className="flex items-center justify-between gap-3 py-3.5"
                 >
                   <div>
-                    <p className="text-[15px] font-bold text-navy">{a.type}</p>
-                    <p className="mt-0.5 text-[13px] text-sage">
+                    <p className="text-[15px] font-semibold text-navy">{a.type}</p>
+                    <p className="mt-0.5 text-[12px] text-sage">
                       {a.duration} min · {a.intensity} · {a.mood}
                     </p>
                   </div>
@@ -238,22 +247,28 @@ function Dashboard() {
         </motion.div>
       </section>
 
-      {/* IDENTITY band — closer to Apple section breaker */}
+      {/* IDENTITY band — full-bleed dark */}
       <motion.section
         {...fadeUp}
-        className="mt-6 overflow-hidden rounded-[28px] px-8 py-16 sm:px-16 sm:py-24"
-        style={{ background: "var(--navy-dark)" }}
+        className="relative mt-6 -mx-6 overflow-hidden px-8 py-20 sm:-mx-8 sm:px-16 sm:py-28"
+        style={{
+          background:
+            "radial-gradient(ellipse at 20% 30%, rgba(0,113,227,0.4), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(167,139,250,0.35), transparent 55%), #0a0a0c",
+        }}
       >
-        <p className="eyebrow text-gold">
-          {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} showed up · {stats.streak}{" "}
-          in a row
-        </p>
-        <h2
-          className="mt-6 font-serif font-bold leading-[1.02] text-white"
-          style={{ fontSize: "clamp(36px, 5.5vw, 64px)", letterSpacing: "-0.02em" }}
-        >
-          This is how consistency<br />becomes <span className="text-gold">identity.</span>
-        </h2>
+        <div className="mx-auto max-w-[1200px]">
+          <p className="eyebrow text-white/60">
+            {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
+          </p>
+          <h2
+            className="sf-display mt-5 text-white"
+            style={{ fontSize: "clamp(40px, 6vw, 80px)" }}
+          >
+            This is how consistency
+            <br />
+            becomes <span style={{ color: "#5e9eff" }}>identity.</span>
+          </h2>
+        </div>
       </motion.section>
     </Layout>
   );
@@ -262,74 +277,62 @@ function Dashboard() {
 function BentoCard({
   children,
   className = "",
-  tone = "cream",
   delay = 0,
-  as,
-  to,
+  tone = "glass",
+  href,
 }: {
   children: React.ReactNode;
   className?: string;
-  tone?: "cream" | "navy" | "gold";
   delay?: number;
-  as?: typeof Link;
-  to?: string;
+  tone?: "glass" | "blue";
+  href?: string;
 }) {
-  const toneStyles =
-    tone === "navy"
-      ? { background: "var(--navy-dark)", color: "#fff" }
-      : tone === "gold"
-      ? { background: "var(--gold)", color: "var(--navy)" }
-      : { background: "#fff", color: "var(--navy)" };
+  const toneCls =
+    tone === "blue"
+      ? "bg-blue text-white border-transparent"
+      : "glass";
 
-  const Inner = (
+  const inner = (
     <motion.div
-      initial={{ opacity: 0, y: 28, scale: 0.97 }}
+      initial={{ opacity: 0, y: 24, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.7, ease, delay }}
-      whileHover={{ y: -6, transition: { duration: 0.3, ease } }}
-      style={toneStyles}
-      className={`group flex h-full flex-col rounded-[28px] p-7 card-shadow ${className}`}
+      transition={{ duration: 0.6, ease, delay }}
+      whileHover={{ y: -4, transition: { duration: 0.25, ease } }}
+      className={`group flex h-full flex-col rounded-[28px] p-7 ${toneCls} ${className}`}
+      style={tone === "blue" ? { boxShadow: "0 12px 40px -12px rgba(0,113,227,0.5)" } : undefined}
     >
       {children}
     </motion.div>
   );
 
-  if (as && to) {
+  if (href) {
     return (
-      <Link to={to} className={`block h-full ${className}`}>
-        {Inner}
+      <Link to={href} className={`block h-full ${className}`}>
+        {inner}
       </Link>
     );
   }
-  return Inner;
+  return inner;
 }
 
-function CountDisplay({
+function BigNumber({
   value,
-  suffix = "",
-  gold = false,
+  suffix,
   small = false,
-  className = "",
 }: {
   value: number;
   suffix?: string;
-  gold?: boolean;
   small?: boolean;
-  className?: string;
 }) {
   const animated = useCountUp(value, 1200);
   return (
     <p
-      className={`mt-4 font-display leading-none ${className}`}
-      style={{
-        fontSize: small ? "clamp(56px, 8vw, 88px)" : "clamp(72px, 11vw, 132px)",
-        letterSpacing: "-0.02em",
-        color: gold ? "var(--gold)" : undefined,
-      }}
+      className="sf-display mt-auto text-navy"
+      style={{ fontSize: small ? "clamp(48px, 7vw, 72px)" : "clamp(64px, 9vw, 108px)" }}
     >
       {animated}
-      {suffix && <span className="ml-2 text-[0.35em] font-sans font-bold opacity-60">{suffix}</span>}
+      {suffix && <span className="ml-2 text-[0.32em] font-medium text-sage">{suffix}</span>}
     </p>
   );
 }

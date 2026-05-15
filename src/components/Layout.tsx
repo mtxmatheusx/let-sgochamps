@@ -1,25 +1,106 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 
 const links = [
   { to: "/", label: "Dashboard" },
-  { to: "/log", label: "Log Movement" },
+  { to: "/log", label: "Log" },
   { to: "/history", label: "History" },
   { to: "/about", label: "About" },
 ] as const;
 
-const publicLinks = [
-  { to: "/about", label: "About" },
-] as const;
+const ease = [0.22, 1, 0.36, 1] as const;
+
+function Brand() {
+  return (
+    <Link to="/" className="group flex items-center gap-2">
+      <span className="font-display text-[17px] font-semibold tracking-tight text-navy">
+        Let's Go Champs
+      </span>
+      <span className="h-1.5 w-1.5 rounded-full bg-gold opacity-70 transition-opacity group-hover:opacity-100" />
+    </Link>
+  );
+}
+
+function NavLinks({
+  items,
+  pathname,
+}: {
+  items: ReadonlyArray<{ to: string; label: string }>;
+  pathname: string;
+}) {
+  return (
+    <>
+      {items.map((l) => {
+        const active = pathname === l.to;
+        return (
+          <Link
+            key={l.to}
+            to={l.to}
+            className="relative px-1 py-1 text-[13px] font-medium text-navy/75 transition-colors hover:text-navy"
+          >
+            {l.label}
+            {active && (
+              <motion.span
+                layoutId="nav-underline"
+                className="absolute -bottom-1 left-0 right-0 h-[1.5px] rounded-full bg-navy"
+                transition={{ duration: 0.4, ease }}
+              />
+            )}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+function MobileSheet({
+  open,
+  items,
+  onClose,
+  trailing,
+}: {
+  open: boolean;
+  items: ReadonlyArray<{ to: string; label: string }>;
+  onClose: () => void;
+  trailing: ReactNode;
+}) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25, ease }}
+          className="md:hidden glass-nav border-t border-black/5 px-6 pb-6 pt-4"
+        >
+          <div className="flex flex-col gap-1">
+            {items.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                onClick={onClose}
+                className="rounded-xl px-3 py-3 text-[15px] font-medium text-navy hover:bg-black/5"
+              >
+                {l.label}
+              </Link>
+            ))}
+            <div className="mt-2 border-t border-black/5 pt-3">{trailing}</div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -40,99 +121,52 @@ export function Layout({ children }: { children: ReactNode }) {
     if (ready && !session) navigate({ to: "/auth" });
   }, [ready, session, navigate]);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   useEffect(() => setOpen(false), [location.pathname]);
 
   if (!ready) return <div className="min-h-screen bg-cream" />;
   if (!session) return null;
 
+  const signOutBtn = (
+    <button
+      onClick={() => supabase.auth.signOut()}
+      className="rounded-full px-4 py-2 text-[13px] font-medium text-navy/70 transition-colors hover:bg-black/5 hover:text-navy"
+    >
+      Sign out
+    </button>
+  );
+
   return (
     <div className="min-h-screen bg-cream">
-      <nav
-        className="sticky top-0 z-40 transition-all duration-300"
-        style={{
-          background: scrolled ? "rgba(7,27,47,0.85)" : "#071b2f",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-        }}
-      >
-        <div className="mx-auto flex h-[68px] max-w-[1280px] items-center justify-between px-6 sm:px-[6%]">
-          <Link to="/" className="flex items-baseline gap-2.5">
-            <span className="font-display text-[22px] leading-none tracking-wide text-gold">LGC</span>
-            <span className="hidden text-sm font-semibold tracking-wide text-white sm:inline">
-              Move Your Way
-            </span>
-          </Link>
+      <nav className="sticky top-0 z-40 glass-nav">
+        <div className="mx-auto flex h-[52px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
+          <Brand />
 
           <div className="hidden items-center gap-8 md:flex">
-            {links.map((l) => {
-              const active = location.pathname === l.to;
-              return (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  className="relative text-sm font-semibold text-white/90 transition-colors hover:text-gold"
-                >
-                  {l.label}
-                  <span
-                    className="absolute -bottom-2 left-0 h-[2px] bg-gold transition-all duration-300"
-                    style={{ width: active ? "100%" : "0%" }}
-                  />
-                </Link>
-              );
-            })}
-            <button
-              onClick={() => supabase.auth.signOut()}
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-gold"
-            >
-              Sign out
-            </button>
+            <NavLinks items={links} pathname={location.pathname} />
           </div>
 
+          <div className="hidden md:block">{signOutBtn}</div>
+
           <button
-            className="md:hidden text-white"
+            className="md:hidden text-navy"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {open ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              {open ? <path d="M6 6l12 12M6 18L18 6" /> : <><path d="M4 8h16" /><path d="M4 16h16" /></>}
             </svg>
           </button>
         </div>
 
-        {open && (
-          <div className="md:hidden bg-navy px-6 pb-6">
-            <div className="flex flex-col gap-4">
-              {links.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  className="text-base font-semibold text-white hover:text-gold"
-                >
-                  {l.label}
-                </Link>
-              ))}
-              <button
-                onClick={() => supabase.auth.signOut()}
-                className="text-left text-sm font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-gold"
-              >
-                Sign out
-              </button>
-            </div>
-          </div>
-        )}
+        <MobileSheet open={open} items={links} onClose={() => setOpen(false)} trailing={signOutBtn} />
       </nav>
 
-      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-[6%] sm:py-20 fade-up">
+      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16 fade-up">
         {children}
       </main>
 
-      <footer className="mx-auto max-w-[1280px] px-6 py-10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-sage sm:px-[6%]">
-        Let's Go Champs · Move Your Way
+      <footer className="mx-auto max-w-[1280px] px-6 py-10 text-center text-[12px] text-sage sm:px-8">
+        © Let's Go Champs · Move Your Way
       </footer>
     </div>
   );
@@ -149,12 +183,14 @@ export function PageHeader({
 }) {
   return (
     <header className="mb-12 max-w-3xl">
-      {eyebrow && <p className="eyebrow mb-4 text-green">{eyebrow}</p>}
-      <h1 className="font-serif text-4xl font-bold leading-[1.05] text-navy sm:text-5xl md:text-[56px]">
+      {eyebrow && <p className="eyebrow mb-4 text-blue">{eyebrow}</p>}
+      <h1 className="sf-display text-navy text-[44px] sm:text-[56px] md:text-[64px]">
         {title}
       </h1>
       {subtitle && (
-        <p className="mt-5 text-base leading-relaxed text-sage sm:text-lg">{subtitle}</p>
+        <p className="mt-5 text-[17px] leading-[1.55] text-sage sm:text-[19px]">
+          {subtitle}
+        </p>
       )}
     </header>
   );
@@ -162,99 +198,44 @@ export function PageHeader({
 
 export function PublicLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   useEffect(() => setOpen(false), [location.pathname]);
+
+  const items = [{ to: "/about", label: "About" }] as const;
+
+  const trailing = (
+    <Link
+      to="/auth"
+      className="rounded-full bg-blue px-4 py-2 text-[13px] font-semibold text-white hover:brightness-110"
+    >
+      Sign in
+    </Link>
+  );
 
   return (
     <div className="min-h-screen bg-cream">
-      <nav
-        className="sticky top-0 z-40 transition-all duration-300"
-        style={{
-          background: scrolled ? "rgba(7,27,47,0.85)" : "#071b2f",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-        }}
-      >
-        <div className="mx-auto flex h-[68px] max-w-[1280px] items-center justify-between px-6 sm:px-[6%]">
-          <Link to="/" className="flex items-baseline gap-2.5">
-            <span className="font-display text-[22px] leading-none tracking-wide text-gold">LGC</span>
-            <span className="hidden text-sm font-semibold tracking-wide text-white sm:inline">
-              Move Your Way
-            </span>
-          </Link>
-
+      <nav className="sticky top-0 z-40 glass-nav">
+        <div className="mx-auto flex h-[52px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
+          <Brand />
           <div className="hidden items-center gap-8 md:flex">
-            {publicLinks.map((l) => {
-              const active = location.pathname === l.to;
-              return (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  className="relative text-sm font-semibold text-white/90 transition-colors hover:text-gold"
-                >
-                  {l.label}
-                  <span
-                    className="absolute -bottom-2 left-0 h-[2px] bg-gold transition-all duration-300"
-                    style={{ width: active ? "100%" : "0%" }}
-                  />
-                </Link>
-              );
-            })}
-            <Link
-              to="/auth"
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-gold"
-            >
-              Member Login
-            </Link>
+            <NavLinks items={items} pathname={location.pathname} />
           </div>
-
-          <button
-            className="md:hidden text-white"
-            onClick={() => setOpen(!open)}
-            aria-label="Menu"
-          >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {open ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+          <div className="hidden md:block">{trailing}</div>
+          <button className="md:hidden text-navy" onClick={() => setOpen(!open)} aria-label="Menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              {open ? <path d="M6 6l12 12M6 18L18 6" /> : <><path d="M4 8h16" /><path d="M4 16h16" /></>}
             </svg>
           </button>
         </div>
-
-        {open && (
-          <div className="md:hidden bg-navy px-6 pb-6">
-            <div className="flex flex-col gap-4">
-              {publicLinks.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  className="text-base font-semibold text-white hover:text-gold"
-                >
-                  {l.label}
-                </Link>
-              ))}
-              <Link
-                to="/auth"
-                className="text-sm font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-gold"
-              >
-                Member Login
-              </Link>
-            </div>
-          </div>
-        )}
+        <MobileSheet open={open} items={items} onClose={() => setOpen(false)} trailing={trailing} />
       </nav>
 
-      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-[6%] sm:py-20 fade-up">
+      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16 fade-up">
         {children}
       </main>
 
-      <footer className="mx-auto max-w-[1280px] px-6 py-10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-sage sm:px-[6%]">
-        Let's Go Champs · Move Your Way
+      <footer className="mx-auto max-w-[1280px] px-6 py-10 text-center text-[12px] text-sage sm:px-8">
+        © Let's Go Champs · Move Your Way
       </footer>
     </div>
   );

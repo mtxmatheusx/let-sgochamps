@@ -1,8 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({ component: AuthPage });
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -37,7 +40,7 @@ function AuthPage() {
         });
         if (error) throw error;
         if (!data.session) {
-          setInfo("Enviamos um e-mail de confirmação. Verifique sua caixa de entrada para ativar sua conta.");
+          setInfo("We sent you a confirmation email. Check your inbox to activate your account.");
         } else {
           navigate({ to: "/" });
         }
@@ -50,76 +53,175 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream px-4 py-12">
-      <div className="w-full max-w-md rounded-[20px] bg-card p-10 card-shadow">
-        <div className="mb-8 flex items-baseline gap-2.5">
-          <span className="font-display text-[28px] leading-none text-gold">LGC</span>
-          <span className="text-sm font-semibold tracking-wide text-navy">Move Your Way</span>
-        </div>
-        <p className="eyebrow mb-3 text-green">
-          {mode === "signin" ? "Welcome back" : "Join the movement"}
-        </p>
-        <h1 className="font-serif text-3xl font-bold text-navy">
-          {mode === "signin" ? "Show up again." : "Start showing up."}
-        </h1>
-        <p className="mt-3 text-sm text-sage">
-          {mode === "signin"
-            ? "Sign in to log your next movement."
-            : "Create your account and stack the days."}
-        </p>
+    <div className="relative min-h-screen overflow-hidden bg-cream px-4 py-10">
+      {/* Floating colored orbs behind the glass */}
+      <div className="orb animate-float-orb" style={{ width: 520, height: 520, top: -120, left: -80, background: "#0071e3" }} />
+      <div
+        className="orb animate-float-orb"
+        style={{ width: 460, height: 460, bottom: -160, right: -120, background: "#b8962e", animationDelay: "-8s" }}
+      />
+      <div
+        className="orb animate-float-orb"
+        style={{ width: 380, height: 380, top: "40%", left: "55%", background: "#30a46c", animationDelay: "-15s", opacity: 0.4 }}
+      />
 
-        <form onSubmit={submit} className="mt-8 space-y-5">
-          <div>
-            <label
-              className="mb-2 block text-[12px] font-bold uppercase text-navy"
-              style={{ letterSpacing: "1px" }}
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-12 w-full rounded-xl border-[1.5px] border-mist bg-[var(--cream-deep)] px-4 text-[15px] outline-none transition-all duration-200 focus:border-gold focus:border-l-[3px] focus:bg-white"
-            />
+      {/* Top bar */}
+      <div className="relative z-10 mx-auto flex max-w-[1100px] items-center justify-between px-2">
+        <Link to="/" className="flex items-center gap-2">
+          <span className="font-display text-[17px] font-semibold tracking-tight text-navy">
+            Let's Go Champs
+          </span>
+          <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+        </Link>
+        <span className="text-[12px] text-sage">Move Your Way</span>
+      </div>
+
+      {/* Centered glass card */}
+      <div className="relative z-10 mx-auto mt-10 flex max-w-md justify-center sm:mt-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, ease }}
+          className="w-full glass-strong rounded-[28px] p-8 sm:p-10"
+        >
+          {/* Segmented control */}
+          <div className="relative mx-auto mb-8 flex w-full max-w-[280px] rounded-full bg-black/[0.06] p-1">
+            {(["signin", "signup"] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => {
+                  setMode(m);
+                  setError(null);
+                  setInfo(null);
+                }}
+                className={`relative z-10 flex-1 rounded-full py-2 text-[13px] font-semibold transition-colors ${
+                  mode === m ? "text-navy" : "text-sage hover:text-navy"
+                }`}
+              >
+                {mode === m && (
+                  <motion.span
+                    layoutId="auth-pill"
+                    className="absolute inset-0 -z-10 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                    transition={{ duration: 0.4, ease }}
+                  />
+                )}
+                {m === "signin" ? "Sign in" : "Sign up"}
+              </button>
+            ))}
           </div>
-          <div>
-            <label
-              className="mb-2 block text-[12px] font-bold uppercase text-navy"
-              style={{ letterSpacing: "1px" }}
-            >
-              Password
-            </label>
-            <input
+
+          <motion.h1
+            key={mode + "-title"}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease }}
+            className="sf-display text-[40px] text-navy"
+          >
+            {mode === "signin" ? "Welcome back." : "Start moving."}
+          </motion.h1>
+          <p className="mt-2 text-[15px] text-sage">
+            {mode === "signin"
+              ? "Sign in to log your next movement."
+              : "Create your account and stack the days."}
+          </p>
+
+          <form onSubmit={submit} className="mt-7 space-y-3">
+            <FloatingInput
+              label="Email"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              required
+            />
+            <FloatingInput
+              label="Password"
               type="password"
+              value={password}
+              onChange={setPassword}
               required
               minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-12 w-full rounded-xl border-[1.5px] border-mist bg-[var(--cream-deep)] px-4 text-[15px] outline-none transition-all duration-200 focus:border-gold focus:border-l-[3px] focus:bg-white"
             />
-          </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {info && (
-            <p className="rounded-lg bg-green/10 p-3 text-sm text-green">{info}</p>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="h-12 w-full rounded-full bg-gold text-[12px] font-extrabold uppercase text-navy transition-all duration-200 hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
-            style={{ letterSpacing: "1.5px" }}
-          >
-            {loading ? "..." : mode === "signin" ? "Sign In" : "Create Account"}
-          </button>
-        </form>
-        <button
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-6 w-full text-center text-sm text-sage hover:text-navy"
-        >
-          {mode === "signin" ? "No account? Sign up" : "Already have one? Sign in"}
-        </button>
+
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-[13px] text-destructive"
+                >
+                  {error}
+                </motion.p>
+              )}
+              {info && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="rounded-xl bg-green/10 p-3 text-[13px] text-green"
+                >
+                  {info}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={loading}
+              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(0,113,227,0.55)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
+            >
+              {loading ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+            </motion.button>
+          </form>
+
+          <p className="mt-6 text-center text-[12px] text-sage">
+            By continuing you agree to keep showing up.
+          </p>
+        </motion.div>
       </div>
+    </div>
+  );
+}
+
+function FloatingInput({
+  label,
+  value,
+  onChange,
+  type = "text",
+  required,
+  minLength,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  required?: boolean;
+  minLength?: number;
+}) {
+  const [focused, setFocused] = useState(false);
+  const float = focused || value.length > 0;
+  return (
+    <div className="relative">
+      <label
+        className={`pointer-events-none absolute left-4 transition-all duration-200 ${
+          float
+            ? "top-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-blue"
+            : "top-1/2 -translate-y-1/2 text-[15px] text-sage"
+        }`}
+      >
+        {label}
+      </label>
+      <input
+        type={type}
+        required={required}
+        minLength={minLength}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        className="focus-ios h-[58px] w-full rounded-2xl border border-transparent bg-black/[0.04] px-4 pb-1 pt-5 text-[15px] text-navy outline-none transition-all"
+      />
     </div>
   );
 }
