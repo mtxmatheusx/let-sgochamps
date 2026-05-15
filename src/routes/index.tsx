@@ -109,7 +109,7 @@ function Dashboard() {
             src={HERO_IMG}
             alt="Aidan running with the community"
             className="h-full w-full object-cover"
-            style={{ objectPosition: "62% center" }}
+            style={{ objectPosition: "38% center" }}
           />
           {/* Left-to-right gradient: text area is clean white, image bleeds to the right */}
           <div
