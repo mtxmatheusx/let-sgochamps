@@ -141,15 +141,14 @@ function Dashboard() {
       </section>
 
       {/* BENTO GRID */}
-      <section className="relative mt-16">
-        {/* Soft orbs behind the grid */}
-        <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#22c55e", opacity: 0.18 }} />
-        <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#22c55e", opacity: 0.18 }} />
+      <section className="relative mt-10">
+        <div className="orb" style={{ width: 480, height: 480, top: -80, left: -120, background: "#22c55e", opacity: 0.12 }} />
+        <div className="orb" style={{ width: 420, height: 420, bottom: -60, right: -80, background: "#22c55e", opacity: 0.12 }} />
 
-        <div className="relative grid auto-rows-[180px] grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[200px]">
+        <div className="relative grid auto-rows-[200px] grid-cols-1 gap-5 md:grid-cols-4">
           {/* Streak — Activity Ring */}
           <BentoCard className="md:col-span-2 md:row-span-2 items-center justify-center text-center" delay={0}>
-            <p className="eyebrow text-blue">Current streak</p>
+            <p className="eyebrow text-green">Current streak</p>
             <div className="mt-4">
               <ActivityRing value={stats.streak} max={Math.max(7, stats.streak)} size={240} stroke={20}>
                 <div>
@@ -190,7 +189,7 @@ function Dashboard() {
       </section>
 
       {/* CHART + RECENT */}
-      <section className="mt-4 grid gap-4 lg:grid-cols-5">
+      <section className="mt-5 grid gap-5 lg:grid-cols-5">
         <motion.div {...fadeUp} className="glass rounded-[28px] p-8 lg:col-span-3">
           <p className="eyebrow text-sage">Energy breakdown</p>
           <h3 className="mt-2 sf-display text-[28px] text-navy">Where your minutes went</h3>
@@ -237,7 +236,7 @@ function Dashboard() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="glass rounded-[28px] p-8 lg:col-span-2"
+          className="glass rounded-[28px] p-8 lg:col-span-2 min-h-[420px]"
         >
           <p className="eyebrow text-sage">Recent wins</p>
           <h3 className="mt-2 sf-display text-[28px] text-navy">Proof you showed up</h3>
@@ -271,7 +270,7 @@ function Dashboard() {
       {/* IDENTITY band — full-bleed dark */}
       <motion.section
         {...fadeUp}
-        className="relative mt-6 -mx-6 overflow-hidden px-8 py-20 sm:-mx-8 sm:px-16 sm:py-28"
+        className="relative mt-5 -mx-6 overflow-hidden rounded-[28px] px-8 py-20 sm:-mx-8 sm:px-16 sm:py-28"
         style={{
           background:
             "radial-gradient(ellipse at 20% 30%, rgba(34,197,94,0.35), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(22,163,74,0.25), transparent 55%), #0a0a0c",
@@ -287,7 +286,7 @@ function Dashboard() {
           >
             This is how consistency
             <br />
-            becomes <span style={{ color: "#5e9eff" }}>identity.</span>
+            becomes <span style={{ color: "#22c55e" }}>identity.</span>
           </h2>
         </div>
       </motion.section>
@@ -310,7 +309,7 @@ function BentoCard({
 }) {
   const toneCls =
     tone === "blue"
-      ? "bg-blue text-white border-transparent"
+      ? "bg-green text-white border-transparent"
       : "glass";
 
   const inner = (
