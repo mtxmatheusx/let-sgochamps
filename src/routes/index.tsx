@@ -21,6 +21,56 @@ export const Route = createFileRoute("/")({ component: Dashboard });
 const HERO_IMG = "/hero.png";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+
+const AIDAN_QUOTES = [
+  "You don't need to be the fastest. You just need to show up. Every single day.",
+  "The version of you that keeps going — that's the one people remember.",
+  "Motivation gets you started. Showing up becomes who you are.",
+  "One session doesn't change your body. A thousand sessions change your life.",
+  "Don't wait to feel ready. Readiness is built by doing, not waiting.",
+  "The days you don't feel like it are the days it counts the most.",
+  "Progress isn't always visible. But it's always happening when you show up.",
+  "You are not starting over. You are starting from everything you already learned.",
+  "Consistency is boring to talk about and extraordinary to live.",
+  "Your future self is watching. Make them proud today.",
+  "Movement isn't punishment. It's a privilege. Use it.",
+  "The hardest rep is always the first one. After that, you're already winning.",
+  "Small wins stacked every day will beat one big effort every time.",
+  "You don't have to crush it. You just have to do it.",
+  "Champions aren't made on the days it's easy. They're made on the days like today.",
+  "Stop comparing your chapter one to someone else's chapter ten.",
+  "Every time you show up, you prove something to yourself. That proof adds up.",
+  "The goal isn't perfection. The goal is to never stop moving.",
+  "Rest when you need to. Quit never.",
+  "You built this streak one decision at a time. Keep deciding.",
+  "Discipline is just choosing what you want most over what you want now.",
+  "There is no such thing as a wasted workout. Only missed ones.",
+  "When it feels too hard, remember why you started. Then take the next step anyway.",
+  "The body follows the mind. The mind follows the habit. Build the habit.",
+  "You showed up yesterday. That matters. You're showing up today. That matters more.",
+  "Movement heals. Consistency transforms. Showing up is the whole game.",
+  "You are not behind. You are exactly where your next step matters.",
+  "Be the person your community needs to see today.",
+  "No one ever regretted a workout. Not once.",
+  "This is your time. This is your streak. This is your story.",
+  "Hard days build the foundation. Easy days show the progress. Both matter.",
+  "The goal is not the finish line. The goal is the daily decision to run.",
+  "Some days you sprint. Some days you walk. Both count. Keep moving.",
+  "Your effort today is someone else's inspiration tomorrow.",
+  "It's not about talent. It's about turning up. Let's go.",
+  "The gap between who you are and who you want to be is closed one session at a time.",
+  "Forget the scale. Focus on the habit. The rest follows.",
+  "You are stronger than the excuse. Prove it.",
+  "Movement is medicine. Consistency is the dose.",
+  "Every champion was once a beginner who refused to quit.",
+];
+
+function getDailyQuote() {
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
+  );
+  return AIDAN_QUOTES[dayOfYear % AIDAN_QUOTES.length];
+}
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
@@ -187,6 +237,9 @@ function Dashboard() {
           </BentoCard>
         </div>
       </section>
+
+      {/* DAILY QUOTE */}
+      <DailyQuote />
 
       {/* CHART + RECENT */}
       <section className="mt-5 grid gap-5 lg:grid-cols-5">
@@ -362,5 +415,69 @@ function Empty({ text }: { text: string }) {
     <div className="flex h-full items-center justify-center">
       <p className="italic text-sage">{text}</p>
     </div>
+  );
+}
+
+function DailyQuote() {
+  const quote = getDailyQuote();
+  const today = new Date();
+  const dateLabel = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <motion.div
+      {...fadeUp}
+      className="mt-5 relative overflow-hidden rounded-[28px]"
+      style={{
+        background:
+          "linear-gradient(135deg, #0a0a0c 0%, #0d1a0f 50%, #0a0a0c 100%)",
+      }}
+    >
+      {/* Ambient green glow */}
+      <div
+        className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full"
+        style={{
+          background: "radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-12 right-8 h-48 w-48 rounded-full"
+        style={{
+          background: "radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative px-8 py-10 sm:px-12 sm:py-12">
+        {/* Top row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-2 w-2 rounded-full bg-green animate-pulse" />
+            <p className="eyebrow text-green/80" style={{ letterSpacing: "0.18em" }}>
+              Aidan's message today
+            </p>
+          </div>
+          <p className="text-[12px] font-medium text-white/30">{dateLabel}</p>
+        </div>
+
+        {/* Quote */}
+        <blockquote
+          className="sf-display mt-6 text-white"
+          style={{ fontSize: "clamp(22px, 3.2vw, 38px)", lineHeight: 1.2, maxWidth: "760px" }}
+        >
+          "{quote}"
+        </blockquote>
+
+        {/* Attribution */}
+        <div className="mt-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-white/10" />
+          <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/40">
+            Aidan O'Hare
+          </p>
+        </div>
+      </div>
+    </motion.div>
   );
 }
