@@ -9,22 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as LogRouteImport } from './routes/log'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StoriesIndexRouteImport } from './routes/stories.index'
-import { Route as StoriesSubmitRouteImport } from './routes/stories.submit'
 
-const StoriesRoute = StoriesRouteImport.update({
-  id: '/stories',
-  path: '/stories',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LogRoute = LogRouteImport.update({
   id: '/log',
   path: '/log',
@@ -45,11 +36,6 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -60,111 +46,51 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StoriesIndexRoute = StoriesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => StoriesRoute,
-} as any)
-const StoriesSubmitRoute = StoriesSubmitRouteImport.update({
-  id: '/submit',
-  path: '/submit',
-  getParentRoute: () => StoriesRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
-  '/stories': typeof StoriesRouteWithChildren
-  '/stories/submit': typeof StoriesSubmitRoute
-  '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
-  '/stories/submit': typeof StoriesSubmitRoute
-  '/stories': typeof StoriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
-  '/stories': typeof StoriesRouteWithChildren
-  '/stories/submit': typeof StoriesSubmitRoute
-  '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/about'
-    | '/admin'
-    | '/auth'
-    | '/demo'
-    | '/history'
-    | '/log'
-    | '/stories'
-    | '/stories/submit'
-    | '/stories/'
+  fullPaths: '/' | '/about' | '/auth' | '/demo' | '/history' | '/log'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/admin'
-    | '/auth'
-    | '/demo'
-    | '/history'
-    | '/log'
-    | '/stories/submit'
-    | '/stories'
-  id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/admin'
-    | '/auth'
-    | '/demo'
-    | '/history'
-    | '/log'
-    | '/stories'
-    | '/stories/submit'
-    | '/stories/'
+  to: '/' | '/about' | '/auth' | '/demo' | '/history' | '/log'
+  id: '__root__' | '/' | '/about' | '/auth' | '/demo' | '/history' | '/log'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   DemoRoute: typeof DemoRoute
   HistoryRoute: typeof HistoryRoute
   LogRoute: typeof LogRoute
-  StoriesRoute: typeof StoriesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/stories': {
-      id: '/stories'
-      path: '/stories'
-      fullPath: '/stories'
-      preLoaderRoute: typeof StoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/log': {
       id: '/log'
       path: '/log'
@@ -193,13 +119,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -214,46 +133,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stories/': {
-      id: '/stories/'
-      path: '/'
-      fullPath: '/stories/'
-      preLoaderRoute: typeof StoriesIndexRouteImport
-      parentRoute: typeof StoriesRoute
-    }
-    '/stories/submit': {
-      id: '/stories/submit'
-      path: '/submit'
-      fullPath: '/stories/submit'
-      preLoaderRoute: typeof StoriesSubmitRouteImport
-      parentRoute: typeof StoriesRoute
-    }
   }
 }
-
-interface StoriesRouteChildren {
-  StoriesSubmitRoute: typeof StoriesSubmitRoute
-  StoriesIndexRoute: typeof StoriesIndexRoute
-}
-
-const StoriesRouteChildren: StoriesRouteChildren = {
-  StoriesSubmitRoute: StoriesSubmitRoute,
-  StoriesIndexRoute: StoriesIndexRoute,
-}
-
-const StoriesRouteWithChildren =
-  StoriesRoute._addFileChildren(StoriesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   DemoRoute: DemoRoute,
   HistoryRoute: HistoryRoute,
   LogRoute: LogRoute,
-  StoriesRoute: StoriesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
