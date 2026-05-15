@@ -111,7 +111,7 @@ function Dashboard() {
       {/* ── HERO ── */}
       <section
         ref={heroRef}
-        className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16"
+        className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16 lg:mx-0 lg:mt-0 lg:rounded-[32px]"
         style={{ height: "min(92vh, 860px)", minHeight: 440 }}
       >
         {/* Parallax image */}
