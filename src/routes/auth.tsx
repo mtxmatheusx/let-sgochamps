@@ -9,14 +9,20 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "update">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
   useEffect(() => {
+    // Detect Supabase password-recovery hash (from reset email link)
+    if (window.location.hash.includes("type=recovery")) {
+      setMode("update");
+      return;
+    }
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/" });
     });
@@ -32,7 +38,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         navigate({ to: "/" });
-      } else {
+      } else if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -44,6 +50,18 @@ function AuthPage() {
         } else {
           navigate({ to: "/" });
         }
+      } else if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth`,
+        });
+        if (error) throw error;
+        setInfo("Check your email — we sent a link to reset your password.");
+      } else if (mode === "update") {
+        if (newPassword.length < 6) throw new Error("Password must be at least 6 characters.");
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) throw error;
+        setInfo("Password updated! Signing you in…");
+        setTimeout(() => navigate({ to: "/" }), 1500);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -84,31 +102,33 @@ function AuthPage() {
           transition={{ duration: 0.7, ease }}
           className="w-full glass-strong rounded-[28px] p-8 sm:p-10"
         >
-          {/* Segmented control */}
-          <div className="relative mx-auto mb-8 flex w-full max-w-[280px] rounded-full bg-black/[0.06] p-1">
-            {(["signin", "signup"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => {
-                  setMode(m);
-                  setError(null);
-                  setInfo(null);
-                }}
-                className={`relative z-10 flex-1 rounded-full py-2 text-[13px] font-semibold transition-colors ${
-                  mode === m ? "text-navy" : "text-sage hover:text-navy"
-                }`}
-              >
-                {mode === m && (
-                  <motion.span
-                    layoutId="auth-pill"
-                    className="absolute inset-0 -z-10 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                    transition={{ duration: 0.4, ease }}
-                  />
-                )}
-                {m === "signin" ? "Sign in" : "Sign up"}
-              </button>
-            ))}
-          </div>
+          {/* Segmented control — hidden on forgot/update modes */}
+          {(mode === "signin" || mode === "signup") && (
+            <div className="relative mx-auto mb-8 flex w-full max-w-[280px] rounded-full bg-black/[0.06] p-1">
+              {(["signin", "signup"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => {
+                    setMode(m);
+                    setError(null);
+                    setInfo(null);
+                  }}
+                  className={`relative z-10 flex-1 rounded-full py-2 text-[13px] font-semibold transition-colors ${
+                    mode === m ? "text-navy" : "text-sage hover:text-navy"
+                  }`}
+                >
+                  {mode === m && (
+                    <motion.span
+                      layoutId="auth-pill"
+                      className="absolute inset-0 -z-10 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                      transition={{ duration: 0.4, ease }}
+                    />
+                  )}
+                  {m === "signin" ? "Sign in" : "Sign up"}
+                </button>
+              ))}
+            </div>
+          )}
 
           <motion.h1
             key={mode + "-title"}
@@ -117,30 +137,66 @@ function AuthPage() {
             transition={{ duration: 0.4, ease }}
             className="sf-display text-[40px] text-navy"
           >
-            {mode === "signin" ? "Welcome back." : "Start moving."}
+            {mode === "signin" && "Welcome back."}
+            {mode === "signup" && "Start moving."}
+            {mode === "forgot" && "Reset password."}
+            {mode === "update" && "New password."}
           </motion.h1>
           <p className="mt-2 text-[15px] text-sage">
-            {mode === "signin"
-              ? "Sign in to log your next movement."
-              : "Create your account and stack the days."}
+            {mode === "signin" && "Sign in to log your next movement."}
+            {mode === "signup" && "Create your account and stack the days."}
+            {mode === "forgot" && "Enter your email and we'll send a reset link."}
+            {mode === "update" && "Choose a new password for your account."}
           </p>
 
           <form onSubmit={submit} className="mt-7 space-y-3">
-            <FloatingInput
-              label="Email"
-              type="email"
-              value={email}
-              onChange={setEmail}
-              required
-            />
-            <FloatingInput
-              label="Password"
-              type="password"
-              value={password}
-              onChange={setPassword}
-              required
-              minLength={6}
-            />
+            {/* Email — shown on signin, signup, forgot */}
+            {mode !== "update" && (
+              <FloatingInput
+                label="Email"
+                type="email"
+                value={email}
+                onChange={setEmail}
+                required
+              />
+            )}
+
+            {/* Password — shown on signin, signup */}
+            {(mode === "signin" || mode === "signup") && (
+              <FloatingInput
+                label="Password"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                required
+                minLength={6}
+              />
+            )}
+
+            {/* New password — shown on update */}
+            {mode === "update" && (
+              <FloatingInput
+                label="New password"
+                type="password"
+                value={newPassword}
+                onChange={setNewPassword}
+                required
+                minLength={6}
+              />
+            )}
+
+            {/* Forgot password link — only on signin */}
+            {mode === "signin" && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => { setMode("forgot"); setError(null); setInfo(null); }}
+                  className="text-[13px] text-sage underline underline-offset-2 hover:text-navy transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
 
             <AnimatePresence>
               {error && (
@@ -171,13 +227,26 @@ function AuthPage() {
               disabled={loading}
               className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
             >
-              {loading ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+              {loading ? "…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}
             </motion.button>
           </form>
 
-          <p className="mt-6 text-center text-[12px] text-sage">
-            By continuing you agree to keep showing up.
-          </p>
+          {/* Back to sign in link — on forgot/update modes */}
+          {(mode === "forgot" || mode === "update") && (
+            <button
+              type="button"
+              onClick={() => { setMode("signin"); setError(null); setInfo(null); }}
+              className="mt-5 flex w-full items-center justify-center gap-1.5 text-[13px] text-sage hover:text-navy transition-colors"
+            >
+              <span>←</span> Back to sign in
+            </button>
+          )}
+
+          {(mode === "signin" || mode === "signup") && (
+            <p className="mt-6 text-center text-[12px] text-sage">
+              By continuing you agree to keep showing up.
+            </p>
+          )}
         </motion.div>
       </div>
     </div>
