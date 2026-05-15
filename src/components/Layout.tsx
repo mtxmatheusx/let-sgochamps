@@ -7,13 +7,11 @@ const links = [
   { to: "/", label: "Dashboard" },
   { to: "/log", label: "Log Movement" },
   { to: "/history", label: "History" },
-  { to: "/stories", label: "Stories" },
   { to: "/about", label: "About" },
 ] as const;
 
 const publicLinks = [
-  { to: "/stories", label: "Stories" },
-  { to: "/stories/submit", label: "Share Your Story" },
+  { to: "/about", label: "About" },
 ] as const;
 
 export function Layout({ children }: { children: ReactNode }) {
