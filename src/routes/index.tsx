@@ -329,7 +329,7 @@ function CountDisplay({
       }}
     >
       {animated}
-      {suffix && <span className="ml-2 text-[0.35em] font-sans font-bold text-current/60">{suffix}</span>}
+      {suffix && <span className="ml-2 text-[0.35em] font-sans font-bold opacity-60">{suffix}</span>}
     </p>
   );
 }
