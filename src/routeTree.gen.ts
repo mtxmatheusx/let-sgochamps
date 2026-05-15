@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoriesIndexRouteImport } from './routes/stories.index'
 import { Route as StoriesSubmitRouteImport } from './routes/stories.submit'
 
 const StoriesRoute = StoriesRouteImport.update({
@@ -59,6 +60,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoriesIndexRoute = StoriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StoriesRoute,
+} as any)
 const StoriesSubmitRoute = StoriesSubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/log': typeof LogRoute
   '/stories': typeof StoriesRouteWithChildren
   '/stories/submit': typeof StoriesSubmitRoute
+  '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,8 +91,8 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
-  '/stories': typeof StoriesRouteWithChildren
   '/stories/submit': typeof StoriesSubmitRoute
+  '/stories': typeof StoriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +105,7 @@ export interface FileRoutesById {
   '/log': typeof LogRoute
   '/stories': typeof StoriesRouteWithChildren
   '/stories/submit': typeof StoriesSubmitRoute
+  '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +119,7 @@ export interface FileRouteTypes {
     | '/log'
     | '/stories'
     | '/stories/submit'
+    | '/stories/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,8 +129,8 @@ export interface FileRouteTypes {
     | '/demo'
     | '/history'
     | '/log'
-    | '/stories'
     | '/stories/submit'
+    | '/stories'
   id:
     | '__root__'
     | '/'
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/log'
     | '/stories'
     | '/stories/submit'
+    | '/stories/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -204,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stories/': {
+      id: '/stories/'
+      path: '/'
+      fullPath: '/stories/'
+      preLoaderRoute: typeof StoriesIndexRouteImport
+      parentRoute: typeof StoriesRoute
+    }
     '/stories/submit': {
       id: '/stories/submit'
       path: '/submit'
@@ -216,10 +233,12 @@ declare module '@tanstack/react-router' {
 
 interface StoriesRouteChildren {
   StoriesSubmitRoute: typeof StoriesSubmitRoute
+  StoriesIndexRoute: typeof StoriesIndexRoute
 }
 
 const StoriesRouteChildren: StoriesRouteChildren = {
   StoriesSubmitRoute: StoriesSubmitRoute,
+  StoriesIndexRoute: StoriesIndexRoute,
 }
 
 const StoriesRouteWithChildren =
