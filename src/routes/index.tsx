@@ -102,71 +102,83 @@ function Dashboard() {
       <section
         ref={heroRef}
         className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16"
-        style={{ height: "min(86vh, 780px)" }}
+        style={{ height: "min(92vh, 860px)" }}
       >
+        {/* Parallax image */}
         <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
           <img
             src={HERO_IMG}
             alt="Aidan running with the community"
             className="h-full w-full object-cover"
-            style={{ objectPosition: "38% center" }}
-          />
-          {/* Left-to-right gradient: text area is clean white, image bleeds to the right */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.92) 30%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0) 75%)",
-            }}
-          />
-          {/* Subtle bottom fade for continuity with page body */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(255,255,255,0.6) 0%, transparent 20%)",
-            }}
+            style={{ objectPosition: "55% center" }}
           />
         </motion.div>
 
+        {/* Cinematic overlays */}
+        {/* Dark base layer — bottom-heavy vignette */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.38) 40%, rgba(10,10,10,0.08) 70%, transparent 100%)",
+          }}
+        />
+        {/* Left fade for text legibility */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.3) 35%, transparent 65%)",
+          }}
+        />
+        {/* Green accent glow — bottom left */}
+        <div
+          className="absolute bottom-0 left-0 h-[320px] w-[420px] rounded-full opacity-20 blur-[100px]"
+          style={{ background: "#22c55e" }}
+        />
+
+        {/* Content */}
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-center px-6 sm:px-8"
+          className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col justify-end pb-16 px-6 sm:pb-20 sm:px-8"
         >
-          {/* Green pill eyebrow */}
+          {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease, delay: 0.1 }}
-            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full bg-green/10 px-4 py-1.5"
+            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-green" />
-            <span className="eyebrow text-green" style={{ letterSpacing: "0.18em" }}>
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green" />
+            <span className="eyebrow text-white/90" style={{ letterSpacing: "0.18em" }}>
               Movement · Mindset · Consistency
             </span>
           </motion.div>
 
+          {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.2 }}
-            className="sf-display text-navy"
-            style={{ fontSize: "clamp(56px, 9vw, 140px)", maxWidth: "580px" }}
+            className="sf-display text-white"
+            style={{ fontSize: "clamp(52px, 9vw, 130px)", lineHeight: 0.92, maxWidth: "620px" }}
           >
             Let's go,<br />
-            <span className="text-green">champs.</span>
+            <span style={{ color: "#22c55e" }}>champs.</span>
           </motion.h1>
 
+          {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.45 }}
-            className="mt-5 max-w-[420px] text-[17px] leading-[1.55] text-navy/60 sm:text-[19px]"
+            className="mt-6 max-w-[380px] text-[17px] leading-[1.55] text-white/70 sm:text-[18px]"
           >
             Show up. Stack the days.<br />
             Become the person who keeps going.
           </motion.p>
 
+          {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -175,17 +187,30 @@ function Dashboard() {
           >
             <Link
               to="/log"
-              className="group inline-flex items-center gap-2 rounded-full bg-green px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
+              className="group inline-flex items-center gap-2 rounded-full bg-green px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_12px_32px_-8px_rgba(34,197,94,0.7)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110"
             >
               Log today's movement
-              <span className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1">›</span>
             </Link>
             <Link
               to="/history"
-              className="rounded-full px-5 py-3.5 text-[15px] font-medium text-navy/60 transition-colors hover:text-navy"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-[15px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
             >
               See your history ›
             </Link>
+          </motion.div>
+
+          {/* Bottom attribution tag */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, ease, delay: 1.2 }}
+            className="mt-10 flex items-center gap-2"
+          >
+            <div className="h-px w-8 bg-white/30" />
+            <span className="text-[12px] font-medium uppercase tracking-[0.2em] text-white/40">
+              Aidan O'Hare · Let's Go Champs
+            </span>
           </motion.div>
         </motion.div>
       </section>
