@@ -1,31 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import { Layout, PageHeader } from "@/components/Layout";
 
 export const Route = createFileRoute("/about")({ component: About });
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 const cards: Array<{ title: string; body?: string; list?: string[] }> = [
   {
-    title: "The Idea",
-    body: "This app is not built around perfection or extreme workouts. It is built around daily action. Users track simple movement habits and turn small wins into visible progress.",
+    title: "The idea",
+    body: "This app is not built around perfection or extreme workouts. It's built around daily action. Track simple movement habits and turn small wins into visible progress.",
   },
   {
-    title: "User Flow",
+    title: "The flow",
     list: [
       "Open the dashboard.",
-      "Review movement minutes, total activity and streak.",
-      "Click Log Today's Movement.",
-      "Submit the activity form.",
+      "Review minutes, days, and your streak.",
+      "Tap Log today's movement.",
+      "Submit the form.",
       "Return to an updated dashboard.",
-      "Use history to review progress over time.",
+      "Use history to review your progress.",
     ],
   },
   {
-    title: "Design Direction",
-    body: "The visual style uses bold green, deep navy, cream and gold to connect wellness with champion energy. The design feels motivational without becoming overwhelming.",
+    title: "The design",
+    body: "A calm Apple-light surface with a single blue accent and a touch of brand gold. Movement should feel modern, not loud.",
   },
   {
-    title: "Why It Works",
-    body: "The app turns movement into a feedback loop. Each logged activity gives users proof that they are becoming more consistent.",
+    title: "Why it works",
+    body: "Each logged activity is proof. The feedback loop turns showing up into identity.",
   },
 ];
 
@@ -35,27 +38,36 @@ function About() {
       <PageHeader
         eyebrow="The movement behind the app"
         title="About Move Your Way"
-        subtitle="Move Your Way is a data-driven wellness tracker inspired by the Let's Go Champs mindset: show up, stay consistent and build a lifestyle around movement."
+        subtitle="A data-driven wellness tracker inspired by the Let's Go Champs mindset: show up, stay consistent, build a lifestyle around movement."
       />
-      <div className="grid gap-6 md:grid-cols-2">
-        {cards.map((c) => (
-          <article key={c.title} className="rounded-[20px] bg-card p-8 card-shadow lift">
-            <p className="eyebrow text-gold">Pillar</p>
-            <h3 className="mt-2 font-serif text-2xl font-bold text-navy">{c.title}</h3>
-            {c.body && (
-              <p className="mt-4 text-[15px] leading-relaxed text-sage">{c.body}</p>
-            )}
+      <div className="relative grid gap-4 md:grid-cols-2">
+        <div className="orb" style={{ width: 380, height: 380, top: -60, left: -100, background: "#0071e3", opacity: 0.18 }} />
+        <div className="orb" style={{ width: 360, height: 360, bottom: -80, right: -80, background: "#b8962e", opacity: 0.15 }} />
+
+        {cards.map((c, i) => (
+          <motion.article
+            key={c.title}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease, delay: i * 0.07 }}
+            whileHover={{ y: -4 }}
+            className="glass relative rounded-[24px] p-8"
+          >
+            <p className="eyebrow text-blue">Pillar</p>
+            <h3 className="mt-2 sf-display text-[26px] text-navy">{c.title}</h3>
+            {c.body && <p className="mt-4 text-[15px] leading-[1.55] text-sage">{c.body}</p>}
             {c.list && (
-              <ol className="mt-4 space-y-3">
-                {c.list.map((step, i) => (
-                  <li key={i} className="flex gap-3 text-[15px] text-sage">
-                    <span className="font-bold text-gold">{String(i + 1).padStart(2, "0")}.</span>
+              <ol className="mt-4 space-y-2.5">
+                {c.list.map((step, j) => (
+                  <li key={j} className="flex gap-3 text-[14px] text-sage">
+                    <span className="font-semibold text-blue">{String(j + 1).padStart(2, "0")}</span>
                     <span>{step}</span>
                   </li>
                 ))}
               </ol>
             )}
-          </article>
+          </motion.article>
         ))}
       </div>
     </Layout>
