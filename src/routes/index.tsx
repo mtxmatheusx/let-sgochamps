@@ -57,8 +57,9 @@ function Dashboard() {
         <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
           <img
             src={HERO_IMG}
-            alt="Athletes in motion"
-            className="h-full w-full object-cover object-center"
+            alt="Aidan running with the community"
+            className="h-full w-full object-cover"
+            style={{ objectPosition: "62% center" }}
           />
           {/* Left-to-right gradient: text area is clean white, image bleeds to the right */}
           <div
