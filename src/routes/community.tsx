@@ -33,7 +33,7 @@ function Community() {
       <PageHeader
         eyebrow="Movement of the week"
         title="This is what champs look like."
-        subtitle="Every week, ordinary people log a few minutes of movement and quietly become someone they're proud of. Here's what the Brilliance Tree grew this week."
+        subtitle="The greatest sickness in the world isn't a disease — it's loneliness. This page exists because community is the cure. Here's what the Brilliance Tree grew this week."
       />
 
       {/* ── WEEKLY STATS BENTO ── */}
