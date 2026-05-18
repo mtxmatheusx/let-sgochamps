@@ -13,6 +13,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as LogRouteImport } from './routes/log'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as CommunityRouteImport } from './routes/community'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const DemoRoute = DemoRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/community': typeof CommunityRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/community': typeof CommunityRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/community': typeof CommunityRoute
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/community'
     | '/demo'
     | '/history'
     | '/log'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/community'
     | '/demo'
     | '/history'
     | '/log'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/auth'
+    | '/community'
     | '/demo'
     | '/history'
     | '/log'
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  CommunityRoute: typeof CommunityRoute
   DemoRoute: typeof DemoRoute
   HistoryRoute: typeof HistoryRoute
   LogRoute: typeof LogRoute
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  CommunityRoute: CommunityRoute,
   DemoRoute: DemoRoute,
   HistoryRoute: HistoryRoute,
   LogRoute: LogRoute,

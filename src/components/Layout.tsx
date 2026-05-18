@@ -8,6 +8,7 @@ const links = [
   { to: "/", label: "Dashboard" },
   { to: "/log", label: "Log" },
   { to: "/history", label: "History" },
+  { to: "/community", label: "Community" },
   { to: "/about", label: "About" },
 ] as const;
 
@@ -211,7 +212,10 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [location.pathname]);
 
-  const items = [{ to: "/about", label: "About" }] as const;
+  const items = [
+    { to: "/community", label: "Community" },
+    { to: "/about", label: "About" },
+  ] as const;
 
   const trailing = (
     <Link
