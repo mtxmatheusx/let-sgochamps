@@ -7,6 +7,7 @@ import type { Session } from "@supabase/supabase-js";
 const links = [
   { to: "/", label: "Dashboard" },
   { to: "/log", label: "Log" },
+  { to: "/groups", label: "Groups" },
   { to: "/history", label: "History" },
   { to: "/community", label: "Community" },
   { to: "/about", label: "About" },

@@ -1,12 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Layout, PageHeader } from "@/components/Layout";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 import { ACTIVITY_TYPES, INTENSITIES, MOODS, computeStats, fetchActivities } from "@/lib/activities";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchMyGroups } from "@/lib/groups";
+import { uploadCheckInPhoto, postActivityToGroups } from "@/lib/feed";
 
 export const Route = createFileRoute("/log")({ component: LogMovement });
 
@@ -33,7 +35,29 @@ function LogMovement() {
     notes: "",
   });
   const [loading, setLoading] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const [celebration, setCelebration] = useState<{ activity: SavedActivity; streak: number } | null>(null);
+
+  const { data: myGroups = [] } = useQuery({ queryKey: ["my-groups"], queryFn: fetchMyGroups });
+
+  function onPhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (f.size > 8 * 1024 * 1024) {
+      toast.error("Photo too large — keep it under 8 MB.");
+      return;
+    }
+    setPhoto(f);
+    const reader = new FileReader();
+    reader.onload = () => setPhotoPreview(reader.result as string);
+    reader.readAsDataURL(f);
+  }
+
+  function toggleGroup(id: string) {
+    setSelectedGroupIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,21 +69,37 @@ function LogMovement() {
       setLoading(false);
       return;
     }
-    const { error } = await supabase.from("activities").insert({
-      user_id,
-      type: form.type,
-      duration: Number(form.duration),
-      intensity: form.intensity,
-      mood: form.mood,
-      date: form.date,
-      notes: form.notes || null,
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    const { data: inserted, error } = await supabase
+      .from("activities")
+      .insert({
+        user_id,
+        type: form.type,
+        duration: Number(form.duration),
+        intensity: form.intensity,
+        mood: form.mood,
+        date: form.date,
+        notes: form.notes || null,
+      })
+      .select("id")
+      .single();
+
+    if (error || !inserted) {
+      setLoading(false);
+      toast.error(error?.message ?? "Could not save the check-in.");
       return;
     }
+
+    // Photo + group cross-posting run in parallel; failures don't block the streak
+    const tasks: Promise<unknown>[] = [];
+    if (photo) tasks.push(uploadCheckInPhoto(inserted.id, photo).catch((err) => toast.error("Photo failed to upload: " + err.message)));
+    if (selectedGroupIds.length > 0)
+      tasks.push(postActivityToGroups(inserted.id, selectedGroupIds).catch((err) => toast.error("Couldn't post to all groups: " + err.message)));
+    await Promise.all(tasks);
+
+    setLoading(false);
+
     await qc.invalidateQueries({ queryKey: ["activities"] });
+    await qc.invalidateQueries({ queryKey: ["group", "feed"] });
     const allActivities = await fetchActivities();
     const { streak } = computeStats(allActivities);
     setCelebration({
@@ -161,6 +201,55 @@ function LogMovement() {
               className={`${inputCls} h-auto py-3.5`}
             />
           </Field>
+
+          {/* Photo upload */}
+          <Field label="Photo (optional)">
+            {photoPreview ? (
+              <div className="relative overflow-hidden rounded-2xl">
+                <img src={photoPreview} alt="" className="max-h-72 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => { setPhoto(null); setPhotoPreview(null); }}
+                  className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-white backdrop-blur-sm"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <label className="flex h-[88px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-black/[0.10] bg-black/[0.02] text-center transition-colors hover:border-green/40 hover:bg-green/[0.04]">
+                <span className="text-[22px]">📸</span>
+                <span className="text-[12px] font-semibold text-ink-soft">Add a photo of today's win</span>
+                <input type="file" accept="image/*" onChange={onPhotoChange} className="hidden" />
+              </label>
+            )}
+          </Field>
+
+          {/* Cross-post to groups */}
+          {myGroups.length > 0 && (
+            <Field label="Share with your groups (optional)">
+              <div className="flex flex-wrap gap-2">
+                {myGroups.map((g) => {
+                  const on = selectedGroupIds.includes(g.id);
+                  return (
+                    <motion.button
+                      key={g.id}
+                      type="button"
+                      whileTap={{ scale: 0.94 }}
+                      onClick={() => toggleGroup(g.id)}
+                      className={`rounded-full px-4 py-2 text-[12.5px] font-semibold transition-all ${
+                        on
+                          ? "bg-green text-white shadow-[0_8px_20px_-8px_rgba(22,163,74,0.55)]"
+                          : "bg-black/[0.04] text-navy hover:bg-black/[0.08]"
+                      }`}
+                    >
+                      {on ? "✓ " : ""}
+                      {g.name}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </Field>
+          )}
 
           <motion.button
             whileTap={{ scale: 0.98 }}

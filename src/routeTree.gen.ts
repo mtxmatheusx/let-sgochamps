@@ -20,6 +20,11 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoriesIndexRouteImport } from './routes/stories.index'
 import { Route as StoriesSubmitRouteImport } from './routes/stories.submit'
+import { Route as GroupsRouteImport } from './routes/groups'
+import { Route as GroupsIndexRouteImport } from './routes/groups.index'
+import { Route as GroupsNewRouteImport } from './routes/groups.new'
+import { Route as GroupsJoinRouteImport } from './routes/groups.join'
+import { Route as GroupsSlugRouteImport } from './routes/groups.$slug'
 
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
@@ -76,6 +81,31 @@ const StoriesSubmitRoute = StoriesSubmitRouteImport.update({
   path: '/submit',
   getParentRoute: () => StoriesRoute,
 } as any)
+const GroupsRoute = GroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GroupsIndexRoute = GroupsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GroupsRoute,
+} as any)
+const GroupsNewRoute = GroupsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => GroupsRoute,
+} as any)
+const GroupsJoinRoute = GroupsJoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => GroupsRoute,
+} as any)
+const GroupsSlugRoute = GroupsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GroupsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +119,11 @@ export interface FileRoutesByFullPath {
   '/stories': typeof StoriesRouteWithChildren
   '/stories/submit': typeof StoriesSubmitRoute
   '/stories/': typeof StoriesIndexRoute
+  '/groups': typeof GroupsRouteWithChildren
+  '/groups/': typeof GroupsIndexRoute
+  '/groups/new': typeof GroupsNewRoute
+  '/groups/join': typeof GroupsJoinRoute
+  '/groups/$slug': typeof GroupsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,6 +136,10 @@ export interface FileRoutesByTo {
   '/log': typeof LogRoute
   '/stories/submit': typeof StoriesSubmitRoute
   '/stories': typeof StoriesIndexRoute
+  '/groups': typeof GroupsIndexRoute
+  '/groups/new': typeof GroupsNewRoute
+  '/groups/join': typeof GroupsJoinRoute
+  '/groups/$slug': typeof GroupsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,6 +154,11 @@ export interface FileRoutesById {
   '/stories': typeof StoriesRouteWithChildren
   '/stories/submit': typeof StoriesSubmitRoute
   '/stories/': typeof StoriesIndexRoute
+  '/groups': typeof GroupsRouteWithChildren
+  '/groups/': typeof GroupsIndexRoute
+  '/groups/new': typeof GroupsNewRoute
+  '/groups/join': typeof GroupsJoinRoute
+  '/groups/$slug': typeof GroupsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,6 +174,11 @@ export interface FileRouteTypes {
     | '/stories'
     | '/stories/submit'
     | '/stories/'
+    | '/groups'
+    | '/groups/'
+    | '/groups/new'
+    | '/groups/join'
+    | '/groups/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,6 +191,10 @@ export interface FileRouteTypes {
     | '/log'
     | '/stories/submit'
     | '/stories'
+    | '/groups'
+    | '/groups/new'
+    | '/groups/join'
+    | '/groups/$slug'
   id:
     | '__root__'
     | '/'
@@ -155,6 +208,11 @@ export interface FileRouteTypes {
     | '/stories'
     | '/stories/submit'
     | '/stories/'
+    | '/groups'
+    | '/groups/'
+    | '/groups/new'
+    | '/groups/join'
+    | '/groups/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,6 +225,7 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   LogRoute: typeof LogRoute
   StoriesRoute: typeof StoriesRouteWithChildren
+  GroupsRoute: typeof GroupsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -248,6 +307,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesSubmitRouteImport
       parentRoute: typeof StoriesRoute
     }
+    '/groups': {
+      id: '/groups'
+      path: '/groups'
+      fullPath: '/groups'
+      preLoaderRoute: typeof GroupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/groups/': {
+      id: '/groups/'
+      path: '/'
+      fullPath: '/groups/'
+      preLoaderRoute: typeof GroupsIndexRouteImport
+      parentRoute: typeof GroupsRoute
+    }
+    '/groups/new': {
+      id: '/groups/new'
+      path: '/new'
+      fullPath: '/groups/new'
+      preLoaderRoute: typeof GroupsNewRouteImport
+      parentRoute: typeof GroupsRoute
+    }
+    '/groups/join': {
+      id: '/groups/join'
+      path: '/join'
+      fullPath: '/groups/join'
+      preLoaderRoute: typeof GroupsJoinRouteImport
+      parentRoute: typeof GroupsRoute
+    }
+    '/groups/$slug': {
+      id: '/groups/$slug'
+      path: '/$slug'
+      fullPath: '/groups/$slug'
+      preLoaderRoute: typeof GroupsSlugRouteImport
+      parentRoute: typeof GroupsRoute
+    }
   }
 }
 
@@ -264,6 +358,23 @@ const StoriesRouteChildren: StoriesRouteChildren = {
 const StoriesRouteWithChildren =
   StoriesRoute._addFileChildren(StoriesRouteChildren)
 
+interface GroupsRouteChildren {
+  GroupsIndexRoute: typeof GroupsIndexRoute
+  GroupsNewRoute: typeof GroupsNewRoute
+  GroupsJoinRoute: typeof GroupsJoinRoute
+  GroupsSlugRoute: typeof GroupsSlugRoute
+}
+
+const GroupsRouteChildren: GroupsRouteChildren = {
+  GroupsIndexRoute: GroupsIndexRoute,
+  GroupsNewRoute: GroupsNewRoute,
+  GroupsJoinRoute: GroupsJoinRoute,
+  GroupsSlugRoute: GroupsSlugRoute,
+}
+
+const GroupsRouteWithChildren =
+  GroupsRoute._addFileChildren(GroupsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -274,6 +385,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   LogRoute: LogRoute,
   StoriesRoute: StoriesRouteWithChildren,
+  GroupsRoute: GroupsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
