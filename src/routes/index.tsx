@@ -427,6 +427,7 @@ function Dashboard() {
                 </BarChart>
               </ResponsiveContainer>
             )}
+            </motion.div>
           </div>
         </motion.div>
 
