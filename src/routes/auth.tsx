@@ -225,10 +225,12 @@ function AuthPage() {
             </AnimatePresence>
 
             <motion.button
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
               type="submit"
               disabled={loading}
-              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
+              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] hover:brightness-110 disabled:opacity-60"
             >
               {loading ? "…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}
             </motion.button>
