@@ -9,6 +9,8 @@ import { fetchActivities, deleteActivity, type Activity } from "@/lib/activities
 export const Route = createFileRoute("/history")({ component: History });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const iosSpring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.9 };
+const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
 
 const moodEmoji: Record<string, string> = {
   Energized: "⚡",
