@@ -137,7 +137,7 @@ function AuthPage() {
             key={mode + "-title"}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease }}
+            transition={iosSpring}
             className="sf-display text-[40px] text-navy"
           >
             {mode === "signin" && "Welcome back."}
