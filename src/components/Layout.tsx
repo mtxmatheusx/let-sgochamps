@@ -1,8 +1,11 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
+import { fetchActivities } from "@/lib/activities";
+import { fetchMyGroups } from "@/lib/groups";
 
 const links = [
   { to: "/", label: "Dashboard" },
@@ -17,6 +20,7 @@ const links = [
 const storyLink = { to: "/stories/submit", label: "Share your story" } as const;
 
 const ease = [0.22, 1, 0.36, 1] as const;
+let cachedSession: Session | null | undefined;
 
 function Brand() {
   return (
@@ -104,23 +108,32 @@ function MobileSheet({
 export function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [session, setSession] = useState<Session | null>(null);
-  const [ready, setReady] = useState(false);
+  const queryClient = useQueryClient();
+  const [session, setSession] = useState<Session | null>(() => cachedSession ?? null);
+  const [ready, setReady] = useState(() => !!cachedSession);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      cachedSession = s;
       setSession(s);
       setReady(true);
     });
     supabase.auth.getSession()
       .then(({ data }) => {
+        cachedSession = data.session;
         setSession(data.session);
         setReady(true);
       })
       .catch(() => setReady(true));
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!ready || !session) return;
+    void queryClient.prefetchQuery({ queryKey: ["activities"], queryFn: fetchActivities });
+    void queryClient.prefetchQuery({ queryKey: ["my-groups"], queryFn: fetchMyGroups });
+  }, [queryClient, ready, session]);
 
   useEffect(() => {
     if (ready && !session) navigate({ to: "/auth" });
@@ -174,7 +187,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <MobileSheet open={open} items={[...links, storyLink]} onClose={() => setOpen(false)} trailing={signOutBtn} />
       </nav>
 
-      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16 fade-up">
+      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16">
         {children}
       </main>
 
@@ -246,7 +259,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
         <MobileSheet open={open} items={items} onClose={() => setOpen(false)} trailing={trailing} />
       </nav>
 
-      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16 fade-up">
+      <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16">
         {children}
       </main>
 

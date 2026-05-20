@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { FeedCard } from "@/components/FeedCard";
@@ -67,6 +67,7 @@ function GroupDetail() {
     queryKey: ["group", "feed", slug],
     queryFn: () => (group ? fetchGroupFeed(group.id) : []),
     enabled: !!group,
+    placeholderData: (previous) => previous ?? [],
   });
 
   const inviteMutation = useMutation({
@@ -87,12 +88,14 @@ function GroupDetail() {
   });
 
   const [meId, setMeId] = useState<string | null>(null);
-  supabase.auth.getUser().then(({ data }) => setMeId(data.user?.id ?? null));
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMeId(data.user?.id ?? null));
+  }, []);
 
   if (loadingGroup) {
     return (
       <Layout>
-        <p className="text-[14px] text-ink-soft">Loading group…</p>
+        <div className="min-h-[45vh]" />
       </Layout>
     );
   }
@@ -184,7 +187,7 @@ function GroupDetail() {
         <section className="lg:col-span-2">
           <p className="eyebrow mb-3">Feed · newest first</p>
           {loadingFeed ? (
-            <p className="text-[13px] text-ink-soft">Loading feed…</p>
+            <div className="min-h-28" />
           ) : feed.length === 0 ? (
             <div className="glass rounded-3xl p-10 text-center">
               <p className="text-[36px]">🌱</p>

@@ -91,7 +91,7 @@ const iosTapSpring = { type: "spring" as const, stiffness: 500, damping: 30 };
 const iosHoverSpring = { type: "spring" as const, stiffness: 360, damping: 26 };
 
 const fadeUp = {
-  initial: { opacity: 0, y: 14 },
+  initial: { opacity: 1, y: 0 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-60px" },
   transition: iosSoftSpring,
@@ -101,6 +101,7 @@ function Dashboard() {
   const { data: activities = [] } = useQuery({
     queryKey: ["activities"],
     queryFn: fetchActivities,
+    placeholderData: (previous) => previous ?? [],
   });
   const stats = computeStats(activities);
   const recent = activities.slice(0, 10);
@@ -595,10 +596,10 @@ function BentoCard({
       : "glass";
 
   const motionProps = {
-    initial: { opacity: 0, y: 18 },
+    initial: { opacity: 1, y: 0 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-40px" },
-    transition: { ...iosSoftSpring, delay },
+    transition: { ...iosSoftSpring, delay: Math.min(delay, 0.06) },
     whileHover: { y: -3, transition: iosHoverSpring },
     whileTap: { scale: 0.985, transition: iosTapSpring },
   };
