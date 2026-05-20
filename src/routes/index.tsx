@@ -355,23 +355,37 @@ function Dashboard() {
                 {chartView === "weekly" ? "Last 7 days" : "Where your minutes went"}
               </h3>
             </div>
-            {/* Toggle */}
-            <div className="flex rounded-xl bg-black/[0.05] p-1 gap-1">
+            {/* iOS-style segmented control with sliding pill */}
+            <div className="relative flex rounded-xl bg-black/[0.05] p-1 gap-1">
               {(["weekly", "byType"] as const).map((v) => (
                 <button
                   key={v}
                   onClick={() => setChartView(v)}
-                  className={`rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all ${
-                    chartView === v ? "bg-white text-navy shadow-sm" : "text-sage hover:text-navy"
+                  className={`relative rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors duration-200 ${
+                    chartView === v ? "text-navy" : "text-sage hover:text-navy"
                   }`}
                 >
-                  {v === "weekly" ? "Weekly" : "By type"}
+                  {chartView === v && (
+                    <motion.span
+                      layoutId="seg-pill"
+                      className="absolute inset-0 rounded-lg bg-white shadow-sm"
+                      transition={{ type: "spring", stiffness: 420, damping: 36, mass: 0.8 }}
+                    />
+                  )}
+                  <span className="relative z-10">{v === "weekly" ? "Weekly" : "By type"}</span>
                 </button>
               ))}
             </div>
           </div>
 
           <div className="mt-5 h-[240px] md:h-[280px]">
+            <motion.div
+              key={chartView}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full"
+            >
             {chartData.length === 0 || (chartView === "weekly" && chartData.every((d) => d.minutes === 0)) ? (
               <Empty text="Log your first movement to see the breakdown." />
             ) : (
@@ -413,6 +427,7 @@ function Dashboard() {
                 </BarChart>
               </ResponsiveContainer>
             )}
+            </motion.div>
           </div>
         </motion.div>
 
