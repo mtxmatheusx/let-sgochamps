@@ -102,8 +102,12 @@ function History() {
                 {items.map((a, i) => {
                   const tint = intensityTint(a.intensity);
                   return (
-                    <li
+                    <motion.li
                       key={a.id}
+                      initial={{ opacity: 0, x: 8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{ ...iosSpring, delay: gi * 0.05 + i * 0.04 }}
                       className={`group flex items-center gap-4 px-5 py-4 ${
                         i > 0 ? "border-t border-black/5" : ""
                       }`}
