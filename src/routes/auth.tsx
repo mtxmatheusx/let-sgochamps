@@ -124,7 +124,7 @@ function AuthPage() {
                     <motion.span
                       layoutId="auth-pill"
                       className="absolute inset-0 -z-10 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                      transition={{ duration: 0.4, ease }}
+                      transition={iosPillSpring}
                     />
                   )}
                   {m === "signin" ? "Sign in" : "Sign up"}
