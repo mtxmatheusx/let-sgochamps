@@ -263,7 +263,7 @@ function AuthPage() {
 
           {(mode === "signin" || mode === "signup") && (
             <p className="mt-6 text-center text-[12px] text-sage">
-              By continuing you agree to keep showing up.
+              By continuing, you agree to keep showing up.
             </p>
           )}
         </motion.div>
