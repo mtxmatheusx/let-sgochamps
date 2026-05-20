@@ -111,7 +111,6 @@ function Dashboard() {
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
-    layoutEffect: false,
   });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 180]);
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
