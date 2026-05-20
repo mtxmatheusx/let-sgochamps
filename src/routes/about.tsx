@@ -81,6 +81,103 @@ const trunk: Array<{ letter: string; word: string; line: string }> = [
   { letter: "E", word: "Execute", line: "Do what you said you'd do." },
 ];
 
+const features: Array<{ icon: string; title: string; nav: string; description: string; tips: string[] }> = [
+  {
+    icon: "📊",
+    title: "Dashboard",
+    nav: "Home",
+    description:
+      "Your personal command center. See your current streak, total minutes, active days, and a 12-week activity chart — all updated the moment you log.",
+    tips: [
+      "The ring shows your streak progress toward your best.",
+      "Recent wins at the bottom remind you of your last five moves.",
+      "Tap the quote to copy it and share it.",
+    ],
+  },
+  {
+    icon: "📝",
+    title: "Log",
+    nav: "Log",
+    description:
+      "Record any movement in under 60 seconds. Pick an activity type, enter minutes, choose intensity and mood — then submit. Every log builds your streak and feeds your history.",
+    tips: [
+      "12 activity types: Walking, Running, Cycling, Yoga, Strength, Swimming, Pilates, HIIT, Rowing, Dance, Stretching, Other.",
+      "Add a photo and a note to make it memorable.",
+      "Cross-post to your Groups at the same time — one tap.",
+    ],
+  },
+  {
+    icon: "🧱",
+    title: "The Wall",
+    nav: "Wall",
+    description:
+      "The tribe's public square. Share a photo or a short note about your move and see every other champ doing the same — in real time, in one place.",
+    tips: [
+      "No likes, no rankings. Just the tribe showing up.",
+      "Leave encouraging comments on other champs' posts.",
+      "The tribe pulse at the top shows how many champs are active right now.",
+    ],
+  },
+  {
+    icon: "👥",
+    title: "Groups",
+    nav: "Groups",
+    description:
+      "Create or join Clubs (ongoing) and Challenges (time-boxed). Groups have their own feed, roll call, and shared activity history — all with no leaderboards.",
+    tips: [
+      "Clubs are permanent spaces — great for friend groups or training partners.",
+      "Challenges have a start and end date — ideal for a 30-day push.",
+      "Share your invite code so others can join in one tap.",
+    ],
+  },
+  {
+    icon: "📅",
+    title: "History",
+    nav: "History",
+    description:
+      "A full log of every movement you've ever recorded — sorted by date, with all metadata visible. Your proof that you've been showing up.",
+    tips: [
+      "Filter by activity type or date range.",
+      "Each entry shows intensity, mood, duration, and any notes.",
+    ],
+  },
+  {
+    icon: "📖",
+    title: "Stories",
+    nav: "Stories",
+    description:
+      "Submit your story — a written account of your wellness journey, a comeback, a breakthrough. Featured stories inspire the whole tribe.",
+    tips: [
+      "Add a photo and your location to make it real.",
+      "Stories can be featured by Aidan's team on LGC's channels.",
+      "Your story could be the reason someone else starts.",
+    ],
+  },
+  {
+    icon: "🤝",
+    title: "Community",
+    nav: "Community",
+    description:
+      "Weekly movement stats for the entire tribe: total minutes moved, active champs, sessions logged. Plus Aidan's message of the week — a personal note from the founder.",
+    tips: [
+      "Stats reset every Monday — a fresh start every week.",
+      "Aidan's message changes weekly — check back every Monday.",
+    ],
+  },
+  {
+    icon: "🌳",
+    title: "Brilliance Coach",
+    nav: "Floating button",
+    description:
+      "Your personal AI guide, available on every page. Tap the green tree button in the bottom-right corner to open a chat. Ask anything about the framework, the app, or your journey.",
+    tips: [
+      "Knows the full GROWTH^E framework and all 3 Brilliance Tree branches.",
+      "Can walk you through any feature step by step.",
+      "Great for understanding the \"why\" behind what you're doing.",
+    ],
+  },
+];
+
 const fadeUp = {
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
@@ -285,6 +382,136 @@ function About() {
           <p className="mt-4 text-[14px] leading-[1.65] text-ink-soft">
             The streak isn't there to shame you when you miss a day — it's there to make today's decision visible. The wall isn't a leaderboard — it's a mirror that says <em>champs come in every shape, age, and pace.</em>
           </p>
+        </div>
+      </motion.section>
+
+      {/* ── FEATURE GUIDE ── */}
+      <motion.section {...fadeUp} className="mt-20">
+        <div className="mx-auto max-w-2xl text-center mb-10">
+          <p className="eyebrow text-green">Everything in the app</p>
+          <h2 className="mt-3 sf-display text-navy" style={{ fontSize: "clamp(28px, 4vw, 44px)" }}>
+            How to explore every feature.
+          </h2>
+          <p className="mt-4 text-[15px] leading-[1.6] text-ink-soft">
+            Eight tools, one purpose: make it easy to show up for yourself — and make it feel worth it when you do.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ ...iosSpring, delay: i * 0.05 }}
+              className="glass rounded-3xl p-7"
+            >
+              <div className="flex items-start gap-4">
+                <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-green/10 text-[22px]">
+                  {f.icon}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-[16px] font-bold text-navy">{f.title}</h4>
+                    <span className="pill bg-black/[0.04] text-ink-soft text-[10px]">{f.nav}</span>
+                  </div>
+                  <p className="mt-2 text-[13.5px] leading-[1.6] text-ink-soft">{f.description}</p>
+                  {f.tips.length > 0 && (
+                    <ul className="mt-3 space-y-1.5">
+                      {f.tips.map((tip, ti) => (
+                        <li key={ti} className="flex items-start gap-2 text-[12.5px] text-ink-soft">
+                          <span className="mt-[3px] h-1 w-1 flex-shrink-0 rounded-full bg-green" />
+                          {tip}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* ── GETTING STARTED ── */}
+      <motion.section {...fadeUp} className="mt-12">
+        <div className="glass rounded-3xl p-8 md:p-12">
+          <div className="grid gap-8 md:grid-cols-2 md:gap-16 items-start">
+            <div>
+              <p className="eyebrow text-green">New here?</p>
+              <h3 className="mt-2 sf-display text-[32px] text-navy">Start in 3 moves.</h3>
+              <p className="mt-4 text-[14px] leading-[1.65] text-ink-soft">
+                You don't need to learn everything. These three steps get you from zero to a real streak in under five minutes.
+              </p>
+            </div>
+            <ol className="space-y-5">
+              {[
+                {
+                  n: "01",
+                  title: "Log your first movement",
+                  body: "Tap Log in the nav. Pick any activity — even a 5-minute walk counts. Hit save. Your streak starts now.",
+                  link: "/log",
+                  cta: "Log movement →",
+                },
+                {
+                  n: "02",
+                  title: "Post it on The Wall",
+                  body: "Share what you just did with the tribe. One sentence or a photo is enough. No likes, no ranking — just the tribe seeing you show up.",
+                  link: "/wall",
+                  cta: "Go to The Wall →",
+                },
+                {
+                  n: "03",
+                  title: "Join or create a Group",
+                  body: "Find a Club or start a Challenge with people you know. Shared accountability is the cheat code.",
+                  link: "/groups",
+                  cta: "See Groups →",
+                },
+              ].map((s, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...iosSpring, delay: i * 0.1 }}
+                  className="flex gap-4"
+                >
+                  <span className="nums text-[28px] font-bold text-green/40 leading-none tabular-nums flex-shrink-0 w-8">{s.n}</span>
+                  <div>
+                    <h4 className="text-[15px] font-bold text-navy">{s.title}</h4>
+                    <p className="mt-1 text-[13px] leading-[1.55] text-ink-soft">{s.body}</p>
+                    <Link to={s.link} className="mt-2 inline-block text-[12px] font-semibold text-green hover:underline">
+                      {s.cta}
+                    </Link>
+                  </div>
+                </motion.li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ── BRILLIANCE COACH CALLOUT ── */}
+      <motion.section
+        {...fadeUp}
+        className="mt-6 relative overflow-hidden rounded-3xl px-7 py-10 sm:px-10"
+        style={{ background: "radial-gradient(ellipse at 0% 50%, rgba(34,197,94,0.18), transparent 60%), #0a0a0c" }}
+      >
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <span className="text-[40px] leading-none flex-shrink-0">🌳</span>
+            <div>
+              <p className="eyebrow text-white/50">Built into the app</p>
+              <h3 className="mt-1 sf-display text-white text-[24px]">Ask the Brilliance Coach.</h3>
+              <p className="mt-2 text-[13.5px] leading-[1.55] text-white/60 max-w-md">
+                The green tree button in the bottom-right corner of every page is your personal AI guide. It knows the Brilliance Tree framework, all seven GROWTH^E attributes, and every feature in this app. Ask it anything — anytime.
+              </p>
+            </div>
+          </div>
+          <div className="flex-shrink-0 text-[13px] font-semibold text-green/70 sm:text-right">
+            Tap 🌳 to start →
+          </div>
         </div>
       </motion.section>
 
