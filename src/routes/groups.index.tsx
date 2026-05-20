@@ -23,6 +23,7 @@ function GroupsIndex() {
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["my-groups"],
     queryFn: fetchMyGroups,
+    placeholderData: (previous) => previous ?? [],
   });
 
   const clubs = groups.filter((g) => g.type === "club");
@@ -51,9 +52,7 @@ function GroupsIndex() {
         </Link>
       </div>
 
-      {isLoading ? (
-        <p className="text-[14px] text-ink-soft">Loading your groups…</p>
-      ) : groups.length === 0 ? (
+      {groups.length === 0 ? (
         <EmptyState />
       ) : (
         <>
