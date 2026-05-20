@@ -20,7 +20,7 @@ function formatDateRange(start: string | null, end: string | null): string {
 }
 
 function GroupsIndex() {
-  const { data: groups = [], isLoading } = useQuery({
+  const { data: groups = [] } = useQuery({
     queryKey: ["my-groups"],
     queryFn: fetchMyGroups,
     placeholderData: (previous) => previous ?? [],
