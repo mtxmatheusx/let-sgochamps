@@ -18,11 +18,11 @@ const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, ma
 const iosPillSpring = { type: "spring" as const, stiffness: 420, damping: 36, mass: 0.8 };
 
 const fieldVariants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 1, y: 0 },
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { ...iosSoftSpring, delay: 0.05 + i * 0.045 },
+    transition: { ...iosSoftSpring, delay: i * 0.015 },
   }),
 };
 
@@ -52,7 +52,11 @@ function LogMovement() {
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const [celebration, setCelebration] = useState<{ activity: SavedActivity; streak: number } | null>(null);
 
-  const { data: myGroups = [] } = useQuery({ queryKey: ["my-groups"], queryFn: fetchMyGroups });
+  const { data: myGroups = [] } = useQuery({
+    queryKey: ["my-groups"],
+    queryFn: fetchMyGroups,
+    placeholderData: (previous) => previous ?? [],
+  });
 
   function onPhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -149,9 +153,9 @@ function LogMovement() {
         />
 
         <motion.form
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={iosSoftSpring}
+          transition={{ ...iosSoftSpring, duration: 0.18 }}
           onSubmit={submit}
           className="relative grid max-w-[680px] gap-5 overflow-hidden rounded-[28px] glass p-8 sm:p-10"
         >
