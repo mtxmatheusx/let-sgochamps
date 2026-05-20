@@ -28,7 +28,7 @@ export function ActivityRing({
     const duration = 1100;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
+      const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
       setProgress(target * eased);
       if (t < 1) raf = requestAnimationFrame(tick);
     };
