@@ -21,17 +21,6 @@ const storyLink = { to: "/stories/submit", label: "Share your story" } as const;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 let cachedSession: Session | null | undefined;
-let sessionRequest: Promise<Session | null> | null = null;
-
-function getCachedSession() {
-  if (!sessionRequest) {
-    sessionRequest = supabase.auth.getSession().then(({ data }) => {
-      cachedSession = data.session;
-      return data.session;
-    });
-  }
-  return sessionRequest;
-}
 
 function Brand() {
   return (
@@ -121,7 +110,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(() => cachedSession ?? null);
-  const [ready, setReady] = useState(() => cachedSession !== undefined);
+  const [ready, setReady] = useState(() => !!cachedSession);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -130,9 +119,10 @@ export function Layout({ children }: { children: ReactNode }) {
       setSession(s);
       setReady(true);
     });
-    getCachedSession()
-      .then((s) => {
-        setSession(s);
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        cachedSession = data.session;
+        setSession(data.session);
         setReady(true);
       })
       .catch(() => setReady(true));
