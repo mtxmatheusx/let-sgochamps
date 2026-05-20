@@ -377,7 +377,7 @@ function Segmented({
               <motion.span
                 layoutId={`seg-${groupId}`}
                 className="absolute inset-0 -z-10 rounded-xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                transition={{ duration: 0.35, ease }}
+                transition={iosPillSpring}
               />
             )}
             {o.label}
