@@ -209,11 +209,11 @@ function Dashboard() {
             transition={{ ...iosSoftSpring, delay: 0.24 }}
             className="hidden lg:flex mt-8 items-center gap-6"
           >
-            <StatPill label="Current streak" value={`${stats.streak} days`} />
+            <StatPill label="Current streak" value={stats.streak} suffix="days" />
             <div className="h-8 w-px bg-white/15" />
-            <StatPill label="Total minutes" value={`${stats.totalMinutes} min`} />
+            <StatPill label="Total minutes" value={stats.totalMinutes} suffix="min" />
             <div className="h-8 w-px bg-white/15" />
-            <StatPill label="Days showed up" value={String(stats.daysShowedUp)} />
+            <StatPill label="Days showed up" value={stats.daysShowedUp} />
           </motion.div>
 
           {/* CTAs */}
