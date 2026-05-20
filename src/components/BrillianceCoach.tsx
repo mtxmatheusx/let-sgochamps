@@ -52,14 +52,22 @@ export function BrillianceCoach() {
       const { data, error } = await supabase.functions.invoke("brilliance-coach", {
         body: { messages: next },
       });
-      if (error) throw error;
+      if (error) {
+        console.error("[BrillianceCoach] invoke error:", error);
+        throw error;
+      }
+      if (!data?.reply) {
+        console.error("[BrillianceCoach] unexpected response:", data);
+        throw new Error("Empty reply");
+      }
       setMessages([...next, { role: "assistant", content: data.reply }]);
-    } catch {
+    } catch (err: any) {
+      console.error("[BrillianceCoach] caught:", err?.message ?? err);
       setMessages([
         ...next,
         {
           role: "assistant",
-          content: "I'm having trouble right now — please try again in a moment.",
+          content: `Error: ${err?.message ?? "Unknown error"} — check console for details.`,
         },
       ]);
     } finally {
