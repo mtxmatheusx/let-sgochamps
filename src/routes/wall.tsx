@@ -38,6 +38,7 @@ function Wall() {
     queryKey: ["group", "feed", WALL_SLUG],
     queryFn: () => (wall ? fetchGroupFeed(wall.id, 60) : []),
     enabled: !!wall,
+    placeholderData: (previous) => previous ?? [],
   });
 
   return (
@@ -72,7 +73,7 @@ function Wall() {
       {/* FEED */}
       <section className="mt-8">
         {loadingFeed ? (
-          <p className="text-[14px] text-ink-soft">Loading the tribe…</p>
+          <div className="min-h-32" />
         ) : feed.length === 0 ? (
           <div className="glass rounded-3xl p-10 text-center">
             <p className="text-[36px]">🌱</p>
