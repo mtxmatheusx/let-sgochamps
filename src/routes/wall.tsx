@@ -43,9 +43,9 @@ function Wall() {
   return (
     <Layout>
       <PageHeader
-        eyebrow="Mostrando o movimento da tribo champs"
+        eyebrow="The champs tribe is moving"
         title="The Wall"
-        subtitle="A praça pública da tribo. Show up, share your move, see everyone else doing the same. Sem rankings. Sem likes. Só champs."
+        subtitle="The tribe's public square. Show up, share your move, see everyone else doing the same. No rankings. No likes. Just champs."
       />
 
       {/* live tribe pulse */}

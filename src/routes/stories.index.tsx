@@ -46,9 +46,9 @@ function StoriesWall() {
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
           <p className="text-[13px] font-semibold text-navy">
-            Admin view — mostrando todas as {stories.length} histórias submetidas.{" "}
+            Admin view — showing all {stories.length} submitted {stories.length === 1 ? "story" : "stories"}.{" "}
             <Link to="/admin" className="text-gold underline underline-offset-2 hover:brightness-90">
-              Gerenciar no painel →
+              Manage in admin panel →
             </Link>
           </p>
         </div>
@@ -78,10 +78,10 @@ function StoriesWall() {
       ) : stories.length === 0 ? (
         <div className="rounded-[20px] bg-card p-12 text-center card-shadow">
           <p className="text-lg font-bold text-navy">
-            {isAdmin ? "Nenhuma história submetida ainda." : "No stories yet."}
+            {isAdmin ? "No stories submitted yet." : "No stories yet."}
           </p>
           <p className="mt-2 text-sage">
-            {isAdmin ? "Quando alguém compartilhar, aparece aqui." : "Be the first champion to share yours."}
+            {isAdmin ? "Once someone shares their story, it will appear here." : "Be the first champion to share yours."}
           </p>
         </div>
       ) : (
@@ -201,7 +201,7 @@ function StoryCard({ story, isAdmin }: { story: Story; isAdmin: boolean }) {
             to="/admin"
             className="mt-4 block text-center rounded-full border border-mist py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-sage transition-colors hover:border-gold hover:text-gold"
           >
-            Gerenciar →
+            Manage →
           </Link>
         )}
       </div>
