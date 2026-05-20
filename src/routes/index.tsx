@@ -84,16 +84,17 @@ function getDailyQuote() {
   return AIDAN_QUOTES[dayOfYear % AIDAN_QUOTES.length];
 }
 
-// iOS-style spring physics
-const iosSpring = { type: "spring" as const, stiffness: 220, damping: 26, mass: 1 };
-const iosTapSpring = { type: "spring" as const, stiffness: 400, damping: 28 };
-const iosHoverSpring = { type: "spring" as const, stiffness: 300, damping: 22 };
+// iOS 26 spring physics — snappier, more natural
+const iosSpring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.9 };
+const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
+const iosTapSpring = { type: "spring" as const, stiffness: 500, damping: 30 };
+const iosHoverSpring = { type: "spring" as const, stiffness: 360, damping: 26 };
 
 const fadeUp = {
-  initial: { opacity: 0, y: 28 },
+  initial: { opacity: 0, y: 14 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: iosSpring,
+  viewport: { once: true, margin: "-60px" },
+  transition: iosSoftSpring,
 };
 
 function Dashboard() {
