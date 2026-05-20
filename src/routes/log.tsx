@@ -149,9 +149,9 @@ function LogMovement() {
         />
 
         <motion.form
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease }}
+          transition={iosSoftSpring}
           onSubmit={submit}
           className="relative grid max-w-[680px] gap-5 overflow-hidden rounded-[28px] glass p-8 sm:p-10"
         >
