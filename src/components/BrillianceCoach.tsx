@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
+const COACH_URL = "https://dystxaxrtyqpccjboucg.supabase.co/functions/v1/brilliance-coach";
+
 type Message = { role: "user" | "assistant"; content: string };
 
 const iosSpring = { type: "spring" as const, stiffness: 220, damping: 26 };
@@ -49,16 +51,20 @@ export function BrillianceCoach() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("brilliance-coach", {
-        body: { messages: next },
+      const resp = await fetch(COACH_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
       });
-      if (error) {
-        console.error("[BrillianceCoach] invoke error:", error);
-        throw error;
+      if (!resp.ok) {
+        const txt = await resp.text();
+        console.error("[BrillianceCoach] HTTP error:", resp.status, txt);
+        throw new Error(`HTTP ${resp.status}: ${txt}`);
       }
+      const data = await resp.json();
       if (!data?.reply) {
         console.error("[BrillianceCoach] unexpected response:", data);
-        throw new Error("Empty reply");
+        throw new Error("Empty reply from coach");
       }
       setMessages([...next, { role: "assistant", content: data.reply }]);
     } catch (err: any) {
@@ -67,7 +73,7 @@ export function BrillianceCoach() {
         ...next,
         {
           role: "assistant",
-          content: `Error: ${err?.message ?? "Unknown error"} — check console for details.`,
+          content: "I'm having trouble right now — please try again in a moment.",
         },
       ]);
     } finally {
