@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const iosSpring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.9 };
+const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
+const iosPillSpring = { type: "spring" as const, stiffness: 420, damping: 36, mass: 0.8 };
 
 function AuthPage() {
   const navigate = useNavigate();
