@@ -321,10 +321,10 @@ function Dashboard() {
 
           {/* Days — half-width mobile, 1-col desktop */}
           <BentoCard className="col-span-1 md:col-span-1" delay={0.1}>
-            <p className="eyebrow">Days showed up</p>
+            <p className="eyebrow">Active days</p>
             <BigNumber value={stats.daysShowedUp} small />
             <p className="mt-1 text-[11px] text-ink-muted">
-              {stats.daysShowedUp === 1 ? "one day in" : `across ${stats.daysShowedUp} days`}
+              {stats.daysShowedUp === 1 ? "one day in" : `${stats.daysShowedUp} days in`}
             </p>
           </BentoCard>
 
@@ -333,7 +333,7 @@ function Dashboard() {
             <p className="eyebrow text-white/70">Today</p>
             <div className="mt-auto flex items-end justify-between gap-2">
               <p className="sf-display text-[22px] text-white md:text-[26px]">
-                Log a<br />new move
+                Log<br />today's win
               </p>
               <span className="text-white text-[22px] -mb-0.5">›</span>
             </div>
