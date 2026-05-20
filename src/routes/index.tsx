@@ -439,7 +439,7 @@ function Dashboard() {
           className="glass rounded-3xl p-6 md:p-8 lg:col-span-2"
         >
           <p className="eyebrow text-sage">Recent wins</p>
-          <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">Proof you showed up</h3>
+          <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">Proof you showed up.</h3>
 
           {recent.length === 0 ? (
             <div className="mt-8 flex flex-col items-center justify-center py-10 text-center">
