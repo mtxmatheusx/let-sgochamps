@@ -629,7 +629,7 @@ function BentoCard({
 }
 
 function BigNumber({ value, suffix, small = false }: { value: number; suffix?: string; small?: boolean }) {
-  const animated = useCountUp(value, 1200);
+  const animated = useCountUp(value, 1100);
   return (
     <div
       className="sf-display mt-auto flex items-baseline text-navy"
