@@ -91,7 +91,7 @@ const iosTapSpring = { type: "spring" as const, stiffness: 500, damping: 30 };
 const iosHoverSpring = { type: "spring" as const, stiffness: 360, damping: 26 };
 
 const fadeUp = {
-  initial: { opacity: 0, y: 14 },
+  initial: { opacity: 1, y: 0 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-60px" },
   transition: iosSoftSpring,
@@ -101,6 +101,7 @@ function Dashboard() {
   const { data: activities = [] } = useQuery({
     queryKey: ["activities"],
     queryFn: fetchActivities,
+    placeholderData: (previous) => previous ?? [],
   });
   const stats = computeStats(activities);
   const recent = activities.slice(0, 10);
