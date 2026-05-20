@@ -25,7 +25,7 @@ export function ActivityRing({
   useEffect(() => {
     let raf = 0;
     const start = performance.now();
-    const duration = 1400;
+    const duration = 1100;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - t, 3);
