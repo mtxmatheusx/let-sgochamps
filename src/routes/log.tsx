@@ -158,116 +158,139 @@ function LogMovement() {
           <div className="orb" style={{ width: 300, height: 300, top: -100, right: -80, background: "#22c55e", opacity: 0.18 }} />
           <div className="orb" style={{ width: 280, height: 280, bottom: -120, left: -60, background: "#22c55e", opacity: 0.15 }} />
 
-          <Field label="What did you do today?">
-            <Select
-              value={form.type}
-              onChange={(v) => setForm({ ...form, type: v })}
-              options={ACTIVITY_TYPES.map((t) => ({ value: t, label: t }))}
-            />
-          </Field>
+          <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="What did you do today?">
+              <Select
+                value={form.type}
+                onChange={(v) => setForm({ ...form, type: v })}
+                options={ACTIVITY_TYPES.map((t) => ({ value: t, label: t }))}
+              />
+            </Field>
+          </motion.div>
 
-          <Field label="How many minutes?">
-            <input
-              type="number"
-              min={1}
-              placeholder="e.g. 45"
-              value={form.duration}
-              onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })}
-              className={inputCls}
-            />
-          </Field>
+          <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="How many minutes?">
+              <input
+                type="number"
+                min={1}
+                placeholder="e.g. 45"
+                value={form.duration}
+                onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })}
+                className={inputCls}
+              />
+            </Field>
+          </motion.div>
 
-          <Field label="How hard did you go?">
-            <Segmented
-              value={form.intensity}
-              onChange={(v) => setForm({ ...form, intensity: v })}
-              options={INTENSITIES.map((i) => ({ value: i.value, label: i.value }))}
-              groupId="intensity"
-            />
-          </Field>
+          <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="How hard did you go?">
+              <Segmented
+                value={form.intensity}
+                onChange={(v) => setForm({ ...form, intensity: v })}
+                options={INTENSITIES.map((i) => ({ value: i.value, label: i.value }))}
+                groupId="intensity"
+              />
+            </Field>
+          </motion.div>
 
-          <Field label="How do you feel now?">
-            <Segmented
-              value={form.mood}
-              onChange={(v) => setForm({ ...form, mood: v })}
-              options={MOODS.map((m) => ({ value: m, label: m }))}
-              groupId="mood"
-            />
-          </Field>
+          <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="How do you feel now?">
+              <Segmented
+                value={form.mood}
+                onChange={(v) => setForm({ ...form, mood: v })}
+                options={MOODS.map((m) => ({ value: m, label: m }))}
+                groupId="mood"
+              />
+            </Field>
+          </motion.div>
 
-          <Field label="Date">
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className={inputCls}
-            />
-          </Field>
+          <motion.div custom={4} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="Date">
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                className={inputCls}
+              />
+            </Field>
+          </motion.div>
 
-          <Field label="Champion note (optional)">
-            <textarea
-              rows={4}
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="I didn't feel like moving, but I showed up anyway."
-              className={`${inputCls} h-auto py-3.5`}
-            />
-          </Field>
+          <motion.div custom={5} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="Champion note (optional)">
+              <textarea
+                rows={4}
+                value={form.notes}
+                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                placeholder="I didn't feel like moving, but I showed up anyway."
+                className={`${inputCls} h-auto py-3.5`}
+              />
+            </Field>
+          </motion.div>
 
           {/* Photo upload */}
-          <Field label="Photo (optional)">
-            {photoPreview ? (
-              <div className="relative overflow-hidden rounded-2xl">
-                <img src={photoPreview} alt="" className="max-h-72 w-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => { setPhoto(null); setPhotoPreview(null); }}
-                  className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-white backdrop-blur-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ) : (
-              <label className="flex h-[88px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-black/[0.10] bg-black/[0.02] text-center transition-colors hover:border-green/40 hover:bg-green/[0.04]">
-                <span className="text-[22px]">📸</span>
-                <span className="text-[12px] font-semibold text-ink-soft">Add a photo of today's win</span>
-                <input type="file" accept="image/*" onChange={onPhotoChange} className="hidden" />
-              </label>
-            )}
-          </Field>
+          <motion.div custom={6} variants={fieldVariants} initial="hidden" animate="show">
+            <Field label="Photo (optional)">
+              {photoPreview ? (
+                <div className="relative overflow-hidden rounded-2xl">
+                  <img src={photoPreview} alt="" className="max-h-72 w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => { setPhoto(null); setPhotoPreview(null); }}
+                    className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-white backdrop-blur-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <label className="flex h-[88px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-black/[0.10] bg-black/[0.02] text-center transition-colors hover:border-green/40 hover:bg-green/[0.04]">
+                  <span className="text-[22px]">📸</span>
+                  <span className="text-[12px] font-semibold text-ink-soft">Add a photo of today's win</span>
+                  <input type="file" accept="image/*" onChange={onPhotoChange} className="hidden" />
+                </label>
+              )}
+            </Field>
+          </motion.div>
 
           {/* Cross-post to groups */}
           {myGroups.length > 0 && (
-            <Field label="Share with your groups (optional)">
-              <div className="flex flex-wrap gap-2">
-                {myGroups.map((g) => {
-                  const on = selectedGroupIds.includes(g.id);
-                  return (
-                    <motion.button
-                      key={g.id}
-                      type="button"
-                      whileTap={{ scale: 0.94 }}
-                      onClick={() => toggleGroup(g.id)}
-                      className={`rounded-full px-4 py-2 text-[12.5px] font-semibold transition-all ${
-                        on
-                          ? "bg-green text-white shadow-[0_8px_20px_-8px_rgba(22,163,74,0.55)]"
-                          : "bg-black/[0.04] text-navy hover:bg-black/[0.08]"
-                      }`}
-                    >
-                      {on ? "✓ " : ""}
-                      {g.name}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </Field>
+            <motion.div custom={7} variants={fieldVariants} initial="hidden" animate="show">
+              <Field label="Share with your groups (optional)">
+                <div className="flex flex-wrap gap-2">
+                  {myGroups.map((g) => {
+                    const on = selectedGroupIds.includes(g.id);
+                    return (
+                      <motion.button
+                        key={g.id}
+                        type="button"
+                        whileTap={{ scale: 0.94 }}
+                        whileHover={{ y: -1 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 26 }}
+                        onClick={() => toggleGroup(g.id)}
+                        className={`rounded-full px-4 py-2 text-[12.5px] font-semibold ${
+                          on
+                            ? "bg-green text-white shadow-[0_8px_20px_-8px_rgba(22,163,74,0.55)]"
+                            : "bg-black/[0.04] text-navy hover:bg-black/[0.08]"
+                        }`}
+                      >
+                        {on ? "✓ " : ""}
+                        {g.name}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </Field>
+            </motion.div>
           )}
 
           <motion.button
-            whileTap={{ scale: 0.98 }}
+            custom={8}
+            variants={fieldVariants}
+            initial="hidden"
+            animate="show"
+            whileHover={{ scale: 1.015, y: -1 }}
+            whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="relative mt-2 h-[54px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
+            className="relative mt-2 h-[54px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(34,197,94,0.6)] hover:brightness-110 disabled:opacity-60"
           >
             {loading ? "Saving…" : "Keep the streak going"}
           </motion.button>
