@@ -168,9 +168,9 @@ function Dashboard() {
         >
           {/* Eyebrow */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease, delay: 0.1 }}
+            transition={{ ...iosSpring, delay: 0.05 }}
             className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 backdrop-blur-sm"
           >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green" />
@@ -181,9 +181,9 @@ function Dashboard() {
 
           {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.2 }}
+            transition={{ ...iosSoftSpring, delay: 0.1 }}
             className="sf-display text-white"
             style={{ fontSize: "clamp(44px, 7vw, 110px)", lineHeight: 0.92 }}
           >
@@ -193,9 +193,9 @@ function Dashboard() {
 
           {/* Subtitle */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.45 }}
+            transition={{ ...iosSoftSpring, delay: 0.18 }}
             className="mt-4 max-w-[340px] text-[15px] leading-[1.5] text-white/70 sm:mt-6 sm:text-[18px]"
           >
             Show up. Stack the days.<br className="hidden sm:block" />
@@ -204,9 +204,9 @@ function Dashboard() {
 
           {/* Desktop stats bar */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease, delay: 0.55 }}
+            transition={{ ...iosSoftSpring, delay: 0.24 }}
             className="hidden lg:flex mt-8 items-center gap-6"
           >
             <StatPill label="Current streak" value={`${stats.streak} days`} />
@@ -218,9 +218,9 @@ function Dashboard() {
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ ...iosSpring, delay: 0.65 }}
+            transition={{ ...iosSpring, delay: 0.3 }}
             className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3"
           >
             <motion.div
