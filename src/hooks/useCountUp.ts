@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 // Apple-style easeOutExpo — slow, graceful settle
 const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
 
-export function useCountUp(target: number, duration = 1600) {
+export function useCountUp(target: number, duration = 1100) {
   const [value, setValue] = useState(0);
   const fromRef = useRef(0);
 
