@@ -9,6 +9,8 @@ import { fetchActivities, deleteActivity, type Activity } from "@/lib/activities
 export const Route = createFileRoute("/history")({ component: History });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const iosSpring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.9 };
+const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
 
 const moodEmoji: Record<string, string> = {
   Energized: "⚡",
@@ -85,7 +87,7 @@ function History() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, ease, delay: gi * 0.05 }}
+              transition={{ ...iosSoftSpring, delay: gi * 0.05 }}
             >
               <div className="sticky top-[52px] z-10 -mx-2 mb-2 px-2 py-2 backdrop-blur-md">
                 <div className="flex items-baseline justify-between">
@@ -100,8 +102,12 @@ function History() {
                 {items.map((a, i) => {
                   const tint = intensityTint(a.intensity);
                   return (
-                    <li
+                    <motion.li
                       key={a.id}
+                      initial={{ opacity: 0, x: 8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{ ...iosSpring, delay: gi * 0.05 + i * 0.04 }}
                       className={`group flex items-center gap-4 px-5 py-4 ${
                         i > 0 ? "border-t border-black/5" : ""
                       }`}
@@ -148,7 +154,7 @@ function History() {
                           </svg>
                         )}
                       </button>
-                    </li>
+                    </motion.li>
                   );
                 })}
               </ul>

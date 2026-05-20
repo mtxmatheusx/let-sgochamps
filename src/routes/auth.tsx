@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const iosSpring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.9 };
+const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
+const iosPillSpring = { type: "spring" as const, stiffness: 420, damping: 36, mass: 0.8 };
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -97,9 +100,9 @@ function AuthPage() {
       {/* Centered glass card */}
       <div className="relative z-10 mx-auto mt-10 flex max-w-md justify-center sm:mt-16">
         <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, ease }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={iosSoftSpring}
           className="w-full glass-strong rounded-[28px] p-8 sm:p-10"
         >
           {/* Segmented control — hidden on forgot/update modes */}
@@ -121,7 +124,7 @@ function AuthPage() {
                     <motion.span
                       layoutId="auth-pill"
                       className="absolute inset-0 -z-10 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                      transition={{ duration: 0.4, ease }}
+                      transition={iosPillSpring}
                     />
                   )}
                   {m === "signin" ? "Sign in" : "Sign up"}
@@ -134,7 +137,7 @@ function AuthPage() {
             key={mode + "-title"}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease }}
+            transition={iosSpring}
             className="sf-display text-[40px] text-navy"
           >
             {mode === "signin" && "Welcome back."}
@@ -222,10 +225,12 @@ function AuthPage() {
             </AnimatePresence>
 
             <motion.button
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
               type="submit"
               disabled={loading}
-              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] transition-all duration-200 hover:brightness-110 disabled:opacity-60"
+              className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] hover:brightness-110 disabled:opacity-60"
             >
               {loading ? "…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}
             </motion.button>
