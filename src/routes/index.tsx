@@ -563,11 +563,15 @@ function Dashboard() {
 
 // ── Sub-components ──
 
-function StatPill({ label, value }: { label: string; value: string }) {
+function StatPill({ label, value, suffix }: { label: string; value: number; suffix?: string }) {
+  const animated = useCountUp(value, 1100);
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/40">{label}</p>
-      <p className="mt-0.5 text-[18px] font-bold text-white">{value}</p>
+      <p className="mt-0.5 text-[18px] font-bold text-white nums">
+        {animated}
+        {suffix && <span className="ml-1 font-medium text-white/60">{suffix}</span>}
+      </p>
     </div>
   );
 }
