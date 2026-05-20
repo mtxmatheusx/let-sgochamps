@@ -76,7 +76,7 @@ function History() {
 
       {activities.length === 0 ? (
         <div className="glass rounded-[28px] py-20 text-center">
-          <p className="italic text-sage">You have not logged anything yet. Start today.</p>
+          <p className="italic text-sage">Nothing logged yet. Today's a perfect day to start.</p>
         </div>
       ) : (
         <div className="relative space-y-8">
