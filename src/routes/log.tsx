@@ -13,6 +13,18 @@ import { uploadCheckInPhoto, postActivityToGroups } from "@/lib/feed";
 export const Route = createFileRoute("/log")({ component: LogMovement });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const iosSpring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.9 };
+const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
+const iosPillSpring = { type: "spring" as const, stiffness: 420, damping: 36, mass: 0.8 };
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 14 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { ...iosSoftSpring, delay: 0.05 + i * 0.045 },
+  }),
+};
 
 type SavedActivity = {
   type: string;
