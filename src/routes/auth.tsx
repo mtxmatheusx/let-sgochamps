@@ -100,9 +100,9 @@ function AuthPage() {
       {/* Centered glass card */}
       <div className="relative z-10 mx-auto mt-10 flex max-w-md justify-center sm:mt-16">
         <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, ease }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={iosSoftSpring}
           className="w-full glass-strong rounded-[28px] p-8 sm:p-10"
         >
           {/* Segmented control — hidden on forgot/update modes */}
