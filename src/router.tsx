@@ -6,9 +6,10 @@ export const getRouter = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60_000, // cache data 1min — instant tab switches
-        gcTime: 5 * 60_000,
+        staleTime: 5 * 60_000,
+        gcTime: 30 * 60_000,
         refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
         retry: 1,
       },
     },
@@ -18,7 +19,7 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
-    defaultPreload: "intent", // preload on hover/touch
+    defaultPreload: "render",
     defaultPreloadStaleTime: 0,
   });
 
