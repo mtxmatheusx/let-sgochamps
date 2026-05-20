@@ -1,4 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as _sb } from "@/integrations/supabase/client";
+const supabase: any = _sb;
 
 export type GroupType = "club" | "challenge";
 export type ScoringMode = "days_active" | "check_in_count" | "metrics_minutes";

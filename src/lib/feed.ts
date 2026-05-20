@@ -1,4 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as _sb } from "@/integrations/supabase/client";
+const supabase: any = _sb;
 
 export type FeedPhoto = { id: string; url: string; caption: string | null; position: number };
 export type FeedAuthor = { id: string; display_name: string | null; avatar_url: string | null };
