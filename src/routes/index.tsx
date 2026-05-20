@@ -531,7 +531,7 @@ function Dashboard() {
         <div className="mx-auto max-w-[1200px] lg:flex lg:items-end lg:justify-between lg:gap-16">
           <div>
             <p className="eyebrow text-white/60">
-              {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
+              {stats.daysShowedUp} active day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
             </p>
             <h2
               className="sf-display mt-4 text-white"
