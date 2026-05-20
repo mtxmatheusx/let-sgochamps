@@ -25,6 +25,7 @@ import { Route as GroupsIndexRouteImport } from './routes/groups.index'
 import { Route as GroupsNewRouteImport } from './routes/groups.new'
 import { Route as GroupsJoinRouteImport } from './routes/groups.join'
 import { Route as GroupsSlugRouteImport } from './routes/groups.$slug'
+import { Route as WallRouteImport } from './routes/wall'
 
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
@@ -106,6 +107,11 @@ const GroupsSlugRoute = GroupsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => GroupsRoute,
 } as any)
+const WallRoute = WallRouteImport.update({
+  id: '/wall',
+  path: '/wall',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/groups/new': typeof GroupsNewRoute
   '/groups/join': typeof GroupsJoinRoute
   '/groups/$slug': typeof GroupsSlugRoute
+  '/wall': typeof WallRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/groups/new': typeof GroupsNewRoute
   '/groups/join': typeof GroupsJoinRoute
   '/groups/$slug': typeof GroupsSlugRoute
+  '/wall': typeof WallRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/groups/new': typeof GroupsNewRoute
   '/groups/join': typeof GroupsJoinRoute
   '/groups/$slug': typeof GroupsSlugRoute
+  '/wall': typeof WallRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/groups/new'
     | '/groups/join'
     | '/groups/$slug'
+    | '/wall'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/groups/new'
     | '/groups/join'
     | '/groups/$slug'
+    | '/wall'
   id:
     | '__root__'
     | '/'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/groups/new'
     | '/groups/join'
     | '/groups/$slug'
+    | '/wall'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -226,6 +238,7 @@ export interface RootRouteChildren {
   LogRoute: typeof LogRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   GroupsRoute: typeof GroupsRouteWithChildren
+  WallRoute: typeof WallRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -342,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GroupsSlugRouteImport
       parentRoute: typeof GroupsRoute
     }
+    '/wall': {
+      id: '/wall'
+      path: '/wall'
+      fullPath: '/wall'
+      preLoaderRoute: typeof WallRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -386,6 +406,7 @@ const rootRouteChildren: RootRouteChildren = {
   LogRoute: LogRoute,
   StoriesRoute: StoriesRouteWithChildren,
   GroupsRoute: GroupsRouteWithChildren,
+  WallRoute: WallRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

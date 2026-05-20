@@ -1,118 +1,111 @@
-# Spec: Device sync (web-only) — Strava as the universal bridge
+# Spec: The Wall — global champs feed
 
 ## Objetivo
 
-Permitir que champs conectem uma fonte externa de dados de atividade (relógio,
-app de fitness) ao Let's Go Champs e tenham seus treinos importados como
-check-ins automaticamente — sem precisar logar manualmente, e sem que o LGC
-precise virar app nativo.
+Uma página `/wall` onde **qualquer champ logado** pode postar foto + texto sobre
+seu exercício e ver, no mesmo lugar, os posts de **todos os outros champs** num
+feed cronológico — sem precisar pertencer a um Club ou Challenge específico.
 
-A meta não é "Apple Health no web" literalmente (não existe API web do HealthKit
-— a única forma seria shipping um wrapper iOS, o que viola a restrição). A meta
-é **eliminar a fricção do log manual** para os champs que já usam wearables.
+É a **praça pública** do LGC: o lugar onde a Brilliance Tree mostra cara em
+escala global, não fechada em silos de grupo. Champs novos chegam, veem a wall
+cheia de outros champs reais postando, e sentem "isto aqui é uma comunidade que
+existe."
 
 ## Contexto
 
-- **Restrição absoluta**: web-only (sem Capacitor, sem app nativo, sem extensão de
-  browser). Tudo precisa rodar dentro do que Lovable + Vite + React + Supabase
-  já suportam.
-- **Tabela `activities`** já existe (`src/lib/activities.ts`) com colunas
-  `user_id, type, duration, intensity, mood, date, notes`. Toda atividade
-  importada vira uma linha aqui — mesma forma, mesmo schema, mesmo feed.
-- **Schema v2 de groups** já está deployado (Phase 1+2 — Clubs, Challenges, feed,
-  photos, comments, roll call). Atividades importadas devem poder ser
-  cross-posted para grupos como qualquer outro check-in.
-- **Brilliance Tree philosophy**: a importação é opt-in, gentil, e não compete
-  com o log manual. Continua existindo o "log a new move" tradicional, com a
-  reflexão sobre intensidade + mood que é parte da identidade do app.
+- **Schema atual já cobre 100%** do que precisamos:
+  - `activities` — o check-in em si (type, duration, mood, intensity, notes)
+  - `check_in_photos` — fotos atreladas a uma activity
+  - `comments` — comentários atrelados a uma activity
+  - `activity_groups` — cross-posting de uma activity pra N groups
+  - `groups` — Clubs e Challenges com RLS por membership
+  - `profiles` — display_name + avatar
+- **Componentes prontos**: `src/components/FeedCard.tsx` renderiza
+  fotos + meta + comentários colapsáveis. Reutilizar 100%.
+- **Libs prontas**: `src/lib/feed.ts` já tem `fetchGroupFeed`, `postComment`,
+  `uploadCheckInPhoto`, `postActivityToGroups`.
+- **Restrição crítica do owner**: "tem que aproveitar o schema atual" —
+  decisão de design: **The Wall será modelada como um Club especial do sistema**
+  (slug `the-wall`, `is_public=true`, owner = um system user ou o admin),
+  onde **todo champ é automaticamente adicionado** quando faz signup.
+  Zero mudanças de schema. Composer faz cross-post pro Wall por padrão.
+- **Spec paralelo**: `spec-strava.md` (device sync via Strava) está pausado,
+  voltamos depois.
 
-### Por que Strava (e não Apple Health diretamente)
+## Tom & Copy
 
-Strava é o **bridge de facto** para wearables no ecossistema iOS/Android:
-- A maioria dos iPhone users que tem Apple Watch já tem Apple Health ↔ Strava
-- Garmin, Fitbit, Polar, Wahoo, Suunto, Coros — todos sincronizam pra Strava
-- **OAuth web nativo** + REST API + free tier generoso (rate limits razoáveis)
-- Webhook subscriptions pra atualização em tempo real (atividade nova no Strava
-  vira check-in no LGC sem polling)
+A Wall não é "feed" e não é "timeline" — palavras de produto. É **a praça da
+tribo**. Linguagem de espelho coletivo, não de métrica.
 
-Uma única integração com Strava resolve ~80% do caso de uso "tenho um relógio
-e quero que conte automaticamente" sem que o LGC precise virar app nativo.
+- **Eyebrow / tagline da página**: "Mostrando o movimento da tribo champs"
+  *(ou em EN: "The movement of the champs tribe")*
+- **H1**: "The Wall" — direto, sem ornamento
+- **Composer placeholder**: "Share today's move with the tribe…"
+- **Botão de publicar**: "Share with the champs"
+- **Empty state (feed vazio)**: "Be the first to show up for the tribe."
+- **Empty comment thread**: "Send some encouragement →"
+
+Evitar a todo custo: *"likes"*, *"followers"*, *"trending"*, *"feed"*,
+*"timeline"*, *"posts"*, *"engagement"*. Preferir: *tribe, champs, the wall,
+move, show up, share, encouragement.*
 
 ## Restrições
 
-- **Web-only**: nenhum código nativo. Toda a integração deve rodar no servidor
-  Supabase (Edge Functions) + cliente React.
-- **Brilliance Tree philosophy preservada**:
-  - Importação **opt-in**, controlada pelo champ
-  - O champ continua podendo **editar** mood/intensity/notes depois (Strava
-    não traz isso — preencher com defaults sensatos e marcar como `synced`)
-  - Sem leaderboard de "quem mais treina" — atividades importadas entram no
-    mesmo feed/roll-call sem destaque especial
-  - Possibilidade de **desconectar** a qualquer momento
-- **Sem novas dependências pagas**: Strava API é free. Webhooks opcionais.
-- **Não pode forçar onboarding**: champ pode ignorar a integração para sempre,
-  o app continua 100% funcional sem ela.
-- **Privacidade**: tokens armazenados criptografados no Supabase, nunca
-  expostos ao cliente; refresh tokens rotacionados conforme spec do Strava.
-
-## Decisões locked-in (após Q&A)
-
-- **Provider**: Strava (confirmed) — bridge universal pra Apple Watch / Garmin / Fitbit / Polar / Coros / etc.
-- **Tipos de atividade**: **expandir** a lista atual de 6 para 12 tipos cobrindo
-  o repertório do Strava. Lista nova: Walking, Running, Cycling, Yoga,
-  Stretching, Strength Training, **Swimming**, **Pilates**, **HIIT**, **Rowing**,
-  **Dance**, **Other**. *Sem Hiking* (decisão explícita do champ owner).
-- **Cadência de sync**: **Pull on app open** + botão manual "Sync now".
-  Webhook fica explicitamente fora deste corte porque (a) duplica o trabalho de
-  expor/manter Edge Function público com validação de assinatura, (b) ganho marginal
-  pequeno — champs abrem o app diariamente, latência aceitável, (c) podemos
-  adicionar webhook depois sem refactor da arquitetura.
+- **Web only**, mesmo stack (TanStack Router + Supabase + RLS + framer-motion)
+- **Zero alterações de schema** — só seed de uma linha em `groups` + trigger
+  pra auto-join novos usuários ao Wall
+- **Brilliance Tree philosophy** intacta:
+  - Sem **like count** visível
+  - Sem **ranking** de posts ("top of the day", "most popular")
+  - Sem **reactions** com contagem
+  - Apenas **comentários de encorajamento** (que já existem)
+- **Posts são activities** — entram no streak/total/days do champ
+  exatamente como qualquer outro check-in (não duplica esforço)
+- **Composer mínimo**: foto + texto. Se champ quiser preencher type/duração/mood,
+  a opção existe num "expand details" — mas o caminho mais curto é foto + texto
+  e seguir a vida
+- **Pelo menos um de**: foto OU texto. Não aceitar post completamente vazio
+- **Sem app nativo, sem novas dependências pesadas**
 
 ## Critérios de Aceite
 
-- [ ] Champ logado vê uma seção **"Connected devices"** no Dashboard (card
-      colapsável) e em uma página `/settings/connections` dedicada
-- [ ] Clicar em **"Connect Strava"** abre o OAuth do Strava (redirect, não popup)
-- [ ] Callback do Strava (Edge Function) troca o code por tokens e salva
-      criptografado em `device_connections` (chave por user_id)
-- [ ] Após autorizar, o LGC mostra **"Connected · last sync: …"** com botão
-      **"Sync now"**
-- [ ] **Backfill inicial**: atividades dos últimos **14 dias** do Strava são
-      importadas como check-ins do champ
-- [ ] Importações aparecem no `/history`, contam para **streak + total minutes
-      + sessions**, e entram no roll-call/stats de grupos onde o champ é membro
-- [ ] **Sync on app open**: quando champ abre o LGC e a última sync foi há
-      > 30 min, dispara pull automático silencioso no background
-- [ ] Atividade importada tem **badge sutil** "↻ Strava" no feed/history
-- [ ] Champ pode **editar** intensity/mood/notes em atividade importada
-      (duration/type/date ficam read-only — vem do device)
-- [ ] **Disconnect** remove tokens + para de importar; atividades já
-      importadas permanecem (champ pode deletá-las uma a uma se quiser)
-- [ ] **Sem duplicatas**: upsert pela coluna `external_id` (strava activity id)
-      + `provider` (`'strava'`) — unique constraint
-- [ ] **Mapeamento de tipos Strava → LGC**: Walk→Walking, Run/TrailRun/VirtualRun→Running,
-      Ride/EBikeRide/VirtualRide/MountainBikeRide→Cycling, Swim→Swimming,
-      Yoga→Yoga, Pilates→Pilates, WeightTraining→Strength Training,
-      Workout/HIIT/Crossfit→HIIT, Rowing→Rowing, Dance→Dance, qualquer outro→Other
-- [ ] Champ testa o fluxo no Lovable e aprova qualitativamente
+- [ ] Rota **`/wall`** existe, requer auth, presente na nav principal
+- [ ] Existe um Club system com slug `the-wall` no `groups`, `is_public=true`,
+      `name='The Wall'`
+- [ ] **Auto-join no signup**: trigger `handle_new_user()` (já existe) é
+      estendido pra também inserir o novo user em `group_members` do Wall
+- [ ] **Backfill**: todos os usuários existentes hoje viram membros do Wall
+- [ ] Página `/wall` mostra:
+  - **Composer no topo**: foto (opcional) + textarea (opcional, max 600 chars)
+    + botão "Share with the champs". Por padrão usa Walking/30min/Moderate/
+    Energized como metadata. "Add details" expandível pra customizar
+  - **Feed cronológico** abaixo, reusando `FeedCard.tsx` — mostra posts de
+    todos os champs (porque todos são membros do Wall)
+- [ ] Posts publicados na Wall **também aparecem no `/history`** do champ
+      e **contam pra streak**
+- [ ] Champ pode **deletar o próprio post** (botão sutil no FeedCard quando
+      `meId === item.user_id`)
+- [ ] **Sem like counts**, sem ranking, sem "trending"
+- [ ] Composer com **foto E texto vazios → desabilita o botão Share**
+- [ ] Funciona em mobile (composer empilhado, feed em coluna única)
+- [ ] **Copy hits the right notes**: eyebrow "Mostrando o movimento da tribo
+      champs", H1 "The Wall", placeholder/CTA conforme seção Tom & Copy.
+      Sem usar "feed", "timeline", "posts", "likes" em texto visível
+- [ ] Owner testa qualitativamente no Lovable e aprova
 
 ## Fora do Escopo
 
-- **Apple Health diretamente** — fica documentado como "futuro com app nativo"
-- **Google Fit / Health Connect** — Phase 2 (mesmo padrão de provider,
-  schema já preparado pra suportar)
-- **Manual Apple Health XML upload** — possível alternativa futura, fora deste spec
-- **Webhook do Strava** — fora deste corte (decisão acima). Tudo via pull
-  on app open + botão manual
-- **Hiking** — removido explicitamente da lista expandida de tipos
-- **Importar treinos de mais de 14 dias atrás** — janela fechada pra evitar
-  inundar o histórico do champ com dados antigos
-- **Re-fetch retroativo on reconnect** — se champ desconecta e reconecta, não
-  voltamos a importar atividades antigas (só dali pra frente)
-- **Photos do Strava** — não puxamos imagens das atividades importadas
-- **Comments/kudos do Strava** — não importados; o feed/comments do LGC é a
-  conversa que importa aqui
-- **Touchar schema atual de groups/feed/comments** — atividades importadas se
-  encaixam no schema existente sem mudanças estruturais
-- **Estilizar / refatorar qualquer outra coisa do app** — esta feature
-  adiciona; não toca o que já tá funcionando
+- **Edit de post** após publicar (delete + repostar)
+- **Reactions / likes / kudos** — explicitamente nunca; choca com a filosofia
+- **Tags / hashtags / mentions**
+- **Perfil público individual** (`/champs/:slug`) — spec separado se precisar
+- **Notificação quando alguém comenta** — defer pra Phase 2
+- **Moderação / report** — defer (Aidan + admin sweep manual no admin panel
+  por enquanto se aparecer algo ruim)
+- **Visibilidade granular** (público / só amigos / só grupo) — Wall é
+  binário: pra ele ou não
+- **Pinning de posts** — sem destaque
+- **Filtros do feed** ("só fotos", "só do dia") — feed é cronológico puro
+- **Strava sync** (`spec-strava.md` pausado)
+- **Refactor de Groups, Stories, Community ou About** — esta feature
+  adiciona; não toca o que tá funcionando
