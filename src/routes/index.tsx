@@ -596,10 +596,10 @@ function BentoCard({
       : "glass";
 
   const motionProps = {
-    initial: { opacity: 0, y: 18 },
+    initial: { opacity: 1, y: 0 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-40px" },
-    transition: { ...iosSoftSpring, delay },
+    transition: { ...iosSoftSpring, delay: Math.min(delay, 0.06) },
     whileHover: { y: -3, transition: iosHoverSpring },
     whileTap: { scale: 0.985, transition: iosTapSpring },
   };
