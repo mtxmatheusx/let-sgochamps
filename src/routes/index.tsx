@@ -214,7 +214,7 @@ function Dashboard() {
             <div className="h-8 w-px bg-white/15" />
             <StatPill label="Total minutes" value={stats.totalMinutes} suffix="min" />
             <div className="h-8 w-px bg-white/15" />
-            <StatPill label="Days showed up" value={stats.daysShowedUp} />
+            <StatPill label="Active days" value={stats.daysShowedUp} />
           </motion.div>
 
           {/* CTAs */}
