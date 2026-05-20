@@ -576,12 +576,12 @@ function BentoCard({
       : "glass";
 
   const motionProps = {
-    initial: { opacity: 0, y: 32, scale: 0.94 },
-    whileInView: { opacity: 1, y: 0, scale: 1 },
-    viewport: { once: true, margin: "-60px" },
-    transition: { ...iosSpring, delay },
-    whileHover: { y: -4, scale: 1.012, transition: iosHoverSpring },
-    whileTap: { scale: 0.97, transition: iosTapSpring },
+    initial: { opacity: 0, y: 18 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { ...iosSoftSpring, delay },
+    whileHover: { y: -3, transition: iosHoverSpring },
+    whileTap: { scale: 0.985, transition: iosTapSpring },
   };
 
   if (href) {
