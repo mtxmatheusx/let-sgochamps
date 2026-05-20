@@ -87,7 +87,7 @@ function History() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, ease, delay: gi * 0.05 }}
+              transition={{ ...iosSoftSpring, delay: gi * 0.05 }}
             >
               <div className="sticky top-[52px] z-10 -mx-2 mb-2 px-2 py-2 backdrop-blur-md">
                 <div className="flex items-baseline justify-between">
