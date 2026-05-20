@@ -16,9 +16,14 @@ import { ActivityRing } from "@/components/ActivityRing";
 import { computeStats, fetchActivities, minutesByType, minutesByDay } from "@/lib/activities";
 import { useCountUp } from "@/hooks/useCountUp";
 
-export const Route = createFileRoute("/")({ component: Dashboard });
+export const Route = createFileRoute("/")({
+  component: Dashboard,
+  head: () => ({
+    links: [{ rel: "preload", as: "image", href: "/hero.jpg", fetchpriority: "high" } as any],
+  }),
+});
 
-const HERO_IMG = "/hero.png";
+const HERO_IMG = "/hero.jpg";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 function friendlyDate(iso: string) {
@@ -126,6 +131,8 @@ function Dashboard() {
             alt="Aidan running with the community"
             className="h-full w-full object-cover"
             style={{ objectPosition: "55% center" }}
+            fetchPriority="high"
+            decoding="async"
           />
         </motion.div>
 
