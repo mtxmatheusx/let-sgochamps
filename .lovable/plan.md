@@ -1,85 +1,40 @@
-## Direção visual: iOS 26 Liquid Glass · Light Apple · SF
+## Goal
 
-Vou reescrever a linguagem visual do app inteiro com base em três pilares:
+Make the count-up dos números bater com o ritmo geral do app — nem rápido demais (parece glitch), nem lento demais (fica solto do resto da animação).
 
-1. **Liquid Glass** — superfícies translúcidas com `backdrop-filter: blur()`, bordas hairline com brilho interno (inset highlight + outer shadow muito suave), e gradientes coloridos de fundo que vazam por trás dos cards (tipo iOS 26 widgets / Control Center).
-2. **Light puro Apple** — fundo `#f5f5f7`, texto `#1d1d1f`, acentos azul `#0071e3` + dourado da marca como detalhe. Cards brancos quase puros sobre orbes coloridos desfocados.
-3. **SF Pro stack** — `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Tight", system-ui` para tudo. Sem Bebas, sem Playfair. Pesos 400/600/700/800, tracking negativo nos títulos grandes (`-0.04em`).
+## Diagnóstico do ritmo atual
 
----
+Olhei os timings em volta para escolher uma duração que conversa com tudo:
 
-### 1. Sistema de design (`src/styles.css`)
+- Bento cards entram com spring iOS (~0.4s perceptível)
+- Hero headline: spring suave (~0.5s)
+- Segmented pill desliza em ~0.3s
+- Anel de streak (SVG): spring ~0.6s
+- Count-up dos números hoje: **1.6s** ← destoa, fica "andando sozinho" depois que o resto já parou
 
-Substituir tokens por uma paleta light Apple e adicionar utilitários de glass:
+A regra Apple é: animações terminam **juntas**. Quando o card termina de entrar, o número já tem que estar quase parando.
 
-- Tokens novos: `--bg: #f5f5f7`, `--surface: #ffffff`, `--text: #1d1d1f`, `--text-muted: #6e6e73`, `--hairline: rgba(0,0,0,0.08)`, `--accent: #0071e3`, `--accent-gold: #b8962e` (preservado como toque de marca).
-- Stack de fonte: substituir `--font-sans`, `--font-display`, `--font-serif` por uma única stack SF system. Headings ganham `font-weight: 700` e `letter-spacing: -0.035em`.
-- Utilitários:
-  - `.glass` — `background: rgba(255,255,255,0.6); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255,255,255,0.7); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 32px rgba(0,0,0,0.06)`.
-  - `.glass-dark` — variante para a navbar (translúcida sobre conteúdo escuro).
-  - `.hairline` — borda 1px com a cor `--hairline`.
-  - `.orb` — div circular com `filter: blur(80px)` e cores vivas (azul, gold, verde) que ficam atrás dos cards.
-  - `.sf-display` — utilitário para títulos massivos com tracking apertado.
+## Mudanças
 
-### 2. Navbar global (`src/components/Layout.tsx`)
+### 1. `src/hooks/useCountUp.ts`
+- Duração padrão: **1.6s → 1.1s** (alinha com o tempo de entrada + leitura do anel de streak)
+- Mantém `easeOutExpo` (settle suave continua sendo a assinatura premium)
+- Mantém animação a partir do valor anterior quando muda (não reseta pra 0)
 
-- Translúcida fixa: `position: sticky`, `background: rgba(245,245,247,0.72)`, `backdrop-filter: blur(20px) saturate(180%)`, hairline embaixo.
-- Logo "LGC" em SF semibold (sem dourado por padrão, dourado só no hover).
-- Links em `text-[13px] font-medium`, com underline animado fininho (1px) em vez do gold de 2px.
-- Mobile: trocar o menu hamburger por um sheet que desliza de cima com mesma estética glass.
-- Footer: simplificar para uma linha de copy + links em SF caps minúsculas.
+### 2. `src/routes/index.tsx` — Hero stats bar
+Hoje os números em "5 days · 120 min · 12" no hero desktop aparecem **estáticos** enquanto os do bento contam. Isso quebra a harmonia: o olho vê duas regiões com o mesmo tipo de dado se comportando diferente.
 
-### 3. Auth (`src/routes/auth.tsx`) — atualmente "amador"
+Aplicar `useCountUp` no `StatPill` para os valores numéricos (`streak`, `totalMinutes`, `daysShowedUp`) — começam a contar junto com a entrada do hero (~0.24s delay), terminam ~1.3s depois. Sincroniza com o bento que entra logo abaixo.
 
-Esse é o ponto mais crítico (você está olhando ele agora):
+### 3. Anel de streak (`ActivityRing`)
+Verificar se a duração do preenchimento do arco SVG bate com o count-up (1.1s). Se estiver diferente, alinhar — o número e o anel têm que parar no mesmo frame.
 
-- **Background**: três orbes coloridas desfocadas (azul, gold, verde mint) animando devagar (float infinito com framer-motion), sobre `#f5f5f7`.
-- **Card central**: glassmorphism puro — `backdrop-blur(40px)`, borda branca translúcida, sombra suave, raio 24px.
-- **Marca**: "Let's Go Champs" em SF heavy 28px, tracking −0.04em, cinza-quase-preto. Sem o "LGC" abreviado.
-- **Title**: "Sign in." / "Create account." em SF 40px bold com tracking apertado.
-- **Inputs**: altura 52px, raio 14px, fundo `rgba(0,0,0,0.04)`, sem borda visível, focus revela uma borda azul Apple `#0071e3` com glow azul translúcido. Label flutuante (estilo iOS).
-- **Botão primary**: pill 52px, fundo `#0071e3` (azul Apple) por padrão; o gold continua disponível como variant secundária. Texto "Sign in" em SF semibold, sem uppercase.
-- **Toggle signin/signup**: segmented control no topo (estilo iOS Settings), em vez do link de texto embaixo.
-- **Mensagens**: toast iOS-style — pill flutuante translúcida no topo, não banner verde.
+## Fora de escopo
 
-### 4. Dashboard (`src/routes/index.tsx`)
+- Não mexer no Log/History agora (você não pediu, e a página principal é onde a harmonia mais importa)
+- Não trocar o easing (easeOutExpo está perfeito pra Apple feel)
+- Não animar números pequenos tipo "5 sessions logged" no footer da tabela (ruído visual, não vale)
 
-- **Hero**: manter o full-bleed com parallax, mas:
-  - Trocar a foto Unsplash por uma composição mais clean: foto monocromática + overlay branco gradiente (do transparente no topo para `#f5f5f7` sólido embaixo, dando continuidade ao bg).
-  - Headline "LET'S GO CHAMPS." em SF 700 com tracking −0.05em (não mais Bebas). Tamanho responsivo 80–180px.
-  - CTA: pill azul `#0071e3` com chevron iOS (›) animado.
-- **Bento grid**: refinar para parecer widgets iOS 26:
-  - Cards com `.glass` em vez de branco sólido, sobre orbes coloridas no fundo.
-  - Card de streak (grande): adicionar um anel de progresso SVG ao redor do número (estilo Activity Rings), animando do 0 ao valor atual.
-  - Card de minutos: número gigante em SF, sublinhado por uma sparkline minimalista dos últimos 7 dias.
-  - Hover: leve tilt 3D (`rotateX/rotateY` baseado na posição do mouse) + brilho interno seguindo o cursor (efeito "spotlight" tipo Apple Vision keynote).
-- **Chart Recharts**: trocar barras douradas chapadas por barras com gradiente azul→roxo, raio maior, tooltip glass.
-- **Banda "consistency becomes identity"**: virar uma seção full-bleed com fundo gradiente animado (azul → roxo → preto) e texto em SF heavy.
+## Resultado esperado
 
-### 5. Log Movement + History
-
-- **Log**: form em card glass, inputs no mesmo padrão iOS do auth, segmented control para escolher intensidade (Low/Moderate/High) e mood. Slider iOS-style para duration. Botão azul Apple no final.
-- **History**: trocar a tabela por uma lista estilo iOS (linhas com hairline divider, chevron à direita, agrupamento por data com sticky headers translúcidos). Pills de intensidade com glass + tint colorido.
-
-### 6. Animações (nível 5 mantido)
-
-- `framer-motion` para parallax, reveals em cascata, número que sobe.
-- Adicionar: spotlight hover nos cards (mouse-tracking), float infinito nas orbes de fundo, segmented control com `layoutId` (animação compartilhada da pílula selecionada).
-- Curva padrão: `[0.22, 1, 0.36, 1]` (Apple-like ease-out exponencial).
-
----
-
-### Detalhes técnicos
-
-- Não preciso instalar nada novo (`framer-motion` já está). Vou usar SF nativo via CSS stack — não baixa fonte externa, então é instantâneo no Mac/iOS do usuário (e Inter Tight como fallback no Windows/Android).
-- Atualizo `src/styles.css` (tokens + utilitários glass), `src/components/Layout.tsx` (navbar glass), `src/routes/auth.tsx` (rebuild), `src/routes/index.tsx` (refino bento + activity rings), `src/routes/log.tsx` e `src/routes/history.tsx` (linguagem iOS).
-- O `useCountUp` hook permanece. Adiciono um pequeno componente `<ActivityRing>` SVG novo.
-- Preservo o dourado `#b8962e` como cor de marca acessória (ainda aparece em pequenos detalhes, ex: dot de status, hover do logo) para não perder a identidade Let's Go Champs.
-
----
-
-### Fora de escopo
-
-- Não mexo na lógica de Supabase, auth flow, ou estrutura de rotas.
-- Não recrio a feature de Stories (continua removida).
-- Não adiciono dark mode toggle (você escolheu light puro).
+Você abre a home, e numa janela de ~1.3s **tudo** acontece em coro: hero entra, bento sobe, anel preenche, números (hero + bento) sobem do zero, segmented pill se posiciona — e tudo para junto. Depois, silêncio total. É isso que faz parecer iOS 26 de verdade.

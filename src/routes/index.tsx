@@ -209,11 +209,11 @@ function Dashboard() {
             transition={{ ...iosSoftSpring, delay: 0.24 }}
             className="hidden lg:flex mt-8 items-center gap-6"
           >
-            <StatPill label="Current streak" value={`${stats.streak} days`} />
+            <StatPill label="Current streak" value={stats.streak} suffix="days" />
             <div className="h-8 w-px bg-white/15" />
-            <StatPill label="Total minutes" value={`${stats.totalMinutes} min`} />
+            <StatPill label="Total minutes" value={stats.totalMinutes} suffix="min" />
             <div className="h-8 w-px bg-white/15" />
-            <StatPill label="Days showed up" value={String(stats.daysShowedUp)} />
+            <StatPill label="Days showed up" value={stats.daysShowedUp} />
           </motion.div>
 
           {/* CTAs */}
@@ -563,11 +563,15 @@ function Dashboard() {
 
 // ── Sub-components ──
 
-function StatPill({ label, value }: { label: string; value: string }) {
+function StatPill({ label, value, suffix }: { label: string; value: number; suffix?: string }) {
+  const animated = useCountUp(value, 1100);
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/40">{label}</p>
-      <p className="mt-0.5 text-[18px] font-bold text-white">{value}</p>
+      <p className="mt-0.5 text-[18px] font-bold text-white nums">
+        {animated}
+        {suffix && <span className="ml-1 font-medium text-white/60">{suffix}</span>}
+      </p>
     </div>
   );
 }
@@ -625,7 +629,7 @@ function BentoCard({
 }
 
 function BigNumber({ value, suffix, small = false }: { value: number; suffix?: string; small?: boolean }) {
-  const animated = useCountUp(value, 1200);
+  const animated = useCountUp(value, 1100);
   return (
     <div
       className="sf-display mt-auto flex items-baseline text-navy"
