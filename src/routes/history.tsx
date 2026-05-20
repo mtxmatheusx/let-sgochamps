@@ -41,6 +41,7 @@ function History() {
   const { data: activities = [] } = useQuery({
     queryKey: ["activities"],
     queryFn: fetchActivities,
+    placeholderData: (previous) => previous ?? [],
   });
 
   const grouped = useMemo(() => {
@@ -84,10 +85,10 @@ function History() {
           {grouped.map(([date, items], gi) => (
             <motion.section
               key={date}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 1, y: 0 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ ...iosSoftSpring, delay: gi * 0.05 }}
+              transition={{ ...iosSoftSpring, delay: Math.min(gi * 0.02, 0.08) }}
             >
               <div className="sticky top-[52px] z-10 -mx-2 mb-2 px-2 py-2 backdrop-blur-md">
                 <div className="flex items-baseline justify-between">
@@ -104,10 +105,10 @@ function History() {
                   return (
                     <motion.li
                       key={a.id}
-                      initial={{ opacity: 0, x: 8 }}
+                      initial={{ opacity: 1, x: 0 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true, margin: "-40px" }}
-                      transition={{ ...iosSpring, delay: gi * 0.05 + i * 0.04 }}
+                      transition={{ ...iosSpring, delay: Math.min(gi * 0.02 + i * 0.015, 0.1) }}
                       className={`group flex items-center gap-4 px-5 py-4 ${
                         i > 0 ? "border-t border-black/5" : ""
                       }`}
