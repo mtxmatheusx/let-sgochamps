@@ -154,7 +154,7 @@ function History() {
                           </svg>
                         )}
                       </button>
-                    </li>
+                    </motion.li>
                   );
                 })}
               </ul>
