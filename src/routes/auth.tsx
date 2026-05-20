@@ -232,7 +232,21 @@ function AuthPage() {
               disabled={loading}
               className="mt-2 h-[52px] w-full rounded-2xl bg-blue text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,197,94,0.55)] hover:brightness-110 disabled:opacity-60"
             >
-              {loading ? "…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}
+              {loading
+                ? mode === "signin"
+                  ? "Signing in…"
+                  : mode === "signup"
+                    ? "Creating account…"
+                    : mode === "forgot"
+                      ? "Sending link…"
+                      : "Updating…"
+                : mode === "signin"
+                  ? "Sign in"
+                  : mode === "signup"
+                    ? "Create account"
+                    : mode === "forgot"
+                      ? "Send reset link"
+                      : "Update password"}
             </motion.button>
           </form>
 
@@ -249,7 +263,7 @@ function AuthPage() {
 
           {(mode === "signin" || mode === "signup") && (
             <p className="mt-6 text-center text-[12px] text-sage">
-              By continuing you agree to keep showing up.
+              By continuing, you agree to keep showing up.
             </p>
           )}
         </motion.div>

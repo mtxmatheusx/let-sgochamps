@@ -214,7 +214,7 @@ function Dashboard() {
             <div className="h-8 w-px bg-white/15" />
             <StatPill label="Total minutes" value={stats.totalMinutes} suffix="min" />
             <div className="h-8 w-px bg-white/15" />
-            <StatPill label="Days showed up" value={stats.daysShowedUp} />
+            <StatPill label="Active days" value={stats.daysShowedUp} />
           </motion.div>
 
           {/* CTAs */}
@@ -321,10 +321,10 @@ function Dashboard() {
 
           {/* Days — half-width mobile, 1-col desktop */}
           <BentoCard className="col-span-1 md:col-span-1" delay={0.1}>
-            <p className="eyebrow">Days showed up</p>
+            <p className="eyebrow">Active days</p>
             <BigNumber value={stats.daysShowedUp} small />
             <p className="mt-1 text-[11px] text-ink-muted">
-              {stats.daysShowedUp === 1 ? "one day in" : `across ${stats.daysShowedUp} days`}
+              {stats.daysShowedUp === 1 ? "one day in" : `${stats.daysShowedUp} days in`}
             </p>
           </BentoCard>
 
@@ -333,7 +333,7 @@ function Dashboard() {
             <p className="eyebrow text-white/70">Today</p>
             <div className="mt-auto flex items-end justify-between gap-2">
               <p className="sf-display text-[22px] text-white md:text-[26px]">
-                Log a<br />new move
+                Log<br />today's win
               </p>
               <span className="text-white text-[22px] -mb-0.5">›</span>
             </div>
@@ -439,7 +439,7 @@ function Dashboard() {
           className="glass rounded-3xl p-6 md:p-8 lg:col-span-2"
         >
           <p className="eyebrow text-sage">Recent wins</p>
-          <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">Proof you showed up</h3>
+          <h3 className="mt-1 sf-display text-[22px] text-navy md:text-[26px]">Proof you showed up.</h3>
 
           {recent.length === 0 ? (
             <div className="mt-8 flex flex-col items-center justify-center py-10 text-center">
@@ -531,7 +531,7 @@ function Dashboard() {
         <div className="mx-auto max-w-[1200px] lg:flex lg:items-end lg:justify-between lg:gap-16">
           <div>
             <p className="eyebrow text-white/60">
-              {stats.daysShowedUp} day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
+              {stats.daysShowedUp} active day{stats.daysShowedUp === 1 ? "" : "s"} · {stats.streak} in a row
             </p>
             <h2
               className="sf-display mt-4 text-white"
