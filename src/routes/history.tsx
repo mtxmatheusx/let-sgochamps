@@ -27,7 +27,7 @@ function intensityTint(level: string) {
 
 function prettyDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
