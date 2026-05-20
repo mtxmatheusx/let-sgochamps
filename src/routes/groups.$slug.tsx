@@ -49,7 +49,6 @@ function GroupDetail() {
   const { data: group, isLoading: loadingGroup } = useQuery({
     queryKey: ["group", slug],
     queryFn: () => fetchGroupBySlug(slug),
-    placeholderData: (previous) => previous,
   });
 
   const { data: stats } = useQuery({
