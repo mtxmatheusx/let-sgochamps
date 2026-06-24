@@ -182,6 +182,7 @@ export function Layout({ children }: { children: ReactNode }) {
             >
               Share your story
             </Link>
+            {profileBtn}
             {signOutBtn}
           </div>
 
@@ -196,7 +197,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </button>
         </div>
 
-        <MobileSheet open={open} items={[...links, storyLink]} onClose={() => setOpen(false)} trailing={signOutBtn} />
+        <MobileSheet open={open} items={[...links, profileLink, storyLink]} onClose={() => setOpen(false)} trailing={signOutBtn} />
       </nav>
 
       <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16">
