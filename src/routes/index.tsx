@@ -158,7 +158,6 @@ function Dashboard() {
 
         {/* Content */}
         <motion.div
-          style={{ opacity: heroOpacity }}
           className="relative z-10 h-full flex flex-col justify-end pb-10 px-6 sm:pb-16 sm:px-10 lg:justify-center lg:pb-0 lg:pl-20 lg:pr-4 lg:max-w-[52%]"
         >
           {/* Eyebrow */}
