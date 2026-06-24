@@ -265,30 +265,72 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           daily_pose: string | null
           daily_pose_date: string | null
           display_name: string | null
+          favorite_movement: string | null
           id: string
+          instagram_handle: string | null
+          is_discoverable: boolean
+          location: string | null
           updated_at: string
+          website_url: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           daily_pose?: string | null
           daily_pose_date?: string | null
           display_name?: string | null
+          favorite_movement?: string | null
           id: string
+          instagram_handle?: string | null
+          is_discoverable?: boolean
+          location?: string | null
           updated_at?: string
+          website_url?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           daily_pose?: string | null
           daily_pose_date?: string | null
           display_name?: string | null
+          favorite_movement?: string | null
           id?: string
+          instagram_handle?: string | null
+          is_discoverable?: boolean
+          location?: string | null
           updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      weekly_messages: {
+        Row: {
+          author_note: string | null
+          created_at: string
+          message: string
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          author_note?: string | null
+          created_at?: string
+          message: string
+          updated_at?: string
+          week_start: string
+        }
+        Update: {
+          author_note?: string | null
+          created_at?: string
+          message?: string
+          updated_at?: string
+          week_start?: string
         }
         Relationships: []
       }
@@ -310,6 +352,15 @@ export type Database = {
         Returns: {
           id: string
           slug: string
+        }[]
+      }
+      get_community_weekly_stats: {
+        Args: never
+        Returns: {
+          active_champs: number
+          sessions_logged: number
+          total_minutes: number
+          week_start: string
         }[]
       }
       get_group_roll_call: {
@@ -346,6 +397,7 @@ export type Database = {
           type: string
         }[]
       }
+      get_public_profile: { Args: { p_user_id: string }; Returns: Json }
       is_group_admin: {
         Args: { p_group: string; p_user: string }
         Returns: boolean
@@ -359,6 +411,20 @@ export type Database = {
         Returns: {
           group_id: string
           slug: string
+        }[]
+      }
+      search_champs: {
+        Args: { limit_n?: number; q?: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          display_name: string
+          favorite_movement: string
+          id: string
+          last_active: string
+          location: string
+          sessions_logged: number
+          total_minutes: number
         }[]
       }
     }
