@@ -12,10 +12,13 @@ const links = [
   { to: "/wall", label: "The Wall" },
   { to: "/log", label: "Log" },
   { to: "/groups", label: "Groups" },
+  { to: "/champs", label: "Champs" },
   { to: "/history", label: "History" },
   { to: "/community", label: "Community" },
   { to: "/about", label: "About" },
 ] as const;
+
+const profileLink = { to: "/profile", label: "My profile" } as const;
 
 const storyLink = { to: "/stories/submit", label: "Share your story" } as const;
 

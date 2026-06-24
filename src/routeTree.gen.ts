@@ -28,6 +28,7 @@ import { Route as StoriesSubmitRouteImport } from './routes/stories.submit'
 import { Route as GroupsNewRouteImport } from './routes/groups.new'
 import { Route as GroupsJoinRouteImport } from './routes/groups.join'
 import { Route as GroupsSlugRouteImport } from './routes/groups.$slug'
+import { Route as ChampsUserIdRouteImport } from './routes/champs.$userId'
 
 const WallRoute = WallRouteImport.update({
   id: '/wall',
@@ -124,6 +125,11 @@ const GroupsSlugRoute = GroupsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => GroupsRoute,
 } as any)
+const ChampsUserIdRoute = ChampsUserIdRouteImport.update({
+  id: '/champs/$userId',
+  path: '/champs/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
   '/wall': typeof WallRoute
+  '/champs/$userId': typeof ChampsUserIdRoute
   '/groups/$slug': typeof GroupsSlugRoute
   '/groups/join': typeof GroupsJoinRoute
   '/groups/new': typeof GroupsNewRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/log': typeof LogRoute
   '/profile': typeof ProfileRoute
   '/wall': typeof WallRoute
+  '/champs/$userId': typeof ChampsUserIdRoute
   '/groups/$slug': typeof GroupsSlugRoute
   '/groups/join': typeof GroupsJoinRoute
   '/groups/new': typeof GroupsNewRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
   '/wall': typeof WallRoute
+  '/champs/$userId': typeof ChampsUserIdRoute
   '/groups/$slug': typeof GroupsSlugRoute
   '/groups/join': typeof GroupsJoinRoute
   '/groups/new': typeof GroupsNewRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/stories'
     | '/wall'
+    | '/champs/$userId'
     | '/groups/$slug'
     | '/groups/join'
     | '/groups/new'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/log'
     | '/profile'
     | '/wall'
+    | '/champs/$userId'
     | '/groups/$slug'
     | '/groups/join'
     | '/groups/new'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/stories'
     | '/wall'
+    | '/champs/$userId'
     | '/groups/$slug'
     | '/groups/join'
     | '/groups/new'
@@ -264,6 +276,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   WallRoute: typeof WallRoute
+  ChampsUserIdRoute: typeof ChampsUserIdRoute
   ChampsIndexRoute: typeof ChampsIndexRoute
 }
 
@@ -402,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GroupsSlugRouteImport
       parentRoute: typeof GroupsRoute
     }
+    '/champs/$userId': {
+      id: '/champs/$userId'
+      path: '/champs/$userId'
+      fullPath: '/champs/$userId'
+      preLoaderRoute: typeof ChampsUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -448,6 +468,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   StoriesRoute: StoriesRouteWithChildren,
   WallRoute: WallRoute,
+  ChampsUserIdRoute: ChampsUserIdRoute,
   ChampsIndexRoute: ChampsIndexRoute,
 }
 export const routeTree = rootRouteImport
