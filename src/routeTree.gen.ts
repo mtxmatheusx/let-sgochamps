@@ -23,6 +23,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoriesIndexRouteImport } from './routes/stories.index'
 import { Route as GroupsIndexRouteImport } from './routes/groups.index'
+import { Route as ChampsIndexRouteImport } from './routes/champs.index'
 import { Route as StoriesSubmitRouteImport } from './routes/stories.submit'
 import { Route as GroupsNewRouteImport } from './routes/groups.new'
 import { Route as GroupsJoinRouteImport } from './routes/groups.join'
@@ -98,6 +99,11 @@ const GroupsIndexRoute = GroupsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => GroupsRoute,
 } as any)
+const ChampsIndexRoute = ChampsIndexRouteImport.update({
+  id: '/champs/',
+  path: '/champs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoriesSubmitRoute = StoriesSubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/groups/join': typeof GroupsJoinRoute
   '/groups/new': typeof GroupsNewRoute
   '/stories/submit': typeof StoriesSubmitRoute
+  '/champs/': typeof ChampsIndexRoute
   '/groups/': typeof GroupsIndexRoute
   '/stories/': typeof StoriesIndexRoute
 }
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/groups/join': typeof GroupsJoinRoute
   '/groups/new': typeof GroupsNewRoute
   '/stories/submit': typeof StoriesSubmitRoute
+  '/champs': typeof ChampsIndexRoute
   '/groups': typeof GroupsIndexRoute
   '/stories': typeof StoriesIndexRoute
 }
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/groups/join': typeof GroupsJoinRoute
   '/groups/new': typeof GroupsNewRoute
   '/stories/submit': typeof StoriesSubmitRoute
+  '/champs/': typeof ChampsIndexRoute
   '/groups/': typeof GroupsIndexRoute
   '/stories/': typeof StoriesIndexRoute
 }
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/groups/join'
     | '/groups/new'
     | '/stories/submit'
+    | '/champs/'
     | '/groups/'
     | '/stories/'
   fileRoutesByTo: FileRoutesByTo
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/groups/join'
     | '/groups/new'
     | '/stories/submit'
+    | '/champs'
     | '/groups'
     | '/stories'
   id:
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/groups/join'
     | '/groups/new'
     | '/stories/submit'
+    | '/champs/'
     | '/groups/'
     | '/stories/'
   fileRoutesById: FileRoutesById
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   WallRoute: typeof WallRoute
+  ChampsIndexRoute: typeof ChampsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -354,6 +367,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GroupsIndexRouteImport
       parentRoute: typeof GroupsRoute
     }
+    '/champs/': {
+      id: '/champs/'
+      path: '/champs'
+      fullPath: '/champs/'
+      preLoaderRoute: typeof ChampsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stories/submit': {
       id: '/stories/submit'
       path: '/submit'
@@ -428,6 +448,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   StoriesRoute: StoriesRouteWithChildren,
   WallRoute: WallRoute,
+  ChampsIndexRoute: ChampsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
