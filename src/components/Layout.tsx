@@ -12,10 +12,13 @@ const links = [
   { to: "/wall", label: "The Wall" },
   { to: "/log", label: "Log" },
   { to: "/groups", label: "Groups" },
+  { to: "/champs", label: "Champs" },
   { to: "/history", label: "History" },
   { to: "/community", label: "Community" },
   { to: "/about", label: "About" },
 ] as const;
+
+const profileLink = { to: "/profile", label: "My profile" } as const;
 
 const storyLink = { to: "/stories/submit", label: "Share your story" } as const;
 
@@ -153,6 +156,15 @@ export function Layout({ children }: { children: ReactNode }) {
     </button>
   );
 
+  const profileBtn = (
+    <Link
+      to="/profile"
+      className="rounded-full px-4 py-2 text-[13px] font-medium text-navy/70 transition-colors hover:bg-black/5 hover:text-navy"
+    >
+      My profile
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-cream overflow-x-hidden">
       <nav className="sticky top-0 z-40 glass-nav">
@@ -170,6 +182,7 @@ export function Layout({ children }: { children: ReactNode }) {
             >
               Share your story
             </Link>
+            {profileBtn}
             {signOutBtn}
           </div>
 
@@ -184,7 +197,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </button>
         </div>
 
-        <MobileSheet open={open} items={[...links, storyLink]} onClose={() => setOpen(false)} trailing={signOutBtn} />
+        <MobileSheet open={open} items={[...links, profileLink, storyLink]} onClose={() => setOpen(false)} trailing={signOutBtn} />
       </nav>
 
       <main className="mx-auto max-w-[1280px] px-6 py-12 sm:px-8 sm:py-16">

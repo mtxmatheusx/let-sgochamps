@@ -1,40 +1,66 @@
-## Goal
+## Objetivo
 
-Make the count-up dos números bater com o ritmo geral do app — nem rápido demais (parece glitch), nem lento demais (fica solto do resto da animação).
+Habilitar perfis editáveis (foto + bio + links) com uma página de networking onde os champs descobrem uns aos outros, e fechar as 3 pendências da varredura anterior.
 
-## Diagnóstico do ritmo atual
+---
 
-Olhei os timings em volta para escolher uma duração que conversa com tudo:
+## 1. Perfis editáveis
 
-- Bento cards entram com spring iOS (~0.4s perceptível)
-- Hero headline: spring suave (~0.5s)
-- Segmented pill desliza em ~0.3s
-- Anel de streak (SVG): spring ~0.6s
-- Count-up dos números hoje: **1.6s** ← destoa, fica "andando sozinho" depois que o resto já parou
+**Backend (migração)**
+- Estender `public.profiles` com: `bio` (texto curto), `location`, `website_url`, `instagram_handle`, `favorite_movement`, `is_discoverable` (boolean, default true — controla se aparece no diretório).
+- Bucket Storage `avatars` (público) + políticas RLS: leitura pública, upload/update/delete só do próprio usuário na pasta `{user_id}/`.
+- RPC `search_champs(q text, limit_n int)`: lista perfis discoverable com nome, avatar, bio curta, localização, contagem de check-ins e streak — uma única chamada para a página de networking.
+- RPC `get_public_profile(p_user_id uuid)`: perfil + últimos 10 check-ins públicos + grupos públicos em comum.
 
-A regra Apple é: animações terminam **juntas**. Quando o card termina de entrar, o número já tem que estar quase parando.
+**Frontend**
+- Nova rota `/profile` (editar o meu): foto (upload pro bucket `avatars` com preview e crop simples via `object-fit`), nome de exibição, bio (300 char), localização, site, Instagram, movimento favorito, toggle "aparecer no diretório". Salva em `profiles`.
+- Nova rota `/champs` (diretório/networking): grid de cards com foto, nome, bio, streak, botão "Ver perfil". Busca por nome/localização. Vazio gracioso quando ninguém marcou discoverable.
+- Nova rota `/champs/$userId` (perfil público): hero com foto + bio + links, stats (streak, total minutes, dias ativos), últimos check-ins, grupos públicos em comum.
+- Link "My profile" no menu do Layout (desktop e mobile sheet). Link "Champs" no nav principal.
 
-## Mudanças
+---
 
-### 1. `src/hooks/useCountUp.ts`
-- Duração padrão: **1.6s → 1.1s** (alinha com o tempo de entrada + leitura do anel de streak)
-- Mantém `easeOutExpo` (settle suave continua sendo a assinatura premium)
-- Mantém animação a partir do valor anterior quando muda (não reseta pra 0)
+## 2. Pendências da varredura
 
-### 2. `src/routes/index.tsx` — Hero stats bar
-Hoje os números em "5 days · 120 min · 12" no hero desktop aparecem **estáticos** enquanto os do bento contam. Isso quebra a harmonia: o olho vê duas regiões com o mesmo tipo de dado se comportando diferente.
+- Criar tabela `weekly_messages` (week_start, message, author_note) + RLS pública só de leitura + linha seed da semana atual com mensagem do Aidan.
+- Criar RPC `get_community_weekly_stats` (SECURITY DEFINER) que agrega total_minutes, active_champs, sessions_logged da semana ISO atual.
+- Inserir owner do clube global "The Wall" em `group_members` como `owner`, para o roll-call e feed funcionarem.
 
-Aplicar `useCountUp` no `StatPill` para os valores numéricos (`streak`, `totalMinutes`, `daysShowedUp`) — começam a contar junto com a entrada do hero (~0.24s delay), terminam ~1.3s depois. Sincroniza com o bento que entra logo abaixo.
+---
 
-### 3. Anel de streak (`ActivityRing`)
-Verificar se a duração do preenchimento do arco SVG bate com o count-up (1.1s). Se estiver diferente, alinhar — o número e o anel têm que parar no mesmo frame.
+## Detalhes técnicos
 
-## Fora de escopo
+```text
+profiles (estendida)
+ ├─ bio text                       (max 300)
+ ├─ location text
+ ├─ website_url text
+ ├─ instagram_handle text
+ ├─ favorite_movement text
+ └─ is_discoverable bool default true
 
-- Não mexer no Log/History agora (você não pediu, e a página principal é onde a harmonia mais importa)
-- Não trocar o easing (easeOutExpo está perfeito pra Apple feel)
-- Não animar números pequenos tipo "5 sessions logged" no footer da tabela (ruído visual, não vale)
+storage: avatars/  (public read, owner-only write em {auth.uid}/...)
 
-## Resultado esperado
+RPCs novos (SECURITY DEFINER, search_path=public)
+ ├─ search_champs(q text default '', limit_n int default 60)
+ ├─ get_public_profile(p_user_id uuid)
+ └─ get_community_weekly_stats()
 
-Você abre a home, e numa janela de ~1.3s **tudo** acontece em coro: hero entra, bento sobe, anel preenche, números (hero + bento) sobem do zero, segmented pill se posiciona — e tudo para junto. Depois, silêncio total. É isso que faz parecer iOS 26 de verdade.
+weekly_messages
+ ├─ week_start date PRIMARY KEY
+ ├─ message text not null
+ └─ author_note text
+RLS: SELECT to anon+authenticated; INSERT/UPDATE/DELETE só service_role.
+```
+
+Rotas novas em `src/routes/`: `profile.tsx`, `champs.index.tsx`, `champs.$userId.tsx`. Helpers em `src/lib/profiles.ts`. Upload de avatar via `supabase.storage.from('avatars').upload(...)`. Cache invalida `['profile', userId]` e `['champs']` após save.
+
+Telas mantêm o design system existente (glass, ios spring, animações já padronizadas).
+
+---
+
+## Fora do escopo (perguntar depois se quiser)
+
+- Seguir / mensagens diretas entre champs (requer tabelas `follows` e `messages` + realtime).
+- Verified badge / staff.
+- Notificações de novo seguidor.
