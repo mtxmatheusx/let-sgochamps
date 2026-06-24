@@ -118,8 +118,8 @@ function Dashboard() {
         className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16 lg:rounded-b-[32px]"
         style={{ height: "min(92vh, 860px)", minHeight: 440 }}
       >
-        {/* Parallax image */}
-        <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
+        {/* Parallax image (client-only to avoid SSR/hydration crash) */}
+        <HeroParallax>
           <img
             src={HERO_IMG}
             alt="Aidan running with the community"
@@ -128,7 +128,8 @@ function Dashboard() {
             fetchPriority="high"
             decoding="async"
           />
-        </motion.div>
+        </HeroParallax>
+
 
         {/* Mobile: bottom fade */}
         <div
