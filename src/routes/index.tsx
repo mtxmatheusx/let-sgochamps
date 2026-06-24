@@ -97,6 +97,30 @@ const fadeUp = {
   transition: iosSoftSpring,
 };
 
+/**
+ * Hero parallax wrapper. Only mounts on the client — useScroll() in
+ * framer-motion 11 throws "Target ref is defined but not hydrated" when
+ * called during SSR or before the target ref is attached.
+ */
+function HeroParallax({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="absolute inset-0">{children}</div>;
+  return <HeroParallaxInner>{children}</HeroParallaxInner>;
+}
+
+function HeroParallaxInner({ children }: { children: React.ReactNode }) {
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 0.35], [0, 180]);
+  const scale = useTransform(scrollYProgress, [0, 0.35], [1, 1.12]);
+  return (
+    <motion.div style={{ y, scale }} className="absolute inset-0">
+      {children}
+    </motion.div>
+  );
+}
+
+
 function Dashboard() {
   const { data: activities = [] } = useQuery({
     queryKey: ["activities"],
