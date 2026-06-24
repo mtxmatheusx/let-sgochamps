@@ -109,12 +109,6 @@ function Dashboard() {
   const chartData = chartView === "weekly" ? minutesByDay(activities) : minutesByType(activities);
 
   const heroRef = useRef<HTMLElement>(null);
-  // Only attach framer-motion scroll listeners after mount. useScroll throws
-  // "Target ref is defined but not hydrated" on SSR/initial-render in
-  // framer-motion 11 when the target element isn't in the DOM yet.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const heroY = mounted ? <ParallaxY /> : null;
 
   return (
     <Layout>
