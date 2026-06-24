@@ -156,6 +156,15 @@ export function Layout({ children }: { children: ReactNode }) {
     </button>
   );
 
+  const profileBtn = (
+    <Link
+      to="/profile"
+      className="rounded-full px-4 py-2 text-[13px] font-medium text-navy/70 transition-colors hover:bg-black/5 hover:text-navy"
+    >
+      My profile
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-cream overflow-x-hidden">
       <nav className="sticky top-0 z-40 glass-nav">
