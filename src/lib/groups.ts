@@ -104,36 +104,19 @@ export async function createGroup(input: {
   start_date?: string | null;
   end_date?: string | null;
   scoring_mode?: ScoringMode;
-}): Promise<Group> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("must be authenticated");
-
-  const baseSlug = slugify(input.name);
-  const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`;
-
-  const { data: group, error } = await supabase
-    .from("groups")
-    .insert({
-      name: input.name.trim(),
-      slug,
-      type: input.type,
-      description: input.description?.trim() || null,
-      owner_id: user.id,
-      is_public: input.is_public ?? false,
-      start_date: input.type === "challenge" ? input.start_date ?? null : null,
-      end_date: input.type === "challenge" ? input.end_date ?? null : null,
-      scoring_mode: input.scoring_mode ?? "days_active",
-    })
-    .select("*")
-    .single();
+}): Promise<{ id: string; slug: string }> {
+  const { data, error } = await supabase.rpc("create_group", {
+    p_name: input.name,
+    p_type: input.type,
+    p_description: input.description ?? null,
+    p_is_public: input.is_public ?? false,
+    p_start_date: input.type === "challenge" ? input.start_date ?? null : null,
+    p_end_date: input.type === "challenge" ? input.end_date ?? null : null,
+    p_scoring_mode: input.scoring_mode ?? "days_active",
+  });
   if (error) throw error;
-
-  // Add owner as a member
-  await supabase
-    .from("group_members")
-    .insert({ group_id: group.id, user_id: user.id, role: "owner" });
-
-  return group as Group;
+  const row = Array.isArray(data) ? data[0] : data;
+  return { id: row.id, slug: row.slug };
 }
 
 /** Join a group via shareable invite code. */

@@ -297,6 +297,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_group: {
+        Args: {
+          p_description?: string
+          p_end_date?: string
+          p_is_public?: boolean
+          p_name: string
+          p_scoring_mode?: string
+          p_start_date?: string
+          p_type: string
+        }
+        Returns: {
+          id: string
+          slug: string
+        }[]
+      }
       get_group_roll_call: {
         Args: { p_group_id: string }
         Returns: {
