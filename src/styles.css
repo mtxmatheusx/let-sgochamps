@@ -317,7 +317,6 @@
     filter: blur(90px);
     opacity: 0.4;
     pointer-events: none;
-    will-change: transform;
   }
 
   /* ════════════ Motion utilities ════════════ */
@@ -340,12 +339,32 @@
     33% { transform: translate(40px, -30px) scale(1.1); }
     66% { transform: translate(-30px, 40px) scale(0.95); }
   }
-  .animate-float-orb { animation: float-orb 22s ease-in-out infinite; }
+  /* will-change only on the orbs that actually animate (was on every static .orb,
+     forcing a needless compositor layer on ~10 decorative orbs across the app). */
+  .animate-float-orb { animation: float-orb 22s ease-in-out infinite; will-change: transform; }
 
   /* ════════════ Focus ring ════════════ */
   .focus-ios:focus {
     outline: none;
     border-color: var(--brand);
     box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+  }
+}
+
+/* ════════════ Reduced motion ════════════
+   One global guard so the whole app respects the OS "reduce motion" setting —
+   the infinite orb drift, every framer spring, .fade-up, .lift, count-ups and
+   pulsing dots all settle instantly instead of animating. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-float-orb {
+    animation: none !important;
   }
 }

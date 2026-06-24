@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PublicLayout, PageHeader } from "@/components/Layout";
 import { submitStory } from "@/lib/stories";
 import { ACTIVITY_TYPES } from "@/lib/activities";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/stories/submit")({ component: SubmitStory });
 
@@ -10,6 +11,11 @@ const MAX_VIDEO_MB = 50;
 const MAX_VIDEO_SECONDS = 30;
 
 function SubmitStory() {
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     city: "",
@@ -109,6 +115,41 @@ function SubmitStory() {
             be featured on this wall or spotlighted on Let's Go Champs content.
           </p>
           <p className="mt-2 text-sm text-sage">Keep moving. Keep showing up.</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  // Brief auth resolution — avoids flashing the form before we know the session.
+  if (authed === null) {
+    return (
+      <PublicLayout>
+        <div className="grid min-h-[40vh] place-items-center text-sage">…</div>
+      </PublicLayout>
+    );
+  }
+
+  // Submissions now require a signed-in champ (keeps the wall real + spam-free).
+  if (!authed) {
+    return (
+      <PublicLayout>
+        <PageHeader
+          eyebrow="Make your mark"
+          title="Share Your Story"
+          subtitle="Tell us how movement changed your life. Aidan's team reads every submission."
+        />
+        <div className="mx-auto max-w-[560px] rounded-[20px] bg-card p-10 text-center card-shadow">
+          <p className="text-[15px] leading-relaxed text-sage">
+            Stories now come from signed-in champs, so we can keep submissions real
+            and spam-free. Sign in — it only takes a moment — and your story is next.
+          </p>
+          <Link
+            to="/auth"
+            className="mt-6 inline-block rounded-full bg-gold px-6 py-3 text-[12px] font-extrabold uppercase text-navy transition-all hover:scale-[1.02] hover:brightness-110"
+            style={{ letterSpacing: "1.5px" }}
+          >
+            Sign in to continue
+          </Link>
         </div>
       </PublicLayout>
     );

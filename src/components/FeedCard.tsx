@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { postComment, type FeedItem } from "@/lib/feed";
 
 const iosSpring = { type: "spring" as const, stiffness: 220, damping: 26 };
@@ -47,6 +48,8 @@ export function FeedCard({ item }: { item: FeedItem }) {
       setDraft("");
       qc.invalidateQueries({ queryKey: ["group", "feed"] });
     },
+    onError: () =>
+      toast.error("Couldn't send your encouragement — try again in a moment."),
   });
 
   return (
@@ -62,7 +65,13 @@ export function FeedCard({ item }: { item: FeedItem }) {
       <div className="flex items-center gap-3 px-5 pt-5 pb-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green/15 text-[13px] font-bold text-green">
           {item.author.avatar_url ? (
-            <img src={item.author.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
+            <img
+              src={item.author.avatar_url}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="h-10 w-10 rounded-full object-cover"
+            />
           ) : (
             initials(item.author.display_name)
           )}
@@ -80,11 +89,24 @@ export function FeedCard({ item }: { item: FeedItem }) {
       {item.photos.length > 0 && (
         <div className="bg-black/[0.04]">
           {item.photos.length === 1 ? (
-            <img src={item.photos[0].url} alt={item.photos[0].caption ?? ""} className="w-full max-h-[460px] object-cover" />
+            <img
+              src={item.photos[0].url}
+              alt={item.photos[0].caption ?? ""}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-h-[460px] object-cover"
+            />
           ) : (
             <div className="grid grid-cols-2 gap-0.5">
               {item.photos.slice(0, 4).map((p) => (
-                <img key={p.id} src={p.url} alt={p.caption ?? ""} className="aspect-square w-full object-cover" />
+                <img
+                  key={p.id}
+                  src={p.url}
+                  alt={p.caption ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-square w-full object-cover"
+                />
               ))}
             </div>
           )}
@@ -110,6 +132,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
       <button
         type="button"
         onClick={() => setShowComments((v) => !v)}
+        aria-expanded={showComments}
         className="w-full border-t border-black/[0.05] px-5 py-3 text-left text-[12px] font-semibold text-ink-soft transition-colors hover:bg-black/[0.02]"
       >
         {item.comments.length === 0

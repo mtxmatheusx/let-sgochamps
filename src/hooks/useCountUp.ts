@@ -15,6 +15,15 @@ export function useCountUp(target: number, duration = 1100) {
       fromRef.current = 0;
       return;
     }
+    // Respect reduced-motion: snap straight to the final value, no animation.
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setValue(target);
+      fromRef.current = target;
+      return;
+    }
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {

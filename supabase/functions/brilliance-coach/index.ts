@@ -79,37 +79,90 @@ These are the attributes you build through consistent action:
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// Best-effort in-memory rate limit (per warm isolate). Not bulletproof across cold
+// starts / multiple isolates, but a real speed bump against denial-of-wallet abuse.
+// The robust fix is JWT-gating once the client sends the user's bearer (see repo).
+const RATE_LIMIT = 15; // requests
+const RATE_WINDOW_MS = 60_000; // per minute, per IP
+const hits = new Map<string, number[]>();
+
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const arr = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  arr.push(now);
+  hits.set(ip, arr);
+  return arr.length > RATE_LIMIT;
+}
+
+const MAX_MESSAGES = 24;
+const MAX_MSG_CHARS = 4000;
+const MAX_TOTAL_CHARS = 8000;
+
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (rateLimited(ip)) {
+    return new Response(JSON.stringify({ error: "Too many requests — give it a moment." }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
     const apiKey = Deno.env.get("GROQ_API_KEY");
     if (!apiKey) throw new Error("GROQ_API_KEY not set");
 
-    const { messages } = await req.json() as { messages: { role: string; content: string }[] };
-    if (!Array.isArray(messages) || messages.length === 0) {
+    const body = (await req.json().catch(() => null)) as { messages?: unknown } | null;
+    const raw = Array.isArray(body?.messages) ? (body!.messages as unknown[]) : null;
+    if (!raw || raw.length === 0) {
       return new Response(JSON.stringify({ error: "messages array required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // Only forward user/assistant turns; drop any client-injected system/other roles.
+    const messages = raw
+      .filter(
+        (m): m is { role: string; content: unknown } =>
+          !!m &&
+          typeof m === "object" &&
+          ((m as { role?: unknown }).role === "user" || (m as { role?: unknown }).role === "assistant") &&
+          (m as { content?: unknown }).content != null,
+      )
+      .map((m) => ({ role: m.role, content: String(m.content).slice(0, MAX_MSG_CHARS) }))
+      .slice(-MAX_MESSAGES);
+
+    if (messages.length === 0) {
+      return new Response(JSON.stringify({ error: "no valid messages" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const totalChars = messages.reduce((n, m) => n + m.content.length, 0);
+    if (totalChars > MAX_TOTAL_CHARS) {
+      return new Response(JSON.stringify({ error: "message too long" }), {
+        status: 413,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...messages,
-        ],
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
         max_tokens: 600,
         temperature: 0.7,
       }),
@@ -117,8 +170,8 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const err = await response.text();
-      console.error("OpenAI error:", err);
-      throw new Error("OpenAI request failed");
+      console.error("Groq error:", err);
+      throw new Error("coach upstream failed");
     }
 
     const data = await response.json();
@@ -129,7 +182,7 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ error: String(err) }), {
+    return new Response(JSON.stringify({ error: "coach unavailable" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
