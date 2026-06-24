@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
