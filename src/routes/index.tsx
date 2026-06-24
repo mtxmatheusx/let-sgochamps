@@ -109,13 +109,12 @@ function Dashboard() {
   const chartData = chartView === "weekly" ? minutesByDay(activities) : minutesByType(activities);
 
   const heroRef = useRef<HTMLElement>(null);
-  // Use document scroll (hero is at top of page). Avoids the framer-motion
-  // "Target ref is defined but not hydrated" crash that target-ref useScroll
-  // can throw during SSR/hydration when the ref isn't attached yet.
-  const { scrollYProgress } = useScroll();
-  const heroY = useTransform(scrollYProgress, [0, 0.35], [0, 180]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0.2]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.35], [1, 1.12]);
+  // Only attach framer-motion scroll listeners after mount. useScroll throws
+  // "Target ref is defined but not hydrated" on SSR/initial-render in
+  // framer-motion 11 when the target element isn't in the DOM yet.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const heroY = mounted ? <ParallaxY /> : null;
 
   return (
     <Layout>
