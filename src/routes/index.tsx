@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -19,7 +19,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 export const Route = createFileRoute("/")({
   component: Dashboard,
   head: () => ({
-    links: [{ rel: "preload", as: "image", href: "/hero.jpg", fetchpriority: "high" } as any],
+    links: [{ rel: "preload", as: "image", href: "/hero.jpg", fetchPriority: "high" } as any],
   }),
 });
 
@@ -97,6 +97,30 @@ const fadeUp = {
   transition: iosSoftSpring,
 };
 
+/**
+ * Hero parallax wrapper. Only mounts on the client — useScroll() in
+ * framer-motion 11 throws "Target ref is defined but not hydrated" when
+ * called during SSR or before the target ref is attached.
+ */
+function HeroParallax({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="absolute inset-0">{children}</div>;
+  return <HeroParallaxInner>{children}</HeroParallaxInner>;
+}
+
+function HeroParallaxInner({ children }: { children: React.ReactNode }) {
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 0.35], [0, 180]);
+  const scale = useTransform(scrollYProgress, [0, 0.35], [1, 1.12]);
+  return (
+    <motion.div style={{ y, scale }} className="absolute inset-0">
+      {children}
+    </motion.div>
+  );
+}
+
+
 function Dashboard() {
   const { data: activities = [] } = useQuery({
     queryKey: ["activities"],
@@ -109,13 +133,6 @@ function Dashboard() {
   const chartData = chartView === "weekly" ? minutesByDay(activities) : minutesByType(activities);
 
   const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 180]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
 
   return (
     <Layout>
@@ -125,8 +142,8 @@ function Dashboard() {
         className="relative -mx-6 -mt-12 overflow-hidden sm:-mx-8 sm:-mt-16 lg:rounded-b-[32px]"
         style={{ height: "min(92vh, 860px)", minHeight: 440 }}
       >
-        {/* Parallax image */}
-        <motion.div style={{ y: heroY, scale: heroScale }} className="absolute inset-0">
+        {/* Parallax image (client-only to avoid SSR/hydration crash) */}
+        <HeroParallax>
           <img
             src={HERO_IMG}
             alt="Aidan running with the community"
@@ -135,7 +152,8 @@ function Dashboard() {
             fetchPriority="high"
             decoding="async"
           />
-        </motion.div>
+        </HeroParallax>
+
 
         {/* Mobile: bottom fade */}
         <div
@@ -164,7 +182,6 @@ function Dashboard() {
 
         {/* Content */}
         <motion.div
-          style={{ opacity: heroOpacity }}
           className="relative z-10 h-full flex flex-col justify-end pb-10 px-6 sm:pb-16 sm:px-10 lg:justify-center lg:pb-0 lg:pl-20 lg:pr-4 lg:max-w-[52%]"
         >
           {/* Eyebrow */}
