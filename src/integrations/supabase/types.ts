@@ -50,12 +50,302 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_groups: {
+        Row: {
+          activity_id: string
+          created_at: string
+          group_id: string
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          group_id: string
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          group_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_groups_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_groups_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      check_in_photos: {
+        Row: {
+          activity_id: string
+          caption: string | null
+          created_at: string
+          id: string
+          position: number
+          url: string
+        }
+        Insert: {
+          activity_id: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          position?: number
+          url: string
+        }
+        Update: {
+          activity_id?: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          position?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "check_in_photos_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          activity_id: string
+          body: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          body: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          group_id: string
+          id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          group_id: string
+          id?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          group_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_invites_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_members: {
+        Row: {
+          group_id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_public: boolean
+          name: string
+          owner_id: string
+          scoring_mode: string
+          slug: string
+          start_date: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          owner_id: string
+          scoring_mode?: string
+          slug: string
+          start_date?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          owner_id?: string
+          scoring_mode?: string
+          slug?: string
+          start_date?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          daily_pose: string | null
+          daily_pose_date: string | null
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          daily_pose?: string | null
+          daily_pose_date?: string | null
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          daily_pose?: string | null
+          daily_pose_date?: string | null
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_group_roll_call: {
+        Args: { p_group_id: string }
+        Returns: {
+          avatar_url: string
+          check_ins: number
+          daily_pose: string
+          display_name: string
+          last_check_in: string
+          user_id: string
+        }[]
+      }
+      get_group_stats: {
+        Args: { p_group_id: string }
+        Returns: {
+          active_members: number
+          sessions_logged: number
+          total_members: number
+          total_minutes: number
+        }[]
+      }
+      get_my_groups: {
+        Args: never
+        Returns: {
+          cover_url: string
+          end_date: string
+          id: string
+          members: number
+          name: string
+          role: string
+          slug: string
+          start_date: string
+          type: string
+        }[]
+      }
+      is_group_admin: {
+        Args: { p_group: string; p_user: string }
+        Returns: boolean
+      }
+      is_group_member: {
+        Args: { p_group: string; p_user: string }
+        Returns: boolean
+      }
+      join_group_by_code: {
+        Args: { p_code: string }
+        Returns: {
+          group_id: string
+          slug: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
