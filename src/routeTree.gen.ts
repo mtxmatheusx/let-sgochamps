@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WallRouteImport } from './routes/wall'
 import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LogRouteImport } from './routes/log'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as GroupsRouteImport } from './routes/groups'
@@ -35,6 +36,11 @@ const WallRoute = WallRouteImport.update({
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
   path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LogRoute = LogRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/groups': typeof GroupsRouteWithChildren
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
   '/wall': typeof WallRoute
   '/groups/$slug': typeof GroupsSlugRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/profile': typeof ProfileRoute
   '/wall': typeof WallRoute
   '/groups/$slug': typeof GroupsSlugRoute
   '/groups/join': typeof GroupsJoinRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/groups': typeof GroupsRouteWithChildren
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
   '/wall': typeof WallRoute
   '/groups/$slug': typeof GroupsSlugRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/groups'
     | '/history'
     | '/log'
+    | '/profile'
     | '/stories'
     | '/wall'
     | '/groups/$slug'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/history'
     | '/log'
+    | '/profile'
     | '/wall'
     | '/groups/$slug'
     | '/groups/join'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/groups'
     | '/history'
     | '/log'
+    | '/profile'
     | '/stories'
     | '/wall'
     | '/groups/$slug'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   GroupsRoute: typeof GroupsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LogRoute: typeof LogRoute
+  ProfileRoute: typeof ProfileRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   WallRoute: typeof WallRoute
 }
@@ -255,6 +268,13 @@ declare module '@tanstack/react-router' {
       path: '/stories'
       fullPath: '/stories'
       preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/log': {
@@ -405,6 +425,7 @@ const rootRouteChildren: RootRouteChildren = {
   GroupsRoute: GroupsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LogRoute: LogRoute,
+  ProfileRoute: ProfileRoute,
   StoriesRoute: StoriesRouteWithChildren,
   WallRoute: WallRoute,
 }
