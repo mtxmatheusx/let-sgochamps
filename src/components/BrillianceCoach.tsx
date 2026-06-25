@@ -93,7 +93,7 @@ export function BrillianceCoach() {
         initial={false}
         whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green shadow-[0_8px_32px_-8px_rgba(22,163,74,0.6)] transition-all hover:brightness-110"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-[#34d399] to-[#16a34a] shadow-[0_12px_30px_-8px_rgba(22,163,74,0.6)] ring-1 ring-white/40 transition-all hover:brightness-105"
         aria-label="Open Brilliance Coach"
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -133,7 +133,7 @@ export function BrillianceCoach() {
             transition={iosSpring}
             role="dialog"
             aria-label="Brilliance Coach"
-            className="fixed bottom-24 right-6 z-50 flex w-[min(380px,calc(100vw-24px))] flex-col rounded-[28px] bg-white shadow-[0_24px_64px_-12px_rgba(0,0,0,0.18)] border border-black/[0.06] overflow-hidden"
+            className="glass-strong fixed bottom-24 right-6 z-50 flex w-[min(380px,calc(100vw-24px))] flex-col rounded-[28px] overflow-hidden"
             style={{ height: "min(520px, calc(100dvh - 120px))" }}
           >
             {/* Header */}
