@@ -114,10 +114,22 @@ function LogMovement() {
 
     setLoading(false);
 
-    await qc.invalidateQueries({ queryKey: ["activities"] });
-    await qc.invalidateQueries({ queryKey: ["group", "feed"] });
-    const allActivities = await fetchActivities();
-    const { streak } = computeStats(allActivities);
+    // The check-in is already saved. The post-save refresh is best-effort — a
+    // transient failure here must not swallow the celebration or strand the user
+    // on the form (which previously risked a confused double-submit).
+    let streak = 0;
+    try {
+      await qc.invalidateQueries({ queryKey: ["activities"] });
+      await qc.invalidateQueries({ queryKey: ["group", "feed"] });
+      const allActivities = await fetchActivities();
+      streak = computeStats(allActivities).streak;
+    } catch (err) {
+      console.error("[log] post-save refresh failed:", err);
+      const cached = qc.getQueryData(["activities"]) as
+        | Parameters<typeof computeStats>[0]
+        | undefined;
+      streak = cached ? computeStats(cached).streak : 1;
+    }
     setCelebration({
       activity: {
         type: form.type,

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Layout, PageHeader } from "@/components/Layout";
@@ -17,11 +17,23 @@ export const Route = createFileRoute("/champs/")({
 
 const iosSoftSpring = { type: "spring" as const, stiffness: 260, damping: 30, mass: 0.9 };
 
+// Debounce the search term so we hit Supabase once the user pauses, not on
+// every keystroke (previously one round-trip per character).
+function useDebounced<T>(value: T, delay = 300): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
+
 function ChampsDirectory() {
   const [q, setQ] = useState("");
-  const { data: champs = [], isLoading } = useQuery({
-    queryKey: ["champs", q],
-    queryFn: () => searchChamps(q),
+  const debouncedQ = useDebounced(q, 300);
+  const { data: champs = [], isLoading, isError } = useQuery({
+    queryKey: ["champs", debouncedQ],
+    queryFn: () => searchChamps(debouncedQ),
     placeholderData: (previous) => previous ?? [],
   });
 
@@ -39,11 +51,22 @@ function ChampsDirectory() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search by name, city, or movement…"
+          aria-label="Search champs"
           className="focus-ios h-[54px] w-full rounded-2xl border border-transparent bg-black/[0.04] px-5 text-[15px] text-navy outline-none"
         />
       </div>
 
-      {isLoading && champs.length === 0 ? (
+      {isError ? (
+        <div className="mx-auto max-w-md rounded-[24px] glass p-10 text-center">
+          <div className="text-[40px]">😕</div>
+          <h3 className="mt-3 text-[20px] font-semibold text-navy">
+            Couldn't load the directory.
+          </h3>
+          <p className="mt-2 text-[14px] text-sage">
+            Something hiccuped on our end. Refresh the page to try again.
+          </p>
+        </div>
+      ) : isLoading && champs.length === 0 ? (
         <div className="grid min-h-[30vh] place-items-center text-sage">Finding champs…</div>
       ) : champs.length === 0 ? (
         <EmptyState query={q} />
@@ -75,6 +98,8 @@ function ChampCardView({ champ, index }: { champ: ChampCard; index: number }) {
             <img
               src={champ.avatar_url}
               alt=""
+              loading="lazy"
+              decoding="async"
               className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-black/5"
             />
           ) : (

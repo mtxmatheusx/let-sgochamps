@@ -31,3 +31,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Local env — never commit secrets/keys
+.env
+.env.*
+!.env.example

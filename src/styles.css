@@ -5,10 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ════════════════════════════════════════════════════════
-   DESIGN SYSTEM — Let's Go Champs
+   DESIGN SYSTEM — Let's Go Champs · "Liquid Glass" (iOS 27)
    ──────────────────────────────────────────────────────
-   Philosophy: crisp surfaces, generous whitespace, one
-   accent colour, decisive typography. No foggy glass.
+   Philosophy: translucent layered materials, specular edge
+   light, real refraction over an ambient colour field. One
+   luminous accent. Concentric radii. Spring motion.
    ════════════════════════════════════════════════════════ */
 
 @theme inline {
@@ -70,42 +71,52 @@
 }
 
 :root {
-  /* ════ Radii ════ */
-  --radius: 1.25rem;        /* shadcn baseline */
-  --r-xs: 8px;
-  --r-sm: 12px;
-  --r-md: 16px;
-  --r-lg: 20px;
-  --r-xl: 24px;             /* primary card radius */
-  --r-2xl: 32px;            /* hero / large surfaces */
+  /* ════ Radii (concentric, generous — iOS 27) ════ */
+  --radius: 1.5rem;         /* shadcn baseline (was 1.25rem) */
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 18px;
+  --r-lg: 22px;
+  --r-xl: 28px;             /* primary card radius */
+  --r-2xl: 36px;            /* hero / large surfaces */
   --r-pill: 9999px;
 
   /* ════ Ink (text) ════ */
   --ink: #0a0a0c;
-  --ink-soft: #525252;
-  --ink-muted: #a3a3a3;
+  --ink-soft: #52525b;
+  --ink-muted: #8a8a93;
 
-  /* ════ Surface (backgrounds) ════ */
+  /* ════ Base / surface ════ */
+  --base: #eef1f0;          /* ambient field base */
   --surface: #ffffff;
-  --surface-soft: #fafafa;
-  --surface-muted: #f4f4f5;
-  --surface-inverse: #0a0a0c;
+  --surface-soft: #f3f5f4;
+  --surface-muted: #eceeed;
+  --surface-inverse: #0a0d0c;
 
   /* ════ Lines / borders ════ */
-  --line: rgba(15, 15, 16, 0.06);
-  --line-strong: rgba(15, 15, 16, 0.10);
+  --line: rgba(15, 18, 17, 0.08);
+  --line-strong: rgba(15, 18, 17, 0.13);
 
-  /* ════ Brand (single accent — green) ════ */
-  --brand: #16a34a;          /* slightly deeper green than before, reads as premium */
-  --brand-soft: #f0fdf4;
+  /* ════ Brand (single luminous accent — green) ════ */
+  --brand: #16a34a;
+  --brand-2: #34d399;        /* luminous top of gradient */
+  --brand-soft: #ecfdf3;
   --brand-strong: #15803d;
   --brand-ink: #14532d;
 
-  /* ════ Shadows ════ */
-  --sh-card: 0 1px 2px rgba(15, 15, 16, 0.04), 0 8px 24px -12px rgba(15, 15, 16, 0.10);
-  --sh-card-hover: 0 1px 2px rgba(15, 15, 16, 0.06), 0 24px 48px -16px rgba(15, 15, 16, 0.16);
-  --sh-floating: 0 4px 12px rgba(15, 15, 16, 0.05), 0 30px 60px -20px rgba(15, 15, 16, 0.16);
-  --sh-cta: 0 8px 24px -10px rgba(22, 163, 74, 0.5);
+  /* ════ Liquid Glass material ════ */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-blur: blur(40px) saturate(180%);
+  --glass-blur-nav: blur(30px) saturate(180%);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 0.5px rgba(255, 255, 255, 0.35);
+
+  /* ════ Shadows (layered float + lens inset) ════ */
+  --sh-card: var(--glass-inset), 0 2px 6px rgba(16, 24, 20, 0.05), 0 16px 44px -20px rgba(16, 24, 20, 0.22);
+  --sh-card-hover: var(--glass-inset), 0 4px 10px rgba(16, 24, 20, 0.07), 0 28px 60px -22px rgba(16, 24, 20, 0.30);
+  --sh-floating: var(--glass-inset), 0 8px 18px rgba(16, 24, 20, 0.08), 0 36px 80px -28px rgba(16, 24, 20, 0.34);
+  --sh-cta: 0 12px 30px -10px rgba(22, 163, 74, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 
   /* ════ Legacy aliases (do not remove — used in components) ════ */
   --navy: var(--ink);
@@ -120,7 +131,7 @@
   --mist: var(--line);
 
   /* ════ shadcn surface assignments ════ */
-  --background: var(--surface-soft);
+  --background: var(--base);
   --foreground: var(--ink);
   --card: var(--surface);
   --card-foreground: var(--ink);
@@ -141,6 +152,37 @@
   --ring: var(--brand);
 }
 
+/* ════ Dark theme (opt-in via .dark on <html>) ════ */
+.dark {
+  --ink: #f4f5f4;
+  --ink-soft: #b6bdba;
+  --ink-muted: #7f8784;
+
+  --base: #07100d;
+  --surface: #141a18;
+  --surface-soft: #101614;
+  --surface-muted: #1b2220;
+  --surface-inverse: #f4f5f4;
+
+  --line: rgba(255, 255, 255, 0.10);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  --brand-soft: #0c2a1b;
+  --brand-ink: #86efac;
+
+  --glass-bg: rgba(28, 32, 34, 0.52);
+  --glass-bg-strong: rgba(34, 40, 42, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+
+  --sh-card: var(--glass-inset), 0 2px 8px rgba(0, 0, 0, 0.35), 0 22px 56px -22px rgba(0, 0, 0, 0.7);
+  --sh-card-hover: var(--glass-inset), 0 4px 12px rgba(0, 0, 0, 0.4), 0 30px 70px -24px rgba(0, 0, 0, 0.8);
+  --sh-floating: var(--glass-inset), 0 10px 24px rgba(0, 0, 0, 0.45), 0 40px 90px -30px rgba(0, 0, 0, 0.85);
+
+  --navy-dark: #ffffff;
+  --primary-foreground: #07120d;
+}
+
 @layer base {
   * { border-color: var(--line); }
   html {
@@ -149,7 +191,6 @@
     max-width: 100%;
   }
   body {
-    background-color: var(--surface-soft);
     color: var(--ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -158,6 +199,20 @@
     font-feature-settings: "ss01", "cv11";
     overflow-x: hidden;
     max-width: 100%;
+    /* Ambient colour field — gives the glass something real to refract,
+       even on pages without decorative orbs. */
+    background-color: var(--base);
+    background-image:
+      radial-gradient(58% 46% at 14% 0%, rgba(94, 234, 212, 0.20), transparent 60%),
+      radial-gradient(50% 40% at 100% 16%, rgba(134, 239, 172, 0.18), transparent 62%),
+      radial-gradient(60% 50% at 52% 108%, rgba(165, 180, 252, 0.16), transparent 60%);
+    background-attachment: fixed;
+  }
+  .dark body {
+    background-image:
+      radial-gradient(58% 46% at 14% 0%, rgba(15, 118, 110, 0.30), transparent 60%),
+      radial-gradient(50% 40% at 100% 16%, rgba(21, 128, 61, 0.26), transparent 62%),
+      radial-gradient(60% 50% at 52% 108%, rgba(67, 56, 202, 0.24), transparent 60%);
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
@@ -172,15 +227,13 @@
   .font-display { font-family: var(--font-display); }
   .font-serif { font-family: var(--font-serif); }
 
-  /* Massive display number/headline */
   .sf-display {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: -0.045em;
     line-height: 0.95;
   }
 
-  /* Section heading */
   .h-section {
     font-family: var(--font-display);
     font-weight: 700;
@@ -190,7 +243,6 @@
     font-size: clamp(22px, 2.4vw, 28px);
   }
 
-  /* Small overline label */
   .eyebrow {
     font-family: var(--font-sans);
     font-weight: 700;
@@ -200,14 +252,45 @@
     color: var(--ink-soft);
   }
 
-  /* Tabular numerals for stats */
   .nums { font-variant-numeric: tabular-nums; }
 
-  /* ════════════ Surfaces ════════════ */
-  /* Primary card — crisp white, no foggy glass */
+  /* ════════════ Liquid Glass surfaces ════════════ */
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--sh-card);
+  }
+  .glass-strong {
+    background: var(--glass-bg-strong);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--sh-floating);
+  }
+  .glass-nav {
+    background: var(--glass-bg-strong);
+    -webkit-backdrop-filter: var(--glass-blur-nav);
+    backdrop-filter: var(--glass-blur-nav);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 10px 30px -18px rgba(16, 24, 20, 0.3);
+  }
+  .glass-dark {
+    background: rgba(10, 13, 12, 0.55);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: var(--sh-floating);
+  }
+
+  /* Crisp card aliases — now also glassy so they share the language. */
   .surface {
-    background: var(--surface);
-    border: 1px solid var(--line);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     box-shadow: var(--sh-card);
   }
   .surface-soft {
@@ -216,39 +299,12 @@
   }
   .surface-inverse {
     background: var(--surface-inverse);
-    color: #ffffff;
+    color: var(--base);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* Legacy classes redefined to use the new system (no foggy blur).
-     This upgrades ALL pages that still reference these. */
-  .glass {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-shadow: var(--sh-card);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  .glass-strong {
-    background: var(--surface);
-    border: 1px solid var(--line-strong);
-    box-shadow: var(--sh-floating);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  .glass-nav {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: saturate(180%) blur(18px);
-    -webkit-backdrop-filter: saturate(180%) blur(18px);
-    border-bottom: 1px solid var(--line);
-  }
-  .glass-dark {
-    background: var(--surface-inverse);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+  /* shadcn card-shadow helper used on some pages */
+  .card-shadow { box-shadow: var(--sh-card); }
 
   /* ════════════ Hairlines ════════════ */
   .hairline { border: 1px solid var(--line); }
@@ -262,36 +318,36 @@
     justify-content: center;
     gap: 6px;
     border-radius: var(--r-pill);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    padding: 10px 18px;
-    transition: transform .25s cubic-bezier(.22,1,.36,1), background .25s, box-shadow .25s, color .25s;
+    padding: 11px 20px;
+    transition: transform .25s cubic-bezier(.22,1,.36,1), background .25s, box-shadow .25s, color .25s, filter .25s;
     white-space: nowrap;
   }
   .btn-primary {
-    background: var(--brand);
+    background: linear-gradient(180deg, var(--brand-2), var(--brand));
     color: #ffffff;
     box-shadow: var(--sh-cta);
   }
   .btn-primary:hover {
-    background: var(--brand-strong);
     transform: translateY(-1px);
+    filter: brightness(1.04);
   }
   .btn-ghost {
-    background: var(--surface-muted);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
     color: var(--ink);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-inset);
   }
-  .btn-ghost:hover {
-    background: var(--line);
-  }
+  .btn-ghost:hover { background: var(--glass-bg-strong); }
   .btn-outline {
     background: transparent;
     color: var(--ink);
     border: 1px solid var(--line-strong);
   }
-  .btn-outline:hover {
-    background: var(--surface-muted);
-  }
+  .btn-outline:hover { background: var(--surface-muted); }
 
   /* ════════════ Tiny pill (used inside cards as "tag") ════════════ */
   .pill {
@@ -300,24 +356,23 @@
     gap: 4px;
     border-radius: var(--r-pill);
     background: var(--surface-muted);
-    padding: 3px 9px;
+    padding: 4px 10px;
     font-size: 11px;
     font-weight: 600;
     color: var(--ink-soft);
   }
   .pill-brand {
-    background: var(--brand-soft);
+    background: color-mix(in srgb, var(--brand) 14%, transparent);
     color: var(--brand-ink);
   }
 
-  /* ════════════ Decorative orb (subtle background bloom) ════════════ */
+  /* ════════════ Decorative orb (ambient refraction source) ════════════ */
   .orb {
     position: absolute;
     border-radius: 9999px;
     filter: blur(90px);
-    opacity: 0.4;
+    opacity: 0.5;
     pointer-events: none;
-    will-change: transform;
   }
 
   /* ════════════ Motion utilities ════════════ */
@@ -340,12 +395,31 @@
     33% { transform: translate(40px, -30px) scale(1.1); }
     66% { transform: translate(-30px, 40px) scale(0.95); }
   }
-  .animate-float-orb { animation: float-orb 22s ease-in-out infinite; }
+  /* will-change only on the orbs that actually animate. */
+  .animate-float-orb { animation: float-orb 22s ease-in-out infinite; will-change: transform; }
 
   /* ════════════ Focus ring ════════════ */
   .focus-ios:focus {
     outline: none;
     border-color: var(--brand);
     box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+  }
+}
+
+/* ════════════ Reduced motion ════════════
+   One global guard so the whole app respects the OS "reduce motion" setting —
+   the infinite orb drift, every framer spring, .fade-up, .lift, count-ups and
+   pulsing dots all settle instantly instead of animating. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-float-orb {
+    animation: none !important;
   }
 }

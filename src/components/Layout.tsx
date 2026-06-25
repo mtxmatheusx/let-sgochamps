@@ -144,7 +144,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
   useEffect(() => setOpen(false), [location.pathname]);
 
-  if (!ready) return <div className="min-h-screen bg-cream" />;
+  if (!ready) return <div className="min-h-screen" />;
   if (!session) return null;
 
   const signOutBtn = (
@@ -166,7 +166,7 @@ export function Layout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-cream overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden">
       <nav className="sticky top-0 z-40 glass-nav">
         <div className="mx-auto flex h-[52px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
           <Brand />
@@ -255,7 +255,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen overflow-x-hidden">
       <nav className="sticky top-0 z-40 glass-nav">
         <div className="mx-auto flex h-[52px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
           <Brand />
