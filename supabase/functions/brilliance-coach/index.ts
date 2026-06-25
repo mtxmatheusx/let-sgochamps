@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SYSTEM_PROMPT = `You are the Brilliance Coach — the AI guide inside Let's Go Champs (LGC), created by Aidan O'Hare.
 
@@ -110,13 +111,43 @@ Deno.serve(async (req) => {
     });
   }
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (rateLimited(ip)) {
+  // Require a Supabase user JWT — block unauthenticated callers from draining GROQ credits.
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+  if (userErr || !userData?.user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const userId = userData.user.id;
+
+  // Per-user rate limit (replaces IP heuristic now that we have a verified identity).
+  if (rateLimited(userId)) {
     return new Response(JSON.stringify({ error: "Too many requests — give it a moment." }), {
       status: 429,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 
   try {
     const apiKey = Deno.env.get("GROQ_API_KEY");
