@@ -14,6 +14,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
-    spa: { enabled: true, prerender: { enabled: false } },
+    // SPA prerender is incompatible with @cloudflare/vite-plugin's .mjs output
+    // (preview-server-plugin looks for `server.js`). Disable SPA shell prerender
+    // and let the Cloudflare worker render `/` dynamically (index route is ssr:false).
+    spa: { enabled: false },
   },
 });
