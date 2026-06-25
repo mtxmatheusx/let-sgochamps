@@ -1,0 +1,193 @@
+vite v7.3.2 building client environment for production...
+transforming...
+✓ 1315 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/client/assets/styles-CWXNakID.css         109.89 kB │ gzip:  18.11 kB
+dist/client/assets/stories-CSOF2_Vd.js           0.10 kB │ gzip:   0.11 kB
+dist/client/assets/groups-CadXvp20.js            0.10 kB │ gzip:   0.11 kB
+dist/client/assets/useCountUp-DJBoTL1I.js        0.58 kB │ gzip:   0.38 kB
+dist/client/assets/demo-B_UvUdaJ.js              0.77 kB │ gzip:   0.52 kB
+dist/client/assets/feed-CSLn5I1U.js              1.12 kB │ gzip:   0.56 kB
+dist/client/assets/stories-_8zeUPZ0.js           1.59 kB │ gzip:   0.62 kB
+dist/client/assets/profiles-suFOZM09.js          1.90 kB │ gzip:   0.86 kB
+dist/client/assets/groups.join-feYqk7B2.js       1.91 kB │ gzip:   1.11 kB
+dist/client/assets/history-CBoeUmPy.js           3.91 kB │ gzip:   1.86 kB
+dist/client/assets/champs.index-CDBObQWV.js      4.04 kB │ gzip:   1.74 kB
+dist/client/assets/groups.index-CuB4CE1G.js      4.26 kB │ gzip:   1.62 kB
+dist/client/assets/champs._userId-D0Ho2JR7.js    4.80 kB │ gzip:   1.72 kB
+dist/client/assets/groups.new-CNOnXi8W.js        5.12 kB │ gzip:   1.98 kB
+dist/client/assets/profile-B_k4-9Yk.js           5.55 kB │ gzip:   2.19 kB
+dist/client/assets/stories.index-Cnu9qVbU.js     6.35 kB │ gzip:   2.21 kB
+dist/client/assets/auth-CYTWbYlF.js              6.49 kB │ gzip:   2.48 kB
+dist/client/assets/groups._slug-BCeo5u3o.js      6.65 kB │ gzip:   2.51 kB
+dist/client/assets/FeedCard-BPrJfd6y.js          6.95 kB │ gzip:   2.72 kB
+dist/client/assets/admin-CqxDD2Al.js             7.10 kB │ gzip:   2.59 kB
+dist/client/assets/wall-B3tl_JCd.js              7.56 kB │ gzip:   2.98 kB
+dist/client/assets/useQuery-P363XD1E.js          8.81 kB │ gzip:   3.20 kB
+dist/client/assets/stories.submit-K6HQ-gcx.js    8.82 kB │ gzip:   3.08 kB
+dist/client/assets/Layout-D6Fp-gDJ.js            9.58 kB │ gzip:   3.37 kB
+dist/client/assets/community-BF4k_v-6.js        10.34 kB │ gzip:   3.39 kB
+dist/client/assets/about-RZ1fm9IB.js            18.98 kB │ gzip:   6.10 kB
+dist/client/assets/log-sHIPE50V.js              21.15 kB │ gzip:   8.29 kB
+dist/client/assets/index-BG-URN3N.js           412.67 kB │ gzip: 115.31 kB
+dist/client/assets/index-BXoN0lLn.js           727.00 kB │ gzip: 218.49 kB
+✓ built in 6.83s
+vite v7.3.2 building ssr environment for production...
+transforming...
+✓ 104 modules transformed.
+rendering chunks...
+node_modules/.nitro/vite/services/ssr/assets/styles-CWXNakID.css                             109.89 kB
+node_modules/.nitro/vite/services/ssr/assets/__23tanstack-start-plugin-adapters-Cwee5PKy.js    0.14 kB
+node_modules/.nitro/vite/services/ssr/assets/stories-BFsOu0JM.js                               0.19 kB
+node_modules/.nitro/vite/services/ssr/assets/groups-BFsOu0JM.js                                0.19 kB
+node_modules/.nitro/vite/services/ssr/assets/client-C5e6d755.js                                0.84 kB
+node_modules/.nitro/vite/services/ssr/assets/demo-BpB0L3oI.js                                  1.13 kB
+node_modules/.nitro/vite/services/ssr/assets/useCountUp-By-CuhdQ.js                            1.17 kB
+node_modules/.nitro/vite/services/ssr/assets/feed-BYIwBkwr.js                                  1.86 kB
+node_modules/.nitro/vite/services/ssr/assets/start-z9eGNkFp.js                                 2.41 kB
+node_modules/.nitro/vite/services/ssr/assets/stories-DvPVHw3f.js                               2.59 kB
+node_modules/.nitro/vite/services/ssr/assets/profiles-Be5eQfNE.js                              2.86 kB
+node_modules/.nitro/vite/services/ssr/assets/groups.join-B88gH2zd.js                           3.07 kB
+node_modules/.nitro/vite/services/ssr/index.js                                                 3.85 kB
+node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-CS12RsXh.js            4.75 kB
+node_modules/.nitro/vite/services/ssr/assets/champs.index-D1JuVr_B.js                          5.78 kB
+node_modules/.nitro/vite/services/ssr/assets/groups.index-hzAzwPGz.js                          6.12 kB
+node_modules/.nitro/vite/services/ssr/assets/history-wxMMnFk_.js                               6.55 kB
+node_modules/.nitro/vite/services/ssr/assets/champs._userId-DoZrqvMj.js                        6.99 kB
+node_modules/.nitro/vite/services/ssr/assets/groups.new-D1a54KnT.js                            7.64 kB
+node_modules/.nitro/vite/services/ssr/assets/FeedCard-CVUB-yZZ.js                              8.33 kB
+node_modules/.nitro/vite/services/ssr/assets/profile-DraYgVqn.js                               8.57 kB
+node_modules/.nitro/vite/services/ssr/assets/stories.index-DstpR6DA.js                         9.18 kB
+node_modules/.nitro/vite/services/ssr/assets/groups._slug-D5Z9zbp4.js                         10.30 kB
+node_modules/.nitro/vite/services/ssr/assets/auth-Drd8Zh62.js                                 10.35 kB
+node_modules/.nitro/vite/services/ssr/assets/admin-BcFRMTB4.js                                10.95 kB
+node_modules/.nitro/vite/services/ssr/assets/wall-DO9lljmj.js                                 11.75 kB
+node_modules/.nitro/vite/services/ssr/assets/stories.submit-D6PnPlax.js                       13.16 kB
+node_modules/.nitro/vite/services/ssr/assets/Layout-n5mE9iy_.js                               14.97 kB
+node_modules/.nitro/vite/services/ssr/assets/community-CaWySPz6.js                            14.99 kB
+node_modules/.nitro/vite/services/ssr/assets/log-BHXZMKVO.js                                  17.17 kB
+node_modules/.nitro/vite/services/ssr/assets/router-CygXdOsZ.js                               22.86 kB
+node_modules/.nitro/vite/services/ssr/assets/about-DKnka6Fl.js                                24.97 kB
+node_modules/.nitro/vite/services/ssr/assets/index-BLPFGgwS.js                                34.73 kB
+node_modules/.nitro/vite/services/ssr/assets/server-HyFgZSzO.js                               38.80 kB
+✓ built in 1.50s
+
+[nitro] ◐ Building [Nitro] (preset: cloudflare-module, compatibility: 2026-06-25)
+[nitro] ✔ Generated public dist/client
+vite v7.3.2 building nitro environment for production...
+transforming...
+✓ 1332 modules transformed.
+rendering chunks...
+dist/server/_libs/unstorage.mjs                                0.00 kB
+dist/server/_libs/use-sync-external-store.mjs                  0.00 kB
+dist/server/_libs/croner.mjs                                   0.00 kB
+dist/server/_libs/ufo.mjs                                      0.00 kB
+dist/server/_libs/ohash.mjs                                    0.00 kB
+dist/server/_libs/ocache.mjs                                   0.00 kB
+dist/server/_libs/tanstack__store.mjs                          0.00 kB
+dist/server/_libs/babel__runtime.mjs                           0.00 kB
+dist/server/_libs/dom-helpers.mjs                              0.00 kB
+dist/server/_libs/tanstack__react-store.mjs                    0.02 kB
+dist/server/_libs/crossws.mjs                                  0.03 kB
+dist/server/_libs/react-transition-group.mjs                   0.05 kB
+dist/server/__23tanstack-start-plugin-adapters-Cwee5PKy.mjs    0.14 kB
+dist/server/_libs/tiny-invariant.mjs                           0.14 kB
+dist/server/_libs/srvx.mjs                                     0.20 kB
+dist/server/_libs/rou3.mjs                                     0.21 kB
+dist/server/_libs/clsx.mjs                                     0.51 kB
+dist/server/_chunks/ssr-renderer.mjs                           0.53 kB
+dist/server/_ssr/stories-BFsOu0JM.mjs                          0.54 kB
+dist/server/_ssr/groups-BFsOu0JM.mjs                           0.54 kB
+dist/server/_ssr/client-C5e6d755.mjs                           0.86 kB
+dist/server/_libs/internmap.mjs                                1.17 kB
+dist/server/_libs/hookable.mjs                                 1.18 kB
+dist/server/_ssr/useCountUp-By-CuhdQ.mjs                       1.27 kB
+dist/server/_libs/tslib.mjs                                    1.41 kB
+dist/server/_libs/victory-vendor.mjs                           1.45 kB
+dist/server/_libs/cookie-es.mjs                                1.46 kB
+dist/server/_libs/seroval-plugins.mjs                          1.47 kB
+dist/server/_ssr/feed-BYIwBkwr.mjs                             1.86 kB
+dist/server/_ssr/demo-BpB0L3oI.mjs                             2.00 kB
+dist/server/_libs/prop-types.mjs                               2.53 kB
+dist/server/_libs/isbot.mjs                                    2.56 kB
+dist/server/_ssr/stories-DvPVHw3f.mjs                          2.59 kB
+dist/server/_ssr/start-z9eGNkFp.mjs                            2.78 kB
+dist/server/_ssr/profiles-Be5eQfNE.mjs                         2.86 kB
+dist/server/_libs/d3-path.mjs                                  3.36 kB
+dist/server/_ssr/index.mjs                                     3.84 kB
+dist/server/_ssr/groups.join-B88gH2zd.mjs                      4.06 kB
+dist/server/_libs/react-is.mjs                                 4.11 kB
+dist/server/_libs/d3-interpolate.mjs                           4.34 kB
+dist/server/_tanstack-start-manifest_v-CS12RsXh.mjs            4.75 kB
+dist/server/_libs/motion-utils.mjs                             4.96 kB
+dist/server/_libs/tanstack__history.mjs                        5.99 kB
+dist/server/_libs/eventemitter3.mjs                            6.52 kB
+dist/server/_libs/unenv.mjs                                    6.66 kB
+dist/server/_libs/tanstack__react-query.mjs                    6.96 kB
+dist/server/_libs/d3-array.mjs                                 7.16 kB
+dist/server/_ssr/champs.index-D1JuVr_B.mjs                     7.18 kB
+dist/server/_ssr/groups.index-hzAzwPGz.mjs                     7.52 kB
+dist/server/_ssr/history-wxMMnFk_.mjs                          7.85 kB
+dist/server/_ssr/champs._userId-DoZrqvMj.mjs                   8.59 kB
+dist/server/_ssr/FeedCard-CVUB-yZZ.mjs                         9.01 kB
+dist/server/_ssr/groups.new-D1a54KnT.mjs                       9.21 kB
+dist/server/_libs/d3-format.mjs                                9.81 kB
+dist/server/_libs/h3-v2.mjs                                   10.00 kB
+dist/server/_ssr/profile-DraYgVqn.mjs                         10.08 kB
+dist/server/_libs/d3-color.mjs                                10.63 kB
+dist/server/_libs/d3-time.mjs                                 10.78 kB
+dist/server/_ssr/stories.index-DstpR6DA.mjs                   10.94 kB
+dist/server/_ssr/auth-Drd8Zh62.mjs                            11.77 kB
+dist/server/_libs/supabase__functions-js.mjs                  11.84 kB
+dist/server/_ssr/groups._slug-D5Z9zbp4.mjs                    12.10 kB
+dist/server/_libs/recharts-scale.mjs                          12.43 kB
+dist/server/_ssr/admin-BcFRMTB4.mjs                           12.80 kB
+dist/server/_ssr/wall-DO9lljmj.mjs                            13.61 kB
+dist/server/_libs/fast-equals.mjs                             13.70 kB
+dist/server/_libs/h3.mjs                                      14.34 kB
+dist/server/_ssr/stories.submit-D6PnPlax.mjs                  15.35 kB
+dist/server/_libs/iceberg-js.mjs                              15.70 kB
+dist/server/index.mjs                                         16.07 kB
+dist/server/_ssr/Layout-n5mE9iy_.mjs                          16.13 kB
+dist/server/_ssr/community-CaWySPz6.mjs                       17.11 kB
+dist/server/_libs/d3-time-format.mjs                          18.50 kB
+dist/server/_ssr/log-BHXZMKVO.mjs                             19.22 kB
+dist/server/_libs/react.mjs                                   19.51 kB
+dist/server/_libs/canvas-confetti.mjs                         23.00 kB
+dist/server/_libs/supabase__supabase-js.mjs                   23.42 kB
+dist/server/_libs/d3-shape.mjs                                24.57 kB
+dist/server/_ssr/router-CygXdOsZ.mjs                          24.88 kB
+dist/server/_libs/decimal.js-light.mjs                        26.70 kB
+dist/server/_ssr/about-DKnka6Fl.mjs                           27.78 kB
+dist/server/_libs/d3-scale.mjs                                29.02 kB
+dist/server/_libs/react-smooth.mjs                            38.16 kB
+dist/server/_ssr/server-HyFgZSzO.mjs                          39.07 kB
+dist/server/_ssr/index-BLPFGgwS.mjs                           39.45 kB
+dist/server/_libs/tanstack__react-router.mjs                  40.40 kB
+dist/server/_libs/seroval.mjs                                 48.10 kB
+dist/server/_libs/supabase__phoenix.mjs                       53.95 kB
+dist/server/_libs/sonner.mjs                                  56.10 kB
+dist/server/_libs/supabase__realtime-js.mjs                   72.85 kB
+dist/server/_libs/tanstack__query-core.mjs                    74.92 kB
+dist/server/_libs/framer-motion.mjs                           90.49 kB
+dist/server/_libs/supabase__storage-js.mjs                    97.00 kB
+dist/server/_libs/lodash.mjs                                 113.25 kB
+dist/server/_libs/supabase__postgrest-js.mjs                 132.59 kB
+dist/server/_libs/tanstack__router-core.mjs                  159.00 kB
+dist/server/_libs/motion-dom.mjs                             206.76 kB
+dist/server/_libs/supabase__auth-js.mjs                      297.81 kB
+dist/server/_libs/recharts.mjs                               477.76 kB
+dist/server/_libs/react-dom.mjs                              499.23 kB
+✓ built in 5.57s
+ℹ Generated dist/server/wrangler.json
+ℹ Generated .wrangler/deploy/config.json
+ℹ Generated dist/client/_headers
+ℹ Generated dist/nitro.json
+
+[nitro] ✔ You can preview this build using npx vite preview
+[nitro] ✔ You can deploy this build using npx nitro deploy --prebuilt
+[prerender] Prerendering pages...
+[prerender] Concurrency: 64
+[prerender] Crawling: /
+[prerender] Prerendered 0 pages:
