@@ -18,6 +18,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
+  ssr: false,
   head: () => ({
     links: [{ rel: "preload", as: "image", href: "/hero.jpg", fetchPriority: "high" } as any],
   }),
