@@ -1,9 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Layout, PageHeader } from "@/components/Layout";
-import { searchChamps, type ChampCard } from "@/lib/profiles";
+import { searchChamps, fetchChampMapPoints, type ChampCard } from "@/lib/profiles";
+
+const ChampsWorldMap = lazy(() =>
+  import("@/components/ChampsWorldMap").then((m) => ({ default: m.ChampsWorldMap })),
+);
+
 
 export const Route = createFileRoute("/champs/")({
   component: ChampsDirectory,
