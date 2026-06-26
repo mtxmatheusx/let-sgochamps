@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WallRouteImport } from './routes/wall'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LogRouteImport } from './routes/log'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as GroupsRouteImport } from './routes/groups'
@@ -43,6 +44,11 @@ const StoriesRoute = StoriesRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LogRoute = LogRouteImport.update({
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/groups': typeof GroupsRouteWithChildren
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
   '/wall': typeof WallRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/wall': typeof WallRoute
   '/champs/$userId': typeof ChampsUserIdRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/groups': typeof GroupsRouteWithChildren
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
   '/wall': typeof WallRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/groups'
     | '/history'
     | '/log'
+    | '/onboarding'
     | '/profile'
     | '/stories'
     | '/wall'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/history'
     | '/log'
+    | '/onboarding'
     | '/profile'
     | '/wall'
     | '/champs/$userId'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/groups'
     | '/history'
     | '/log'
+    | '/onboarding'
     | '/profile'
     | '/stories'
     | '/wall'
@@ -273,6 +285,7 @@ export interface RootRouteChildren {
   GroupsRoute: typeof GroupsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LogRoute: typeof LogRoute
+  OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   WallRoute: typeof WallRoute
@@ -301,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/log': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   GroupsRoute: GroupsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LogRoute: LogRoute,
+  OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   StoriesRoute: StoriesRouteWithChildren,
   WallRoute: WallRoute,
@@ -474,3 +495,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

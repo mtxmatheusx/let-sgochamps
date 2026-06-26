@@ -146,6 +146,68 @@ export async function updateMyProfile(patch: Partial<MyProfile>): Promise<void> 
   if (error) throw error;
 }
 
+// Cached so the Layout gate doesn't re-query on every navigation, and so completing
+// onboarding (which sets it true) can't loop the champ back to /onboarding.
+let _onboardingCache: boolean | null = null;
+export function resetOnboardingCache() {
+  _onboardingCache = null;
+}
+
+export async function fetchOnboardingStatus(): Promise<boolean | null> {
+  if (_onboardingCache !== null) return _onboardingCache;
+  const { data: u } = await supabase.auth.getUser();
+  const uid = u.user?.id;
+  if (!uid) return null;
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("onboarding_completed")
+    .eq("id", uid)
+    .maybeSingle();
+  if (error) return null;
+  _onboardingCache = !!data?.onboarding_completed;
+  return _onboardingCache;
+}
+
+export type OnboardingData = {
+  display_name: string;
+  location: string;
+  goal: string | null;
+  favorite_activities: string[];
+  bio: string | null;
+  instagram_handle: string | null;
+};
+
+/** Save everything the champ entered during onboarding, geocode their city for the
+ *  world map, and flip onboarding_completed so the gate stops redirecting them. */
+export async function completeOnboarding(data: OnboardingData): Promise<void> {
+  const { data: u } = await supabase.auth.getUser();
+  const uid = u.user?.id;
+  if (!uid) throw new Error("Not signed in");
+
+  const patch: any = {
+    display_name: data.display_name.trim(),
+    location: data.location.trim() || null,
+    goal: data.goal,
+    favorite_activities: data.favorite_activities.length ? data.favorite_activities : null,
+    bio: data.bio?.trim() || null,
+    instagram_handle: data.instagram_handle?.trim() || null,
+    onboarding_completed: true,
+  };
+
+  if (data.location?.trim()) {
+    const geo = await geocodeCity(data.location);
+    if (geo) {
+      patch.location_lat = geo.lat;
+      patch.location_lng = geo.lng;
+      patch.location_country = geo.country;
+    }
+  }
+
+  const { error } = await supabase.from("profiles").update(patch).eq("id", uid);
+  if (error) throw error;
+  _onboardingCache = true;
+}
+
 export async function uploadAvatar(file: File): Promise<string> {
   const { data: u } = await supabase.auth.getUser();
   const uid = u.user?.id;

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { fetchActivities } from "@/lib/activities";
 import { fetchMyGroups } from "@/lib/groups";
+import { fetchOnboardingStatus, resetOnboardingCache } from "@/lib/profiles";
 
 const links = [
   { to: "/", label: "Dashboard" },
@@ -119,6 +120,7 @@ export function Layout({ children }: { children: ReactNode }) {
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       cachedSession = s;
+      if (!s) resetOnboardingCache();
       setSession(s);
       setReady(true);
     });
@@ -141,6 +143,18 @@ export function Layout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (ready && !session) navigate({ to: "/auth" });
   }, [ready, session, navigate]);
+
+  // Gate: a logged-in champ who hasn't finished onboarding goes to /onboarding first.
+  useEffect(() => {
+    if (!ready || !session || location.pathname === "/onboarding") return;
+    let alive = true;
+    fetchOnboardingStatus().then((done) => {
+      if (alive && done === false) navigate({ to: "/onboarding" });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [ready, session, location.pathname, navigate]);
 
   useEffect(() => setOpen(false), [location.pathname]);
 
