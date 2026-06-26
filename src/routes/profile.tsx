@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Layout, PageHeader } from "@/components/Layout";
 import { fetchMyProfile, updateMyProfile, uploadAvatar, type MyProfile } from "@/lib/profiles";
+import { geocodeMyLocation } from "@/lib/geocode.functions";
+
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
