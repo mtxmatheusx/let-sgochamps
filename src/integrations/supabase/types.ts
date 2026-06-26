@@ -275,6 +275,9 @@ export type Database = {
           instagram_handle: string | null
           is_discoverable: boolean
           location: string | null
+          location_country: string | null
+          location_lat: number | null
+          location_lng: number | null
           updated_at: string
           website_url: string | null
         }
@@ -290,6 +293,9 @@ export type Database = {
           instagram_handle?: string | null
           is_discoverable?: boolean
           location?: string | null
+          location_country?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           updated_at?: string
           website_url?: string | null
         }
@@ -305,6 +311,9 @@ export type Database = {
           instagram_handle?: string | null
           is_discoverable?: boolean
           location?: string | null
+          location_country?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           updated_at?: string
           website_url?: string | null
         }
@@ -354,6 +363,7 @@ export type Database = {
           slug: string
         }[]
       }
+      get_champ_map_points: { Args: never; Returns: Json }
       get_community_weekly_stats: {
         Args: never
         Returns: {
