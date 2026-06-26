@@ -42,6 +42,12 @@ function ChampsDirectory() {
     placeholderData: (previous) => previous ?? [],
   });
 
+  const { data: mapData } = useQuery({
+    queryKey: ["champ-map"],
+    queryFn: fetchChampMapPoints,
+    staleTime: 5 * 60 * 1000,
+  });
+
   return (
     <Layout>
       <PageHeader
@@ -49,6 +55,14 @@ function ChampsDirectory() {
         title="Champs"
         subtitle="The people showing up alongside you. Find your circle. Cheer them on."
       />
+
+      {mapData && (
+        <Suspense fallback={<div className="mb-10 h-[360px] rounded-[28px] glass" />}>
+          <ChampsWorldMap data={mapData} />
+        </Suspense>
+      )}
+
+
 
       <div className="mb-8 max-w-[520px]">
         <input
