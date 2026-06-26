@@ -40,6 +40,13 @@ function ProfilePage() {
     if (profile && !form) setForm(profile);
   }, [profile, form]);
 
+  // Auto-heal: if the champ has a city but no lat/lng, geocode silently so they
+  // appear on the world map without needing to re-save their profile.
+  useEffect(() => {
+    if (!profile?.location || profile.location_lat != null) return;
+    updateMyProfile({ location: profile.location }).catch(() => {});
+  }, [profile?.id]);
+
   if (isLoading || !form) {
     return (
       <Layout>

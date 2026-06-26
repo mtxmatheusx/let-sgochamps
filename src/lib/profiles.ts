@@ -57,6 +57,7 @@ export type MyProfile = {
   avatar_url: string | null;
   bio: string | null;
   location: string | null;
+  location_lat: number | null;
   website_url: string | null;
   instagram_handle: string | null;
   favorite_movement: string | null;
@@ -117,7 +118,7 @@ export async function fetchMyProfile(): Promise<MyProfile | null> {
   if (!uid) return null;
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, display_name, avatar_url, bio, location, website_url, instagram_handle, favorite_movement, is_discoverable")
+    .select("id, display_name, avatar_url, bio, location, location_lat, website_url, instagram_handle, favorite_movement, is_discoverable")
     .eq("id", uid)
     .maybeSingle();
   if (error) throw error;

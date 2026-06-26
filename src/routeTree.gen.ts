@@ -13,6 +13,7 @@ import { Route as WallRouteImport } from './routes/wall'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MaptestRouteImport } from './routes/maptest'
 import { Route as LogRouteImport } from './routes/log'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as GroupsRouteImport } from './routes/groups'
@@ -49,6 +50,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaptestRoute = MaptestRouteImport.update({
+  id: '/maptest',
+  path: '/maptest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LogRoute = LogRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/groups': typeof GroupsRouteWithChildren
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/maptest': typeof MaptestRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/maptest': typeof MaptestRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/wall': typeof WallRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/groups': typeof GroupsRouteWithChildren
   '/history': typeof HistoryRoute
   '/log': typeof LogRoute
+  '/maptest': typeof MaptestRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/stories': typeof StoriesRouteWithChildren
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/groups'
     | '/history'
     | '/log'
+    | '/maptest'
     | '/onboarding'
     | '/profile'
     | '/stories'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/history'
     | '/log'
+    | '/maptest'
     | '/onboarding'
     | '/profile'
     | '/wall'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/groups'
     | '/history'
     | '/log'
+    | '/maptest'
     | '/onboarding'
     | '/profile'
     | '/stories'
@@ -285,6 +297,7 @@ export interface RootRouteChildren {
   GroupsRoute: typeof GroupsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LogRoute: typeof LogRoute
+  MaptestRoute: typeof MaptestRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   StoriesRoute: typeof StoriesRouteWithChildren
@@ -321,6 +334,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maptest': {
+      id: '/maptest'
+      path: '/maptest'
+      fullPath: '/maptest'
+      preLoaderRoute: typeof MaptestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/log': {
@@ -485,6 +505,7 @@ const rootRouteChildren: RootRouteChildren = {
   GroupsRoute: GroupsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LogRoute: LogRoute,
+  MaptestRoute: MaptestRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   StoriesRoute: StoriesRouteWithChildren,

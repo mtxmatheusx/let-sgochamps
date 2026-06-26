@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Layout, PageHeader } from "@/components/Layout";
-import { searchChamps, fetchChampMapPoints, type ChampCard } from "@/lib/profiles";
+import { searchChamps, fetchChampMapPoints, fetchMyProfile, updateMyProfile, type ChampCard } from "@/lib/profiles";
 
 const ChampsWorldMap = lazy(() =>
   import("@/components/ChampsWorldMap").then((m) => ({ default: m.ChampsWorldMap })),
@@ -34,6 +34,7 @@ function useDebounced<T>(value: T, delay = 300): T {
 }
 
 function ChampsDirectory() {
+  const qc = useQueryClient();
   const [q, setQ] = useState("");
   const debouncedQ = useDebounced(q, 300);
   const { data: champs = [], isLoading, isError } = useQuery({
@@ -47,6 +48,18 @@ function ChampsDirectory() {
     queryFn: fetchChampMapPoints,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Auto-heal: the first time this page loads, silently geocode the current
+  // champ's city if they have location text but no coordinates yet, so their
+  // dot appears on the map without them having to re-save their profile.
+  useEffect(() => {
+    fetchMyProfile().then((p) => {
+      if (!p?.location || p.location_lat != null) return;
+      updateMyProfile({ location: p.location })
+        .then(() => qc.invalidateQueries({ queryKey: ["champ-map"] }))
+        .catch(() => {});
+    });
+  }, [qc]);
 
   return (
     <Layout>
