@@ -2,6 +2,55 @@
 import { supabase as _sb } from "@/integrations/supabase/client";
 const supabase: any = _sb;
 
+const GMAPS_KEY = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
+
+/** Turn a free-text city into coordinates so the champ shows up on the world map.
+ *  Tries Google Geocoding (key provisioned by Lovable), falls back to free Nominatim.
+ *  Returns null on any failure — the profile still saves, just without a map dot. */
+export async function geocodeCity(
+  city: string,
+): Promise<{ lat: number; lng: number; country: string | null } | null> {
+  const q = city.trim();
+  if (!q) return null;
+
+  // Primary: Nominatim (OpenStreetMap) — free, no key, CORS-enabled in browsers.
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&q=${encodeURIComponent(q)}`,
+    );
+    const arr = await r.json();
+    const hit = Array.isArray(arr) ? arr[0] : null;
+    if (hit) {
+      return {
+        lat: parseFloat(hit.lat),
+        lng: parseFloat(hit.lon),
+        country: hit.address?.country ?? null,
+      };
+    }
+  } catch {
+    /* fall through to Google */
+  }
+
+  // Fallback: Google Geocoding (only works if the key has the Geocoding API enabled).
+  if (GMAPS_KEY) {
+    try {
+      const r = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(q)}&key=${GMAPS_KEY}`,
+      );
+      const j = await r.json();
+      const hit = j?.results?.[0];
+      if (hit?.geometry?.location) {
+        const country =
+          hit.address_components?.find((c: any) => c.types?.includes("country"))?.long_name ?? null;
+        return { lat: hit.geometry.location.lat, lng: hit.geometry.location.lng, country };
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return null;
+}
+
 export type MyProfile = {
   id: string;
   display_name: string | null;
@@ -81,7 +130,19 @@ export async function updateMyProfile(patch: Partial<MyProfile>): Promise<void> 
   const { data: u } = await supabase.auth.getUser();
   const uid = u.user?.id;
   if (!uid) throw new Error("Not signed in");
-  const { error } = await supabase.from("profiles").update(patch).eq("id", uid);
+
+  // When the city changes, geocode it so the champ lands on the world map.
+  const finalPatch: any = { ...patch };
+  if (typeof patch.location === "string" && patch.location.trim()) {
+    const geo = await geocodeCity(patch.location);
+    if (geo) {
+      finalPatch.location_lat = geo.lat;
+      finalPatch.location_lng = geo.lng;
+      finalPatch.location_country = geo.country;
+    }
+  }
+
+  const { error } = await supabase.from("profiles").update(finalPatch).eq("id", uid);
   if (error) throw error;
 }
 
