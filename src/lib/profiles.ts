@@ -123,3 +123,26 @@ export async function fetchPublicProfile(userId: string): Promise<PublicProfile 
   p.profile.avatar_url = await resolveAvatarUrl(p.profile.avatar_url);
   return p;
 }
+
+export type ChampMapPoint = {
+  lat: number;
+  lng: number;
+  city: string | null;
+  country: string | null;
+  count: number;
+};
+
+export type ChampMapData = {
+  points: ChampMapPoint[];
+  totals: { countries: number; cities: number; champs: number };
+};
+
+export async function fetchChampMapPoints(): Promise<ChampMapData> {
+  const { data, error } = await supabase.rpc("get_champ_map_points");
+  if (error) {
+    console.warn("get_champ_map_points failed:", error.message);
+    return { points: [], totals: { countries: 0, cities: 0, champs: 0 } };
+  }
+  return (data as ChampMapData) ?? { points: [], totals: { countries: 0, cities: 0, champs: 0 } };
+}
+

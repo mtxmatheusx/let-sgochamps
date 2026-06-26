@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Layout, PageHeader } from "@/components/Layout";
 import { fetchMyProfile, updateMyProfile, uploadAvatar, type MyProfile } from "@/lib/profiles";
+import { geocodeMyLocation } from "@/lib/geocode.functions";
+
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -77,10 +79,18 @@ function ProfilePage() {
         favorite_movement: form.favorite_movement?.trim() || null,
         is_discoverable: form.is_discoverable,
       });
+      // Geocode in the background so the champ shows up on the world map.
+      const newLoc = form.location?.trim() || null;
+      if (newLoc !== (profile?.location ?? null)) {
+        geocodeMyLocation({ data: { location: newLoc } })
+          .then(() => qc.invalidateQueries({ queryKey: ["champ-map"] }))
+          .catch(() => {});
+      }
       await qc.invalidateQueries({ queryKey: ["my-profile"] });
       await qc.invalidateQueries({ queryKey: ["champs"] });
       toast.success("Profile saved.");
       navigate({ to: "/champs/$userId", params: { userId: form.id } });
+
     } catch (err: any) {
       toast.error(err.message ?? "Could not save profile.");
     } finally {
